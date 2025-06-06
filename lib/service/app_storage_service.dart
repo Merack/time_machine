@@ -7,7 +7,7 @@ class AppStorageService extends GetxService {
 
   Future<AppStorageService> init() async {
     final rootDir = await MMKV.initialize();
-    print('MMKV for flutter with rootDir = $rootDir');
+    Get.log('MMKV for flutter with rootDir = $rootDir');
     _mmkv = MMKV.defaultMMKV();
     return this;
   }

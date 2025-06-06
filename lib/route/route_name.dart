@@ -3,10 +3,12 @@ abstract class AppRoutes {
   AppRoutes._();
 
   // 初始路由，通常是启动页或主页
-  static const String INITIAL = '/test';
+  static const String INITIAL = '/main';
 
   static const String TEST = '/test';
+  static const String MAIN = '/main';
   static const String HOME = '/home';
+  static const String SETTING = '/setting';
   static const String OTHER = "/other";
 
   // 带参数的路由

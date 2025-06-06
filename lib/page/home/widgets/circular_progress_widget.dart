@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
-/// 圆形进度条组件，样式参考华为鸿蒙系统
+/// 圆形进度条组件
 class CircularProgressWidget extends StatelessWidget {
   final double progress; // 进度值 0.0 - 1.0
   final double size; // 组件大小

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../config/app_config.dart';
 import 'controller.dart';
 import 'state.dart';
 import 'widgets/circular_progress_widget.dart';
@@ -26,7 +27,7 @@ class HomePage extends StatelessWidget {
           ),
         ),
         backgroundColor: Colors.white,
-        foregroundColor: Colors.black87,
+        foregroundColor: Colors.black,
         elevation: 0,
         centerTitle: true,
       ),
@@ -47,12 +48,12 @@ class HomePage extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 40),
+              const SizedBox(height: 20),
 
               // 控制按钮
               _buildControlButtons(),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 50),
             ],
           ),
         ),
@@ -85,7 +86,7 @@ class HomePage extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           Text(
-            '已完成周期: ${state.completedCycles.value}',
+            '已完成 ${state.completedCycles.value} 个时钟',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
@@ -122,7 +123,7 @@ class HomePage extends StatelessWidget {
       return CircularProgressWidget(
         progress: state.progress,
         size: 280,
-        strokeWidth: 12,
+        strokeWidth: 18,
         progressColor: progressColor,
         backgroundColor: Colors.grey[200]!,
         child: TimerDisplayWidget(
@@ -130,7 +131,7 @@ class HomePage extends StatelessWidget {
           statusText: state.statusText,
           timeStyle: const TextStyle(
             fontSize: 52,
-            fontWeight: FontWeight.w200,
+            fontWeight: FontWeight.w400,
             color: Colors.black87,
             fontFeatures: [
               FontFeature.tabularFigures(),
@@ -152,6 +153,7 @@ class HomePage extends StatelessWidget {
       isRunning: state.isRunning.value,
       onPlayPause: controller.toggleTimer,
       onReset: controller.resetTimer,
+      onSkip: AppConfig.isDebug ? controller.skipCurrentPhase : null,
     ));
   }
 }

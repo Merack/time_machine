@@ -37,8 +37,8 @@ class TimerDisplayWidget extends StatelessWidget {
           style: timeStyle ??
               const TextStyle(
                 fontSize: 48,
-                fontWeight: FontWeight.w300,
-                color: Colors.black87,
+                fontWeight: FontWeight.w400,
+                color: Colors.black,
                 fontFeatures: [
                   FontFeature.tabularFigures(), // 使用等宽数字
                 ],
