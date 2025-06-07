@@ -11,8 +11,8 @@ class StorageKeys {
   static const String microBreakIntervalMaxMinutes = 'micro_break_interval_max_minutes';
   
   // 行为控制设置
-  static const String isCountingUp = 'is_counting_up'; // true=正向计时，false=逆向计时
-  static const String isProgressForward = 'is_progress_forward'; // true=正向填充，false=逆向填充
+  static const String isCountingUp = 'is_counting_up'; // true=正向计时,false=逆向计时
+  static const String isProgressForward = 'is_progress_forward'; // true=正向填充,false=逆向填充
   
   // 默认值
   static const int defaultFocusTimeMinutes = 90;

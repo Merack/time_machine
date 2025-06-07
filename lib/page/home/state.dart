@@ -39,7 +39,7 @@ class HomeState {
   // 微休息间隔时间（3-5分钟的随机值，单位：秒）
   var microBreakInterval = 0.obs;
 
-  // 动态设置值（从存储中读取）
+  // 设置默认值
   var focusTimeSeconds = (90 * 60).obs; // 默认90分钟
   var bigBreakTimeSeconds = (20 * 60).obs; // 默认20分钟
   var microBreakTimeSeconds = 10.obs; // 默认10秒

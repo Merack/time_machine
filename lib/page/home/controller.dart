@@ -101,20 +101,26 @@ class HomeController extends GetxController {
   /// 开始计时器
   void _startTimer() {
     if (state.timerStatus.value == TimerStatus.stopped) {
-      // 首次启动，进入专注状态
+      // 首次启动,进入专注状态
       _startFocusSession();
     } else {
       // 从暂停状态恢复
       if (state.timerStatus.value == TimerStatus.paused) {
+        // 更新 isRunning 状态
         state.isRunning.value = true;
+        // 如果之前的状态是 focus 或者 microBreak, 则恢复为专注状态
         if ((state.previousStatus.value == TimerStatus.focus) ||
             (state.previousStatus.value == TimerStatus.microBreak)) {
           state.timerStatus.value = TimerStatus.focus;
         } else {
+          // 恢复为之前的状态, 逻辑上这里应该只能是 bigBreak
           state.timerStatus.value = state.previousStatus.value;
         }
+        // 重新开始专注计时器
         _startFocusCountdown();
+        // 重新生成随机间隔
         state.generateNextMicroBreakInterval();
+        // 重新开始微休息计时器
         _startMicroBreakCountdown();
       }
     }
@@ -122,6 +128,7 @@ class HomeController extends GetxController {
 
   /// 暂停计时器
   void _pauseTimer() {
+    // 一同暂停专注和微休息
     _timer?.cancel();
     _microBreakTimer?.cancel();
     state.previousStatus.value = state.timerStatus.value;
@@ -152,24 +159,23 @@ class HomeController extends GetxController {
     });
   }
 
-  /// 开始微休息倒计时
+  /// 处理微休息到来时间和微休息期间倒计时
   void _startMicroBreakCountdown() {
     Get.log("当前状态: ${state.timerStatus.value}");
+    // 处理微休息到来时间倒计时
     if (state.timerStatus.value == TimerStatus.focus) {
       Get.log("微休息倒计时开始");
       _microBreakTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-        if (state.timerStatus.value == TimerStatus.focus && state.isRunning.value) {
-          if (state.nextMicroBreakTime.value > 0) {
-            state.nextMicroBreakTime.value--;
-            Get.log("距离微休息开始还有: ${state.nextMicroBreakTime.value}");
-          } else {
-            Get.log("休息时间1是: ${state.microBreakTimeSeconds.value}");
-            _triggerMicroBreak(isStartMicroBreak: true);
-          }
+        if (state.nextMicroBreakTime.value > 0) {
+          state.nextMicroBreakTime.value--;
+          Get.log("距离微休息开始还有: ${state.nextMicroBreakTime.value}");
+        } else {
+          Get.log("休息时间1是: ${state.microBreakTimeSeconds.value}");
+          _handleMicroBreakStatus(isStartMicroBreak: true);
         }
       });
     }
-
+    // 处理微休息期间倒计时
     if (state.timerStatus.value == TimerStatus.microBreak) {
       Get.log("微休息期间");
       Get.log("休息时间是: ${state.remainingMicroBreakTime.value}");
@@ -180,19 +186,18 @@ class HomeController extends GetxController {
             Get.log("微休息时间还剩有: ${state.remainingMicroBreakTime.value}");
           } else {
             Get.log("走到了else");
-            _triggerMicroBreak(isStartMicroBreak: false);
+            _handleMicroBreakStatus(isStartMicroBreak: false);
           }
       });
     }
   }
 
-  /// 触发微休息
-  void _triggerMicroBreak({required bool isStartMicroBreak}) {
+  /// 处理微休息的开始和结束
+  void _handleMicroBreakStatus({required bool isStartMicroBreak}) {
     Get.log("微休息开始");
     // 开始微休息
     if (isStartMicroBreak) {
       _microBreakTimer?.cancel();
-      // _timer?.cancel();
 
       // 播放微休息开始音效
       _playAudio('audio/drop.mp3');
@@ -203,12 +208,12 @@ class HomeController extends GetxController {
       // state.totalTime.value = state.microBreakTimeSeconds.value;
 
       // 开始微休息倒计时
+      // 设置微休息时间
       state.remainingMicroBreakTime.value = state.microBreakTimeSeconds.value;
       _startMicroBreakCountdown();
     } else {  // 微休息结束
       Get.log("微休息结束");
       _microBreakTimer?.cancel();
-      // _timer?.cancel();
 
       // 播放微休息结束音效
       _playAudio('audio/ding.mp3');
@@ -232,9 +237,6 @@ class HomeController extends GetxController {
       case TimerStatus.focus:
         _completeFocusSession();
         break;
-      // case TimerStatus.microBreak:
-      //   _completeMicroBreak();
-      //   break;
       case TimerStatus.bigBreak:
         _completeBigBreak();
         break;
@@ -263,22 +265,22 @@ class HomeController extends GetxController {
     _startFocusCountdown();
   }
 
-  /// 完成微休息
-  void _completeMicroBreak() {
-    // 播放微休息结束音效
-    _playAudio('audio/ding.mp3');
-
-    // 回到专注状态，恢复之前的剩余时间
-    state.timerStatus.value = TimerStatus.focus;
-    state.totalTime.value = state.focusTimeSeconds.value;
-
-    // 生成下一次微休息间隔
-    state.generateNextMicroBreakInterval();
-
-    // 继续专注倒计时和微休息倒计时
-    _startFocusCountdown();
-    _startMicroBreakCountdown();
-  }
+  /// 完成微休息(已废弃, 为供参考暂时保留注释)
+  // void _completeMicroBreak() {
+  //   // 播放微休息结束音效
+  //   _playAudio('audio/ding.mp3');
+  //
+  //   // 回到专注状态，恢复之前的剩余时间
+  //   state.timerStatus.value = TimerStatus.focus;
+  //   state.totalTime.value = state.focusTimeSeconds.value;
+  //
+  //   // 生成下一次微休息间隔
+  //   state.generateNextMicroBreakInterval();
+  //
+  //   // 继续专注倒计时和微休息倒计时
+  //   _startFocusCountdown();
+  //   _startMicroBreakCountdown();
+  // }
 
   /// 完成大休息
   void _completeBigBreak() {
@@ -305,7 +307,9 @@ class HomeController extends GetxController {
         _completeFocusSession();
         break;
       case TimerStatus.microBreak:
-        _completeMicroBreak();
+        // _completeMicroBreak();
+        _startFocusCountdown();
+        _handleMicroBreakStatus(isStartMicroBreak: false);
         break;
       case TimerStatus.bigBreak:
         _completeBigBreak();
@@ -323,6 +327,11 @@ class HomeController extends GetxController {
   /// 播放音频
   void _playAudio(String assetPath) async {
     try {
+      // 当新的播放请求来临时打断之前的播放
+      // 目前还不可以处理按钮的快速点击, 仅是处理阶段结束音乐播放时按下按钮的情况
+      if (_audioPlayer.state == PlayerState.playing) {
+        _audioPlayer.stop();
+      }
       await _audioPlayer.play(AssetSource(assetPath));
     } catch (e) {
       // 使用 Get.log 替代 print
