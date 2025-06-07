@@ -43,6 +43,7 @@ class HomeState {
   // 设置默认值
   var focusTimeSeconds = (90 * 60).obs; // 默认90分钟
   var bigBreakTimeSeconds = (20 * 60).obs; // 默认20分钟
+  var microBreakEnabled = true.obs; // 默认启用微休息
   var microBreakTimeSeconds = 10.obs; // 默认10秒
   var minMicroBreakInterval = (3 * 60).obs; // 默认3分钟
   var maxMicroBreakInterval = (5 * 60).obs; // 默认5分钟

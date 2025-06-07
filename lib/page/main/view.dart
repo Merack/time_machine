@@ -9,10 +9,14 @@ class MainPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 使用Get.find避免重复创建，如果不存在则创建
+    final controller = Get.isRegistered<MainController>()
+        ? Get.find<MainController>()
+        : Get.put(MainController());
+
     return Scaffold(
       body: GetBuilder<MainController>(
-        init: MainController(),
-        builder: (controller) {
+        builder: (_) {
           return IndexedStack(
             index: controller.state.currentIndex,
             children: controller.state.pages,
@@ -27,12 +31,10 @@ class MainPage extends StatelessWidget {
           splashFactory: NoSplash.splashFactory,
         ),
         child: GetBuilder<MainController>(
-          builder: (controller) {
+          builder: (ctrl) {
             return BottomNavigationBar(
-              currentIndex: controller.state.currentIndex,
-              onTap: (index) {
-                controller.updateIndex(index);
-              },
+              currentIndex: ctrl.state.currentIndex,
+              onTap: ctrl.updateIndex,
               type: BottomNavigationBarType.fixed,
               backgroundColor: Colors.white,
               selectedItemColor: const Color(0xFF007AFF),

@@ -6,13 +6,16 @@ import 'controller.dart';
 import 'state.dart';
 
 class SettingPage extends StatelessWidget {
-  SettingPage({super.key});
-
-  final SettingController controller = Get.put(SettingController());
-  final SettingState state = Get.find<SettingController>().state;
+  const SettingPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // 使用Get.find避免重复创建，如果不存在则创建
+    final controller = Get.isRegistered<SettingController>()
+        ? Get.find<SettingController>()
+        : Get.put(SettingController());
+    final state = controller.state;
+
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
@@ -32,123 +35,143 @@ class SettingPage extends StatelessWidget {
         ],
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
+        child: GestureDetector(
+          onTap: () {
+            // 点击页面任何地方都会触发当前聚焦输入框失去焦点
+            FocusScope.of(context).unfocus();
+          },
+          child: ListView(
+            padding: const EdgeInsets.all(16.0),
             children: [
-              // 大休息设置组
-              _buildSettingGroup(
-                title: '专注设置',
-                icon: Icons.timer,
-                children: [
-                  _buildTimeInputField(
-                    label: '专注时间',
-                    unit: '分钟',
-                    controller: state.focusTimeController,
-                    errorObs: state.focusTimeError,
-                    onChanged: controller.updateFocusTime,
-                  ),
-                  const SizedBox(height: 16),
-                  _buildTimeInputField(
-                    label: '休息时间',
-                    unit: '分钟',
-                    controller: state.bigBreakTimeController,
-                    errorObs: state.bigBreakTimeError,
-                    onChanged: controller.updateBigBreakTime,
-                  ),
-                ],
-              ),
+            // 专注设置组
+            _buildSettingGroup(
+              title: '专注设置',
+              icon: Icons.timer,
+              children: [
+                _buildTimeInputField(
+                  label: '专注时间',
+                  unit: '分钟',
+                  textController: state.focusTimeController,
+                  errorObs: state.focusTimeError,
+                  onChanged: controller.updateFocusTime,
+                  controller: controller,
+                ),
+                const SizedBox(height: 16),
+                _buildTimeInputField(
+                  label: '休息时间',
+                  unit: '分钟',
+                  textController: state.bigBreakTimeController,
+                  errorObs: state.bigBreakTimeError,
+                  onChanged: controller.updateBigBreakTime,
+                  controller: controller,
+                ),
+              ],
+            ),
 
-              const SizedBox(height: 20),
+            const SizedBox(height: 20),
 
-              // 微休息设置组
-              _buildSettingGroup(
-                title: '微休息设置',
-                icon: Icons.coffee,
-                children: [
-                  _buildTimeInputField(
-                    label: '微休息时长',
-                    unit: '秒',
-                    controller: state.microBreakTimeController,
-                    errorObs: state.microBreakTimeError,
-                    onChanged: controller.updateMicroBreakTime,
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildTimeInputField(
-                          label: '间隔最小值',
-                          unit: '分钟',
-                          controller: state.microBreakIntervalMinController,
-                          errorObs: state.microBreakIntervalMinError,
-                          onChanged: controller.updateMicroBreakIntervalMin,
-                        ),
+            // 微休息设置组
+            _buildSettingGroup(
+              title: '微休息设置',
+              icon: Icons.coffee,
+              children: [
+                // 微休息开关
+                _buildSwitchTile(
+                  title: '启用微休息',
+                  subtitle: '在专注时间内定期提醒休息',
+                  valueObs: state.microBreakEnabled,
+                  onChanged: controller.toggleMicroBreakEnabled,
+                ),
+                const SizedBox(height: 16),
+                Obx(() => _buildTimeInputField(
+                  label: '微休息时长',
+                  unit: '秒',
+                  textController: state.microBreakTimeController,
+                  errorObs: state.microBreakTimeError,
+                  onChanged: controller.updateMicroBreakTime,
+                  controller: controller,
+                  enabled: state.microBreakEnabled.value,
+                )),
+                const SizedBox(height: 16),
+                Obx(() => Row(
+                  children: [
+                    Expanded(
+                      child: _buildTimeInputField(
+                        label: '间隔最小值',
+                        unit: '分钟',
+                        textController: state.microBreakIntervalMinController,
+                        errorObs: state.microBreakIntervalMinError,
+                        onChanged: controller.updateMicroBreakIntervalMin,
+                        controller: controller,
+                        enabled: state.microBreakEnabled.value,
                       ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: _buildTimeInputField(
-                          label: '间隔最大值',
-                          unit: '分钟',
-                          controller: state.microBreakIntervalMaxController,
-                          errorObs: state.microBreakIntervalMaxError,
-                          onChanged: controller.updateMicroBreakIntervalMax,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 20),
-
-              // 行为控制设置组
-              _buildSettingGroup(
-                title: '行为控制',
-                icon: Icons.settings,
-                children: [
-                  _buildSwitchTile(
-                    title: '正向计时',
-                    subtitle: '计时从0开始递增',
-                    valueObs: state.isCountingUp,
-                    onChanged: controller.toggleCountingDirection,
-                  ),
-                  const SizedBox(height: 8),
-                  _buildSwitchTile(
-                    title: '进度条正向填充',
-                    subtitle: '圆形进度条从0开始填充',
-                    valueObs: state.isProgressForward,
-                    onChanged: controller.toggleProgressDirection,
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 30),
-
-              // 保存按钮
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: controller.saveSettings,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF007AFF),
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
                     ),
-                    elevation: 2,
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: _buildTimeInputField(
+                        label: '间隔最大值',
+                        unit: '分钟',
+                        textController: state.microBreakIntervalMaxController,
+                        errorObs: state.microBreakIntervalMaxError,
+                        onChanged: controller.updateMicroBreakIntervalMax,
+                        controller: controller,
+                        enabled: state.microBreakEnabled.value,
+                      ),
+                    ),
+                  ],
+                )),
+              ],
+            ),
+
+            const SizedBox(height: 20),
+
+            // 行为控制设置组
+            _buildSettingGroup(
+              title: '行为控制',
+              icon: Icons.settings,
+              children: [
+                _buildSwitchTile(
+                  title: '正向计时',
+                  subtitle: '计时从0开始递增',
+                  valueObs: state.isCountingUp,
+                  onChanged: controller.toggleCountingDirection,
+                ),
+                const SizedBox(height: 8),
+                _buildSwitchTile(
+                  title: '进度条正向填充',
+                  subtitle: '圆形进度条从0开始填充',
+                  valueObs: state.isProgressForward,
+                  onChanged: controller.toggleProgressDirection,
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 30),
+
+            // 保存按钮
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton(
+                onPressed: controller.saveSettings,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF007AFF),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Text(
-                    '保存设置',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600,),
-                  ),
+                  elevation: 2,
+                ),
+                child: const Text(
+                  '保存设置',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600,),
                 ),
               ),
+            ),
 
-              const SizedBox(height: 20),
-            ],
-          ),
+            const SizedBox(height: 20),
+          ],
+        ),
         ),
       ),
     );
@@ -202,9 +225,11 @@ class SettingPage extends StatelessWidget {
   Widget _buildTimeInputField({
     required String label,
     required String unit,
-    required TextEditingController controller,
+    required TextEditingController textController,
     required RxString errorObs,
     required Function(String) onChanged,
+    required SettingController controller,
+    bool enabled = true,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -221,29 +246,47 @@ class SettingPage extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: TextFormField(
-                controller: controller,
-                keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly,],
-                onChanged: onChanged,
-                decoration: InputDecoration(
-                  hintText: '请输入$label',
-                  suffixText: unit,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: Colors.grey[300]!),
+              child: Focus(
+                onFocusChange: (hasFocus) {
+                  if (!hasFocus) {
+                    // 当输入框失去焦点时进行验证
+                    controller.state.validateAll();
+                  }
+                },
+                child: TextFormField(
+                  controller: textController,
+                  enabled: enabled,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly,],
+                  onChanged: onChanged,
+                  decoration: InputDecoration(
+                    hintText: enabled ? '请输入$label' : '已禁用',
+                    suffixText: unit,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: Colors.grey[300]!),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: Colors.grey[300]!),
+                    ),
+                    disabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: Colors.grey[200]!),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: const BorderSide(color: Color(0xFF007AFF)),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 16,
+                    ),
+                    fillColor: enabled ? null : Colors.grey[100],
+                    filled: !enabled,
                   ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: Colors.grey[300]!),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: const BorderSide(color: Color(0xFF007AFF)),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 16,
+                  style: TextStyle(
+                    color: enabled ? Colors.black87 : Colors.grey[500],
                   ),
                 ),
               ),

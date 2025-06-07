@@ -41,6 +41,11 @@ class HomeController extends GetxController {
       defaultValue: StorageKeys.defaultBigBreakTimeMinutes,
     ) * 60; // 转换为秒
 
+    state.microBreakEnabled.value = _storage.decodeBool(
+      StorageKeys.microBreakEnabled,
+      defaultValue: StorageKeys.defaultMicroBreakEnabled,
+    );
+
     state.microBreakTimeSeconds.value = _storage.decodeInt(
       StorageKeys.microBreakTimeSeconds,
       defaultValue: StorageKeys.defaultMicroBreakTimeSeconds,
@@ -161,6 +166,11 @@ class HomeController extends GetxController {
 
   /// 处理微休息到来时间和微休息期间倒计时
   void _startMicroBreakCountdown() {
+    // 检查微休息是否启用
+    if (!state.microBreakEnabled.value) {
+      return;
+    }
+
     // 不启用微休息的逻辑
     if (state.microBreakTimeSeconds.value == 0) {
       return;

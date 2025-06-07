@@ -35,6 +35,11 @@ class SettingController extends GetxController {
       defaultValue: StorageKeys.defaultBigBreakTimeMinutes,
     );
 
+    state.microBreakEnabled.value = _storage.decodeBool(
+      StorageKeys.microBreakEnabled,
+      defaultValue: StorageKeys.defaultMicroBreakEnabled,
+    );
+
     state.microBreakTimeSeconds.value = _storage.decodeInt(
       StorageKeys.microBreakTimeSeconds,
       defaultValue: StorageKeys.defaultMicroBreakTimeSeconds,
@@ -79,6 +84,7 @@ class SettingController extends GetxController {
 
     _storage.encodeInt(StorageKeys.focusTimeMinutes, state.focusTimeMinutes.value);
     _storage.encodeInt(StorageKeys.bigBreakTimeMinutes, state.bigBreakTimeMinutes.value);
+    _storage.encodeBool(StorageKeys.microBreakEnabled, state.microBreakEnabled.value);
     _storage.encodeInt(StorageKeys.microBreakTimeSeconds, state.microBreakTimeSeconds.value);
     _storage.encodeInt(StorageKeys.microBreakIntervalMinMinutes, state.microBreakIntervalMinMinutes.value);
     _storage.encodeInt(StorageKeys.microBreakIntervalMaxMinutes, state.microBreakIntervalMaxMinutes.value);
@@ -106,6 +112,7 @@ class SettingController extends GetxController {
   void resetToDefaults() {
     state.focusTimeMinutes.value = StorageKeys.defaultFocusTimeMinutes;
     state.bigBreakTimeMinutes.value = StorageKeys.defaultBigBreakTimeMinutes;
+    state.microBreakEnabled.value = StorageKeys.defaultMicroBreakEnabled;
     state.microBreakTimeSeconds.value = StorageKeys.defaultMicroBreakTimeSeconds;
     state.microBreakIntervalMinMinutes.value = StorageKeys.defaultMicroBreakIntervalMinMinutes;
     state.microBreakIntervalMaxMinutes.value = StorageKeys.defaultMicroBreakIntervalMaxMinutes;
@@ -172,5 +179,11 @@ class SettingController extends GetxController {
   /// 切换进度条方向
   void toggleProgressDirection(bool value) {
     state.isProgressForward.value = value;
+  }
+
+  /// 切换微休息启用状态
+  void toggleMicroBreakEnabled(bool value) {
+    state.microBreakEnabled.value = value;
+    Get.log("当前microBreakEnabled: ${state.microBreakEnabled.value}");
   }
 }

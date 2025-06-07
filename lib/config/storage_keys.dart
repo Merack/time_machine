@@ -6,6 +6,7 @@ class StorageKeys {
   // 计时器设置相关
   static const String focusTimeMinutes = 'focus_time_minutes';
   static const String bigBreakTimeMinutes = 'big_break_time_minutes';
+  static const String microBreakEnabled = 'micro_break_enabled';
   static const String microBreakTimeSeconds = 'micro_break_time_seconds';
   static const String microBreakIntervalMinMinutes = 'micro_break_interval_min_minutes';
   static const String microBreakIntervalMaxMinutes = 'micro_break_interval_max_minutes';
@@ -17,6 +18,7 @@ class StorageKeys {
   // 默认值
   static const int defaultFocusTimeMinutes = 90;
   static const int defaultBigBreakTimeMinutes = 20;
+  static const bool defaultMicroBreakEnabled = true; // 默认启用微休息
   static const int defaultMicroBreakTimeSeconds = 10;
   static const int defaultMicroBreakIntervalMinMinutes = 3;
   static const int defaultMicroBreakIntervalMaxMinutes = 5;
