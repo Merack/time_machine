@@ -74,23 +74,23 @@ class SettingState {
     }
 
     // 验证大休息时间
-    if (bigBreakTimeMinutes.value <= 0) {
-      bigBreakTimeError.value = '大休息时间必须大于0分钟';
+    if (bigBreakTimeMinutes.value < 0) {
+      bigBreakTimeError.value = '长休息时间必须大于或等于0分钟';
       isValid = false;
     }
 
     // 验证微休息时长
-    if (microBreakTimeSeconds.value <= 0) {
-      microBreakTimeError.value = '微休息时长必须大于0秒';
+    if (microBreakTimeSeconds.value < 0) {
+      microBreakTimeError.value = '微休息时长必须大于或等于0秒';
       isValid = false;
-    } else if (microBreakTimeSeconds.value > bigBreakTimeMinutes.value * 60) {
-      microBreakTimeError.value = '微休息时长不能大于大休息时间';
+    } else if (bigBreakTimeMinutes.value != 0 && (microBreakTimeSeconds.value > bigBreakTimeMinutes.value * 60)) {
+      microBreakTimeError.value = '微休息时长不能大于长休息时间';
       isValid = false;
     }
 
     // 验证微休息间隔范围
-    if (microBreakIntervalMinMinutes.value <= 0) {
-      microBreakIntervalMinError.value = '最小间隔必须大于0分钟';
+    if (microBreakIntervalMinMinutes.value < 0) {
+      microBreakIntervalMinError.value = '最小间隔必须大于或等于0分钟';
       isValid = false;
     }
 
@@ -104,8 +104,10 @@ class SettingState {
       microBreakIntervalMinController.text = microBreakIntervalMinMinutes.value.toString();
       Get.snackbar(
         '设置已调整',
-        '最小间隔已调整为与最大间隔相同',
-        snackPosition: SnackPosition.BOTTOM,
+        '最小间隔不能大于最大间隔,已调整为相同值',
+        snackPosition: SnackPosition.TOP,
+        barBlur: 100,
+        duration: Duration(seconds: 2),
       );
     }
 

@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:get/get.dart';
+import 'package:time_machine/config/app_config.dart';
 
 /// 计时器状态枚举
 enum TimerStatus {
@@ -67,8 +68,11 @@ class HomeState {
 
   /// 生成下一次微休息的随机间隔时间
   void generateNextMicroBreakInterval() {
-    // nextMicroBreakTime.value = 5;
-    // return;
+    if (AppConfig.isDebug) {
+      nextMicroBreakTime.value = 5;
+      return;
+    }
+
     nextMicroBreakTime.value = minMicroBreakInterval.value +
         Random().nextInt(maxMicroBreakInterval.value - minMicroBreakInterval.value + 1);
   }

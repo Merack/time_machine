@@ -70,7 +70,9 @@ class SettingController extends GetxController {
       Get.snackbar(
         '验证失败',
         '请检查输入的设置值',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
+        barBlur: 100,
+        duration: Duration(seconds: 2)
       );
       return;
     }

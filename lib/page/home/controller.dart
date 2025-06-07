@@ -161,31 +161,29 @@ class HomeController extends GetxController {
 
   /// 处理微休息到来时间和微休息期间倒计时
   void _startMicroBreakCountdown() {
-    Get.log("当前状态: ${state.timerStatus.value}");
+    // 不启用微休息的逻辑
+    if (state.microBreakTimeSeconds.value == 0) {
+      return;
+    }
     // 处理微休息到来时间倒计时
     if (state.timerStatus.value == TimerStatus.focus) {
-      Get.log("微休息倒计时开始");
       _microBreakTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
         if (state.nextMicroBreakTime.value > 0) {
           state.nextMicroBreakTime.value--;
           Get.log("距离微休息开始还有: ${state.nextMicroBreakTime.value}");
         } else {
-          Get.log("休息时间1是: ${state.microBreakTimeSeconds.value}");
           _handleMicroBreakStatus(isStartMicroBreak: true);
         }
       });
     }
     // 处理微休息期间倒计时
     if (state.timerStatus.value == TimerStatus.microBreak) {
-      Get.log("微休息期间");
-      Get.log("休息时间是: ${state.remainingMicroBreakTime.value}");
       _microBreakTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
           if (state.remainingMicroBreakTime.value > 0) {
-            Get.log("走到了if");
             state.remainingMicroBreakTime.value--;
             Get.log("微休息时间还剩有: ${state.remainingMicroBreakTime.value}");
           } else {
-            Get.log("走到了else");
+            Get.log("微休息完成");
             _handleMicroBreakStatus(isStartMicroBreak: false);
           }
       });
@@ -204,8 +202,6 @@ class HomeController extends GetxController {
 
       // 进入微休息状态
       state.timerStatus.value = TimerStatus.microBreak;
-      // state.remainingFocusTime.value = state.microBreakTimeSeconds.value;
-      // state.totalTime.value = state.microBreakTimeSeconds.value;
 
       // 开始微休息倒计时
       // 设置微休息时间
@@ -220,8 +216,7 @@ class HomeController extends GetxController {
 
       // 更新状态
       state.timerStatus.value = TimerStatus.focus;
-      // state.remainingFocusTime.value = state.microBreakTimeSeconds.value;
-      // state.totalTime.value = state.microBreakTimeSeconds.value;
+
       state.generateNextMicroBreakInterval();
       // 开始微休息倒计时
       _startMicroBreakCountdown();
@@ -255,6 +250,13 @@ class HomeController extends GetxController {
 
     // 增加完成周期数
     state.completedCycles.value++;
+
+    // 如果用户设置大休息时间为0, 则跳过休息阶段
+    if (state.bigBreakTimeSeconds.value == 0) {
+      resetTimer();
+      _startFocusSession();
+      return;
+    }
 
     // 进入大休息状态
     state.timerStatus.value = TimerStatus.bigBreak;

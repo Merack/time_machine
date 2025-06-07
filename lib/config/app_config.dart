@@ -1,3 +1,3 @@
 class AppConfig {
-  static bool isDebug = false;
+  static bool isDebug = true;
 }

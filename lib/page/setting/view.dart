@@ -18,13 +18,10 @@ class SettingPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           '设置',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-          ),
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600,),
         ),
         backgroundColor: Colors.white,
-        foregroundColor: Colors.black87,
+        foregroundColor: Colors.black,
         elevation: 0,
         centerTitle: true,
         actions: [
@@ -144,10 +141,7 @@ class SettingPage extends StatelessWidget {
                   ),
                   child: const Text(
                     '保存设置',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600,),
                   ),
                 ),
               ),
@@ -185,18 +179,14 @@ class SettingPage extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
-                icon,
-                color: const Color(0xFF007AFF),
-                size: 24,
-              ),
+              Icon(icon, color: const Color(0xFF007AFF), size: 24,),
               const SizedBox(width: 12),
               Text(
                 title,
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
-                  color: Colors.black87,
+                  color: Colors.black,
                 ),
               ),
             ],
@@ -234,9 +224,7 @@ class SettingPage extends StatelessWidget {
               child: TextFormField(
                 controller: controller,
                 keyboardType: TextInputType.number,
-                inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly,
-                ],
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly,],
                 onChanged: onChanged,
                 decoration: InputDecoration(
                   hintText: '请输入$label',
@@ -262,18 +250,19 @@ class SettingPage extends StatelessWidget {
             ),
           ],
         ),
-        Obx(() => errorObs.value.isNotEmpty
-            ? Padding(
-                padding: const EdgeInsets.only(top: 4),
-                child: Text(
-                  errorObs.value,
-                  style: const TextStyle(
-                    color: Colors.red,
-                    fontSize: 12,
-                  ),
-                ),
-              )
-            : const SizedBox.shrink()),
+        Obx(() {
+          if (errorObs.value.isNotEmpty) {
+            return Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(
+                errorObs.value,
+                style: const TextStyle(color: Colors.red, fontSize: 12),
+              ),
+            );
+          } else {
+            return const SizedBox.shrink();
+          }
+        }),
       ],
     );
   }
@@ -285,40 +274,37 @@ class SettingPage extends StatelessWidget {
     required RxBool valueObs,
     required Function(bool) onChanged,
   }) {
-    return Obx(() => Container(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black87,
+    return Obx(
+      () => Container(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  valueObs.value ? subtitle : subtitle.replaceFirst('正向', '逆向'),
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[600],
+                  const SizedBox(height: 4),
+                  Text(subtitle, style: TextStyle(fontSize: 14, color: Colors.grey[600],),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          Switch(
-            value: valueObs.value,
-            onChanged: onChanged,
-            activeColor: const Color(0xFF007AFF),
-          ),
-        ],
+            Switch(
+              value: valueObs.value,
+              onChanged: onChanged,
+              activeColor: const Color(0xFF007AFF),
+            ),
+          ],
+        ),
       ),
-    ));
+    );
   }
 }
