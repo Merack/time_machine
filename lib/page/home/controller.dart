@@ -31,15 +31,17 @@ class HomeController extends GetxController {
 
   /// 从存储中加载设置
   void _loadSettings() {
-    state.focusTimeSeconds.value = _storage.decodeInt(
-      StorageKeys.focusTimeMinutes,
-      defaultValue: StorageKeys.defaultFocusTimeMinutes,
-    ) * 60; // 转换为秒
+    state.focusTimeSeconds.value =
+        _storage.decodeInt(
+          StorageKeys.focusTimeMinutes,
+          defaultValue: StorageKeys.defaultFocusTimeMinutes,
+        ) * 60; // 转换为秒
 
-    state.bigBreakTimeSeconds.value = _storage.decodeInt(
-      StorageKeys.bigBreakTimeMinutes,
-      defaultValue: StorageKeys.defaultBigBreakTimeMinutes,
-    ) * 60; // 转换为秒
+    state.bigBreakTimeSeconds.value =
+        _storage.decodeInt(
+          StorageKeys.bigBreakTimeMinutes,
+          defaultValue: StorageKeys.defaultBigBreakTimeMinutes,
+        ) * 60; // 转换为秒
 
     state.microBreakEnabled.value = _storage.decodeBool(
       StorageKeys.microBreakEnabled,
@@ -51,15 +53,17 @@ class HomeController extends GetxController {
       defaultValue: StorageKeys.defaultMicroBreakTimeSeconds,
     );
 
-    state.minMicroBreakInterval.value = _storage.decodeInt(
-      StorageKeys.microBreakIntervalMinMinutes,
-      defaultValue: StorageKeys.defaultMicroBreakIntervalMinMinutes,
-    ) * 60; // 转换为秒
+    state.minMicroBreakInterval.value =
+        _storage.decodeInt(
+          StorageKeys.microBreakIntervalMinMinutes,
+          defaultValue: StorageKeys.defaultMicroBreakIntervalMinMinutes,
+        ) * 60; // 转换为秒
 
-    state.maxMicroBreakInterval.value = _storage.decodeInt(
-      StorageKeys.microBreakIntervalMaxMinutes,
-      defaultValue: StorageKeys.defaultMicroBreakIntervalMaxMinutes,
-    ) * 60; // 转换为秒
+    state.maxMicroBreakInterval.value =
+        _storage.decodeInt(
+          StorageKeys.microBreakIntervalMaxMinutes,
+          defaultValue: StorageKeys.defaultMicroBreakIntervalMaxMinutes,
+        ) * 60; // 转换为秒
 
     // 是否正向计时
     state.isCountingUp.value = _storage.decodeBool(
@@ -189,13 +193,13 @@ class HomeController extends GetxController {
     // 处理微休息期间倒计时
     if (state.timerStatus.value == TimerStatus.microBreak) {
       _microBreakTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-          if (state.remainingMicroBreakTime.value > 0) {
-            state.remainingMicroBreakTime.value--;
-            Get.log("微休息时间还剩有: ${state.remainingMicroBreakTime.value}");
-          } else {
-            Get.log("微休息完成");
-            _handleMicroBreakStatus(isStartMicroBreak: false);
-          }
+        if (state.remainingMicroBreakTime.value > 0) {
+          state.remainingMicroBreakTime.value--;
+          Get.log("微休息时间还剩有: ${state.remainingMicroBreakTime.value}");
+        } else {
+          Get.log("微休息完成");
+          _handleMicroBreakStatus(isStartMicroBreak: false);
+        }
       });
     }
   }
@@ -217,7 +221,8 @@ class HomeController extends GetxController {
       // 设置微休息时间
       state.remainingMicroBreakTime.value = state.microBreakTimeSeconds.value;
       _startMicroBreakCountdown();
-    } else {  // 微休息结束
+    } else {
+      // 微休息结束
       Get.log("微休息结束");
       _microBreakTimer?.cancel();
 
@@ -231,7 +236,6 @@ class HomeController extends GetxController {
       // 开始微休息倒计时
       _startMicroBreakCountdown();
     }
-
   }
 
   /// 处理计时器完成
@@ -240,6 +244,10 @@ class HomeController extends GetxController {
 
     switch (state.timerStatus.value) {
       case TimerStatus.focus:
+        _completeFocusSession();
+        break;
+      // 如果专注计时走完正好又处于微休息期间时, 仍然认为完成了专注任务
+      case TimerStatus.microBreak:
         _completeFocusSession();
         break;
       case TimerStatus.bigBreak:
