@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import 'controller.dart';
-import 'state.dart';
+import '../../route/route_name.dart';
 
 class SettingPage extends StatelessWidget {
   const SettingPage({super.key});
@@ -19,12 +19,22 @@ class SettingPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
+        leading: TextButton(
+          onPressed: () {
+            Get.toNamed(AppRoutes.ABOUT);
+          },
+          style: TextButton.styleFrom(
+            foregroundColor: Colors.black,
+            textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+          ),
+          child: const Text('关于'),
+        ),
         title: const Text(
           '设置',
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600,),
         ),
         backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        foregroundColor: Colors.black87,
         elevation: 0,
         centerTitle: true,
         actions: [
