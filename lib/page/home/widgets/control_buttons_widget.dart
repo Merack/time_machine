@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// 控制按钮组件
+/// 控制按钮组件 - Material 3 优化版本
 class ControlButtonsWidget extends StatelessWidget {
   final bool isRunning; // 是否正在运行
   final VoidCallback onPlayPause; // 播放/暂停回调
@@ -17,34 +17,52 @@ class ControlButtonsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     List<Widget> buttons = [
-      // 播放/暂停按钮
-      _CircularButton(
+      // 播放/暂停按钮 - 使用 FloatingActionButton
+      FloatingActionButton(
         onPressed: onPlayPause,
-        icon: isRunning ? Icons.pause : Icons.play_arrow,
-        backgroundColor: const Color(0xFF2A89FB),
-        iconColor: Colors.white,
-        size: 64,
+        backgroundColor: theme.colorScheme.primary,
+        foregroundColor: theme.colorScheme.onPrimary,
+        elevation: 3,
+        shape: CircleBorder(),
+        child: Icon(
+          isRunning ? Icons.pause : Icons.chevron_right,
+          size: 28,
+        ),
       ),
-      // 重置按钮
-      _CircularButton(
+
+      // 重置按钮 - 使用 FilledButton.tonal
+      FloatingActionButton(
         onPressed: onReset,
-        icon: Icons.refresh,
-        backgroundColor: Colors.grey[300]!,
-        iconColor: Colors.grey[700]!,
-        size: 64,
+        backgroundColor: theme.colorScheme.primary,
+        foregroundColor: theme.colorScheme.onPrimary,
+        elevation: 3,
+        shape: CircleBorder(),
+        child: const Icon(
+          Icons.refresh,
+          size: 24,
+        ),
       ),
     ];
 
     // 如果提供了跳过回调，添加跳过按钮
     if (onSkip != null) {
       buttons.add(
-        _CircularButton(
+        FilledButton(
           onPressed: onSkip!,
-          icon: Icons.skip_next,
-          backgroundColor: Colors.orange[300]!,
-          iconColor: Colors.white,
-          size: 64,
+          style: FilledButton.styleFrom(
+            backgroundColor: theme.colorScheme.tertiary,
+            foregroundColor: theme.colorScheme.onTertiary,
+            shape: const CircleBorder(),
+            padding: const EdgeInsets.all(16),
+            minimumSize: const Size(56, 56),
+          ),
+          child: const Icon(
+            Icons.skip_next,
+            size: 24,
+          ),
         ),
       );
     }
@@ -52,49 +70,6 @@ class ControlButtonsWidget extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: buttons,
-    );
-  }
-}
-
-/// 圆形按钮组件
-class _CircularButton extends StatelessWidget {
-  final VoidCallback onPressed;
-  final IconData icon;
-  final Color backgroundColor;
-  final Color iconColor;
-  final double size;
-
-  const _CircularButton({
-    required this.onPressed,
-    required this.icon,
-    required this.backgroundColor,
-    required this.iconColor,
-    required this.size,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: backgroundColor,
-      shape: const CircleBorder(),
-      elevation: 4,
-      shadowColor: Colors.black26,
-      child: InkWell(
-        onTap: onPressed,
-        customBorder: const CircleBorder(),
-        child: Container(
-          width: size,
-          height: size,
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-          ),
-          child: Icon(
-            icon,
-            color: iconColor,
-            size: size * 0.4,
-          ),
-        ),
-      ),
     );
   }
 }

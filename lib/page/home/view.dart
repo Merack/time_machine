@@ -20,14 +20,16 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     // 构建周期计数器
     Widget buildCycleCounter() {
+      final theme = Theme.of(context);
+
       return Obx(() => Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: theme.colorScheme.surfaceContainerLow,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
+              color: theme.colorScheme.shadow.withValues(alpha: 0.1),
               blurRadius: 10,
               offset: const Offset(0, 2),
             ),
@@ -39,7 +41,7 @@ class HomePage extends StatelessWidget {
             if (state.completedCycles.value > 0) ...[
               Icon(
                 Icons.check_circle,
-                color: Colors.green[600],
+                color: theme.colorScheme.surfaceTint,
                 size: 20,
               ),
               const SizedBox(width: 8),
@@ -49,7 +51,7 @@ class HomePage extends StatelessWidget {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
-                color: Colors.grey[700],
+                color: theme.colorScheme.onSurfaceVariant,
               ),
             ),
           ],
@@ -60,23 +62,25 @@ class HomePage extends StatelessWidget {
     // 构建计时器主要区域
     Widget buildTimerSection() {
       return Obx(() {
-        // 根据状态选择进度条颜色
+        final theme = Theme.of(context);
+
+        // 根据状态选择进度条颜色 - 使用 Material 3 颜色
         Color progressColor;
         switch (state.timerStatus.value) {
           case TimerStatus.focus:
-            progressColor = const Color(0xFF007AFF);
+            progressColor = theme.colorScheme.primary;
             break;
           case TimerStatus.microBreak:
-            progressColor = const Color(0xFFFF9500);
+            progressColor = theme.colorScheme.tertiary;
             break;
           case TimerStatus.bigBreak:
-            progressColor = const Color(0xFF34C759);
+            progressColor = theme.colorScheme.onTertiaryFixed;
             break;
           case TimerStatus.paused:
-            progressColor = Colors.grey;
+            progressColor = theme.colorScheme.outline;
             break;
           default:
-            progressColor = const Color(0xFF007AFF);
+            progressColor = theme.colorScheme.primary;
         }
 
         return CircularProgressWidget(
@@ -84,21 +88,21 @@ class HomePage extends StatelessWidget {
           size: 280,
           strokeWidth: 18,
           progressColor: progressColor,
-          backgroundColor: Colors.grey[200]!,
+          backgroundColor: theme.colorScheme.surfaceContainerHighest,
           child: TimerDisplayWidget(
             timeText: state.formattedTime,
             statusText: state.statusText,
-            timeStyle: const TextStyle(
+            timeStyle: TextStyle(
               fontSize: 52,
               fontWeight: FontWeight.w400,
-              color: Colors.black,
-              fontFeatures: [
+              color: theme.colorScheme.onSurface,
+              fontFeatures: const [
                 FontFeature.tabularFigures(),
               ],
             ),
             statusStyle: TextStyle(
               fontSize: 18,
-              color: Colors.grey[600],
+              color: theme.colorScheme.onSurfaceVariant,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -116,8 +120,10 @@ class HomePage extends StatelessWidget {
       ));
     }
 
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
         title: const Text(
           '专注计时器',
@@ -126,8 +132,8 @@ class HomePage extends StatelessWidget {
             fontWeight: FontWeight.w600,
           ),
         ),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        backgroundColor: theme.colorScheme.surface,
+        foregroundColor: theme.colorScheme.onSurface,
         elevation: 0,
         centerTitle: true,
       ),
