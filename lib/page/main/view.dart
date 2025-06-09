@@ -37,7 +37,7 @@ class MainPage extends StatelessWidget {
               onTap: ctrl.updateIndex,
               type: BottomNavigationBarType.fixed,
               backgroundColor: Colors.white,
-              selectedItemColor: const Color(0xFF007AFF),
+              // selectedItemColor: const Color(0xFF007AFF),
               unselectedItemColor: Colors.grey[600],
               selectedLabelStyle: const TextStyle(
                 fontSize: 12,

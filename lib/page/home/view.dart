@@ -91,7 +91,7 @@ class HomePage extends StatelessWidget {
             timeStyle: const TextStyle(
               fontSize: 52,
               fontWeight: FontWeight.w400,
-              color: Colors.black87,
+              color: Colors.black,
               fontFeatures: [
                 FontFeature.tabularFigures(),
               ],

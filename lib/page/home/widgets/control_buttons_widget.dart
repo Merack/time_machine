@@ -22,7 +22,7 @@ class ControlButtonsWidget extends StatelessWidget {
       _CircularButton(
         onPressed: onPlayPause,
         icon: isRunning ? Icons.pause : Icons.play_arrow,
-        backgroundColor: const Color(0xFF007AFF),
+        backgroundColor: const Color(0xFF2A89FB),
         iconColor: Colors.white,
         size: 64,
       ),

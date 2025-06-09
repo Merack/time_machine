@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import 'controller.dart';
-import '../../route/route_name.dart';
 
 class SettingPage extends StatelessWidget {
   const SettingPage({super.key});
@@ -17,30 +16,27 @@ class SettingPage extends StatelessWidget {
     final state = controller.state;
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      // backgroundColor: const Color(0xFFF8F9FA),
       appBar: AppBar(
-        leading: TextButton(
-          onPressed: () {
-            Get.toNamed(AppRoutes.ABOUT);
-          },
-          style: TextButton.styleFrom(
-            foregroundColor: Colors.black,
-            textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-          ),
-          child: const Text('关于'),
-        ),
         title: const Text(
           '设置',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600,),
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: Colors.black,
+          ),
         ),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black87,
+        // backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
         actions: [
-          TextButton(
+          IconButton(
             onPressed: controller.resetToDefaults,
-            child: const Text('重置'),
+            icon: const Icon(
+              Icons.refresh_rounded,
+              // color: Color(0xFF007AFF),
+            ),
+            tooltip: '重置为默认设置',
           ),
         ],
       ),
@@ -51,319 +47,309 @@ class SettingPage extends StatelessWidget {
             FocusScope.of(context).unfocus();
           },
           child: ListView(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
             children: [
-            // 专注设置组
-            _buildSettingGroup(
-              title: '专注设置',
-              icon: Icons.timer,
-              children: [
-                _buildTimeInputField(
-                  label: '专注时间',
-                  unit: '分钟',
-                  textController: state.focusTimeController,
-                  errorObs: state.focusTimeError,
-                  onChanged: controller.updateFocusTime,
-                  controller: controller,
-                ),
-                const SizedBox(height: 16),
-                _buildTimeInputField(
-                  label: '休息时间',
-                  unit: '分钟',
-                  textController: state.bigBreakTimeController,
-                  errorObs: state.bigBreakTimeError,
-                  onChanged: controller.updateBigBreakTime,
-                  controller: controller,
-                ),
-                // 自动开始下一个专注开关
-                const SizedBox(height: 16),
-                _buildSwitchTile(
-                  title: '自动开始下一个',
-                  subtitle: '在休息结束后自动开始下一个专注',
-                  valueObs: state.autoStartNextFocus,
-                  onChanged: controller.toggleAutoStartNextFocus,
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 20),
-
-            // 微休息设置组
-            _buildSettingGroup(
-              title: '微休息设置',
-              icon: Icons.coffee,
-              children: [
-                // 微休息开关
-                _buildSwitchTile(
-                  title: '启用微休息',
-                  subtitle: '在专注时间内定期提醒休息',
-                  valueObs: state.microBreakEnabled,
-                  onChanged: controller.toggleMicroBreakEnabled,
-                ),
-                const SizedBox(height: 16),
-                Obx(() => _buildTimeInputField(
-                  label: '微休息时长',
-                  unit: '秒',
-                  textController: state.microBreakTimeController,
-                  errorObs: state.microBreakTimeError,
-                  onChanged: controller.updateMicroBreakTime,
-                  controller: controller,
-                  enabled: state.microBreakEnabled.value,
-                )),
-                const SizedBox(height: 16),
-                Obx(() => Row(
-                  children: [
-                    Expanded(
-                      child: _buildTimeInputField(
-                        label: '间隔最小值',
-                        unit: '分钟',
-                        textController: state.microBreakIntervalMinController,
-                        errorObs: state.microBreakIntervalMinError,
-                        onChanged: controller.updateMicroBreakIntervalMin,
-                        controller: controller,
-                        enabled: state.microBreakEnabled.value,
-                      ),
+              // 专注设置组
+              _buildSettingSection(
+                title: '专注设置',
+                children: [
+                  _buildSettingTile(
+                    title: '专注时间',
+                    subtitle: '单次专注的持续时间',
+                    trailing: _buildTimeInput(
+                      controller: state.focusTimeController,
+                      unit: '分钟',
+                      onChanged: controller.updateFocusTime,
+                      errorObs: state.focusTimeError,
+                      settingController: controller,
                     ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: _buildTimeInputField(
-                        label: '间隔最大值',
-                        unit: '分钟',
-                        textController: state.microBreakIntervalMaxController,
-                        errorObs: state.microBreakIntervalMaxError,
-                        onChanged: controller.updateMicroBreakIntervalMax,
-                        controller: controller,
-                        enabled: state.microBreakEnabled.value,
-                      ),
-                    ),
-                  ],
-                )),
-              ],
-            ),
-
-            const SizedBox(height: 20),
-
-            // 行为控制设置组
-            _buildSettingGroup(
-              title: '行为控制',
-              icon: Icons.settings,
-              children: [
-                _buildSwitchTile(
-                  title: '正向计时',
-                  subtitle: '计时从0开始递增',
-                  valueObs: state.isCountingUp,
-                  onChanged: controller.toggleCountingDirection,
-                ),
-                const SizedBox(height: 8),
-                _buildSwitchTile(
-                  title: '进度条正向填充',
-                  subtitle: '圆形进度条从0开始填充',
-                  valueObs: state.isProgressForward,
-                  onChanged: controller.toggleProgressDirection,
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 30),
-
-            // 保存按钮
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                onPressed: controller.saveSettings,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF007AFF),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
                   ),
-                  elevation: 2,
-                ),
-                child: const Text(
-                  '保存设置',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600,),
-                ),
+                  _buildDivider(),
+                  _buildSettingTile(
+                    title: '休息时间',
+                    subtitle: '专注结束后的休息时间',
+                    trailing: _buildTimeInput(
+                      controller: state.bigBreakTimeController,
+                      unit: '分钟',
+                      onChanged: controller.updateBigBreakTime,
+                      errorObs: state.bigBreakTimeError,
+                      settingController: controller,
+                    ),
+                  ),
+                ],
               ),
-            ),
 
-            const SizedBox(height: 20),
-          ],
-        ),
-        ),
-      ),
-    );
-  }
+              const SizedBox(height: 24),
 
-  /// 构建设置组
-  Widget _buildSettingGroup({
-    required String title,
-    required IconData icon,
-    required List<Widget> children,
-  }) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, color: const Color(0xFF007AFF), size: 24,),
-              const SizedBox(width: 12),
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black,
-                ),
+              // 微休息设置组
+              _buildSettingSection(
+                title: '微休息设置',
+                children: [
+                  _buildSettingTile(
+                    title: '启用微休息',
+                    subtitle: '在专注时间内定期提醒休息',
+                    trailing: Obx(() => Switch(
+                      value: state.microBreakEnabled.value,
+                      onChanged: controller.toggleMicroBreakEnabled,
+                      // activeColor: const Color(0xFF007AFF),
+                    )),
+                  ),
+                  Obx(() => state.microBreakEnabled.value ? _buildDivider() : const SizedBox.shrink()),
+                  Obx(() => state.microBreakEnabled.value ? _buildSettingTile(
+                    title: '微休息时长',
+                    subtitle: '每次微休息的持续时间',
+                    trailing: _buildTimeInput(
+                      controller: state.microBreakTimeController,
+                      unit: '秒',
+                      onChanged: controller.updateMicroBreakTime,
+                      errorObs: state.microBreakTimeError,
+                      settingController: controller,
+                      enabled: state.microBreakEnabled.value,
+                    ),
+                  ) : const SizedBox.shrink()),
+                  Obx(() => state.microBreakEnabled.value ? _buildDivider() : const SizedBox.shrink()),
+                  Obx(() => state.microBreakEnabled.value ? _buildSettingTile(
+                    title: '最小间隔',
+                    subtitle: '两次微休息之间的最短时间间隔',
+                    trailing: _buildTimeInput(
+                      controller: state.microBreakIntervalMinController,
+                      unit: '分钟',
+                      onChanged: controller.updateMicroBreakIntervalMin,
+                      errorObs: state.microBreakIntervalMinError,
+                      settingController: controller,
+                      enabled: state.microBreakEnabled.value,
+                    ),
+                  ) : const SizedBox.shrink()),
+                  Obx(() => state.microBreakEnabled.value ? _buildDivider() : const SizedBox.shrink()),
+                  Obx(() => state.microBreakEnabled.value ? _buildSettingTile(
+                    title: '最大间隔',
+                    subtitle: '两次微休息之间的最长时间间隔',
+                    trailing: _buildTimeInput(
+                      controller: state.microBreakIntervalMaxController,
+                      unit: '分钟',
+                      onChanged: controller.updateMicroBreakIntervalMax,
+                      errorObs: state.microBreakIntervalMaxError,
+                      settingController: controller,
+                      enabled: state.microBreakEnabled.value,
+                    ),
+                  ) : const SizedBox.shrink()),
+                ],
               ),
+
+              const SizedBox(height: 24),
+
+              // 显示设置组
+              _buildSettingSection(
+                title: '显示设置',
+                children: [
+                  _buildSettingTile(
+                    title: '正向计时',
+                    subtitle: '计时从0开始递增显示',
+                    trailing: Obx(() => Switch(
+                      value: state.isCountingUp.value,
+                      onChanged: controller.toggleCountingDirection,
+                      // activeColor: const Color(0xFF007AFF),
+                    )),
+                  ),
+                  _buildDivider(),
+                  _buildSettingTile(
+                    title: '进度条正向填充',
+                    subtitle: '圆形进度条从0开始填充',
+                    trailing: Obx(() => Switch(
+                      value: state.isProgressForward.value,
+                      onChanged: controller.toggleProgressDirection,
+                      // activeColor: const Color(0xFF007AFF),
+                    )),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 32),
+
+              // 保存按钮
+              _buildSaveButton(controller),
+
+              const SizedBox(height: 24),
             ],
           ),
-          const SizedBox(height: 20),
-          ...children,
-        ],
+        ),
       ),
     );
   }
 
-  /// 构建时间输入字段
-  Widget _buildTimeInputField({
-    required String label,
-    required String unit,
-    required TextEditingController textController,
-    required RxString errorObs,
-    required Function(String) onChanged,
-    required SettingController controller,
-    bool enabled = true,
+  /// 构建设置分组 - LocalSend风格
+  Widget _buildSettingSection({
+    required String title,
+    required List<Widget> children,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: Colors.grey[700],
+        // 分组标题
+        Padding(
+          padding: const EdgeInsets.only(left: 16, bottom: 8),
+          child: Text(
+            title,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF8E8E93),
+              letterSpacing: 0.5,
+            ),
           ),
         ),
-        const SizedBox(height: 8),
-        Row(
-          children: [
-            Expanded(
-              child: Focus(
-                onFocusChange: (hasFocus) {
-                  if (!hasFocus) {
-                    // 当输入框失去焦点时进行验证
-                    controller.state.validateAll();
-                  }
-                },
-                child: TextFormField(
-                  controller: textController,
-                  enabled: enabled,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly,],
-                  onChanged: onChanged,
-                  decoration: InputDecoration(
-                    hintText: enabled ? '请输入$label' : '已禁用',
-                    suffixText: unit,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.grey[300]!),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.grey[300]!),
-                    ),
-                    disabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.grey[200]!),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: const BorderSide(color: Color(0xFF007AFF)),
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 16,
-                    ),
-                    fillColor: enabled ? null : Colors.grey[100],
-                    filled: !enabled,
-                  ),
-                  style: TextStyle(
-                    color: enabled ? Colors.black87 : Colors.grey[500],
-                  ),
-                ),
-              ),
-            ),
-          ],
+        // 设置卡片
+        Card(
+          margin: EdgeInsets.zero,
+          elevation: 2,
+          shadowColor: Colors.black.withValues(alpha: 0.2),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            children: children,
+          ),
         ),
-        Obx(() {
-          if (errorObs.value.isNotEmpty) {
-            return Padding(
-              padding: const EdgeInsets.only(top: 4),
-              child: Text(
-                errorObs.value,
-                style: const TextStyle(color: Colors.red, fontSize: 12),
-              ),
-            );
-          } else {
-            return const SizedBox.shrink();
-          }
-        }),
       ],
     );
   }
 
-  /// 构建开关切换项
-  Widget _buildSwitchTile({
+  /// 构建设置项
+  Widget _buildSettingTile({
     required String title,
     required String subtitle,
-    required RxBool valueObs,
-    required Function(bool) onChanged,
+    required Widget trailing,
   }) {
-    return Obx(
-      () => Container(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black,
-                    ),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        children: [
+          // 标题和副标题
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black,
                   ),
-                  const SizedBox(height: 4),
-                  Text(subtitle, style: TextStyle(fontSize: 14, color: Colors.grey[600],),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Colors.grey[600],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-            Switch(
-              value: valueObs.value,
-              onChanged: onChanged,
-              activeColor: const Color(0xFF007AFF),
+          ),
+          const SizedBox(width: 12),
+          // 右侧控件
+          trailing,
+        ],
+      ),
+    );
+  }
+
+  /// 构建分割线
+  Widget _buildDivider() {
+    return Container(
+      margin: const EdgeInsets.only(left: 20, right: 20),
+      height: 1,
+      color: Colors.grey[200],
+    );
+  }
+
+  /// 构建时间输入框 - LocalSend风格
+  Widget _buildTimeInput({
+    required TextEditingController controller,
+    required String unit,
+    required Function(String) onChanged,
+    required RxString errorObs,
+    required SettingController settingController,
+    bool enabled = true,
+  }) {
+    return SizedBox(
+      width: 80,
+      child: Focus(
+        onFocusChange: (hasFocus) {
+          if (!hasFocus) {
+            settingController.state.validateAll();
+          }
+        },
+        child: TextFormField(
+          controller: controller,
+          enabled: enabled,
+          keyboardType: TextInputType.number,
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          onChanged: onChanged,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: enabled ? Colors.black : Colors.grey[500],
+          ),
+          decoration: InputDecoration(
+            suffixText: unit,
+            suffixStyle: TextStyle(
+              fontSize: 12,
+              color: Colors.grey[600],
             ),
-          ],
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: Colors.grey[300]!),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: Colors.grey[300]!),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              // borderSide: const BorderSide(color: Color(0xFF007AFF)),
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: Colors.grey[200]!),
+            ),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            fillColor: enabled ? null : Colors.grey[50],
+            filled: !enabled,
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// 构建保存按钮
+  Widget _buildSaveButton(SettingController controller) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      child: SizedBox(
+        width: double.infinity,
+        height: 48,
+        child: ElevatedButton(
+          onPressed: controller.saveSettings,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFFE2E0F8),
+            // foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            elevation: 0,
+            shadowColor: Colors.transparent,
+          ),
+          child: const Text(
+            '保存设置',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ),
       ),
     );
