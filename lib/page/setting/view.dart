@@ -75,6 +75,14 @@ class SettingPage extends StatelessWidget {
                   onChanged: controller.updateBigBreakTime,
                   controller: controller,
                 ),
+                // 自动开始下一个专注开关
+                const SizedBox(height: 16),
+                _buildSwitchTile(
+                  title: '自动开始下一个',
+                  subtitle: '在休息结束后自动开始下一个专注',
+                  valueObs: state.autoStartNextFocus,
+                  onChanged: controller.toggleAutoStartNextFocus,
+                ),
               ],
             ),
 

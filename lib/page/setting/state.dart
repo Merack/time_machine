@@ -16,6 +16,8 @@ class SettingState {
   // 行为控制设置组
   var isCountingUp = StorageKeys.defaultIsCountingUp.obs;
   var isProgressForward = StorageKeys.defaultIsProgressForward.obs;
+  // 自动开始下一个专注
+  var autoStartNextFocus = StorageKeys.defaultAutoStartNextFocus.obs;
 
   // 表单控制器
   final focusTimeController = TextEditingController();

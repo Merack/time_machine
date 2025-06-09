@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:get/get.dart';
 import 'package:time_machine/config/app_config.dart';
+import '../../config/storage_keys.dart';
 
 /// 计时器状态枚举
 enum TimerStatus {
@@ -51,6 +52,9 @@ class HomeState {
   // 行为控制设置
   var isCountingUp = false.obs; // 默认逆向计时
   var isProgressForward = true.obs; // 默认正向填充
+
+  // 自动开始下一个专注
+  var autoStartNextFocus = StorageKeys.defaultAutoStartNextFocus.obs;
 
   HomeState() {
     ///Initialize variables

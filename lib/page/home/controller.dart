@@ -77,6 +77,12 @@ class HomeController extends GetxController {
       defaultValue: StorageKeys.defaultIsProgressForward,
     );
 
+    // 自动开始下一个专注
+    state.autoStartNextFocus.value = _storage.decodeBool(
+      StorageKeys.autoStartNextFocus,
+      defaultValue: StorageKeys.defaultAutoStartNextFocus,
+    );
+
     // 如果当前是停止状态, 更新初始时间
     if (state.timerStatus.value == TimerStatus.stopped) {
       state.remainingFocusTime.value = state.focusTimeSeconds.value;
@@ -96,7 +102,7 @@ class HomeController extends GetxController {
 
   /// 重置计时器
   void resetTimer() {
-    _playButtonSound();
+    // _playButtonSound();
     _timer?.cancel();
     _microBreakTimer?.cancel();
 
@@ -307,10 +313,14 @@ class HomeController extends GetxController {
     // 播放大休息结束音效
     _playAudio('audio/alarm-wood.mp3');
 
-    // 开始新的专注会话
-    // _startFocusSession();
-    // 重置计数器
-    resetTimer();
+    if (state.autoStartNextFocus.value) {
+      // 直接开始下一轮专注
+      resetTimer();
+      _startFocusSession();
+    } else {
+      // 仅重置计时器，保持停止状态
+      resetTimer();
+    }
   }
 
   /// 跳过当前阶段（仅在debug模式下可用）
