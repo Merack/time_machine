@@ -7,7 +7,6 @@ import 'controller.dart';
 class SettingPage extends StatelessWidget {
   SettingPage({super.key});
 
-  // 使用Get.find避免重复创建，如果不存在则创建
   final controller = Get.isRegistered<SettingController>()
       ? Get.find<SettingController>()
       : Get.put(SettingController());
@@ -76,6 +75,16 @@ class SettingPage extends StatelessWidget {
                       errorObs: state.bigBreakTimeError,
                       settingController: controller,
                     ),
+                  ),
+                  _buildDivider(),
+                  _buildSettingTile(
+                    title: '自动开始下一个',
+                    subtitle: '休息结束后自动开始下一个专注',
+                    trailing: Obx(() => Switch(
+                      value: state.autoStartNextFocus.value,
+                      onChanged: controller.toggleAutoStartNextFocus,
+                      // activeColor: const Color(0xFF007AFF),
+                    )),
                   ),
                 ],
               ),
