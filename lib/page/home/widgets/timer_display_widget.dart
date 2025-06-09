@@ -8,12 +8,12 @@ class TimerDisplayWidget extends StatelessWidget {
   final TextStyle? statusStyle; // 状态文本样式
 
   const TimerDisplayWidget({
-    Key? key,
+    super.key,
     required this.timeText,
     required this.statusText,
     this.timeStyle,
     this.statusStyle,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

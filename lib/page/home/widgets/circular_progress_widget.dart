@@ -11,14 +11,14 @@ class CircularProgressWidget extends StatelessWidget {
   final Widget? child; // 中心显示的内容
 
   const CircularProgressWidget({
-    Key? key,
+    super.key,
     required this.progress,
     this.size = 200.0,
     this.strokeWidth = 8.0,
     this.progressColor = const Color(0xFF007AFF),
     this.backgroundColor = const Color(0xFFE5E5EA),
     this.child,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -95,9 +95,9 @@ class _CircularProgressPainter extends CustomPainter {
           startAngle: startAngle,
           endAngle: startAngle + sweepAngle,
           colors: [
-            color.withOpacity(0.3),
+            color.withAlpha((255 * 0.3).round()),
             color,
-            color.withOpacity(0.8),
+            color.withAlpha((255 * 0.8).round()),
           ],
           stops: const [0.0, 0.5, 1.0],
         );

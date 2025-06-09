@@ -1,17 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-
-import 'controller.dart';
 
 class AboutPage extends StatelessWidget {
-  const AboutPage({Key? key}) : super(key: key);
+  const AboutPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // 保证单例
-    final controller = Get.isRegistered<AboutController>()
-        ? Get.find<AboutController>()
-        : Get.put(AboutController());
 
     return Scaffold(
       backgroundColor: Colors.grey[50],

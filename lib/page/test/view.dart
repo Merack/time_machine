@@ -8,7 +8,7 @@ import 'controller.dart';
 import 'state.dart';
 
 class TestPage extends StatelessWidget {
-  TestPage({Key? key}) : super(key: key);
+  TestPage({super.key});
 
   final TestController controller = Get.put(TestController());
   final TestState state = Get.find<TestController>().state;
