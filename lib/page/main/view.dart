@@ -10,7 +10,7 @@ class MainPage extends StatelessWidget {
   // 使用Get.find避免重复创建，如果不存在则创建
   final controller = Get.isRegistered<MainController>()
       ? Get.find<MainController>()
-      : Get.put(MainController(), permanent: true);
+      : Get.put(MainController());
 
   @override
   Widget build(BuildContext context) {
