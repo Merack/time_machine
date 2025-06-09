@@ -9,15 +9,15 @@ import 'widgets/timer_display_widget.dart';
 import 'widgets/control_buttons_widget.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+  HomePage({super.key});
+
+  final controller = Get.isRegistered<HomeController>()
+      ? Get.find<HomeController>()
+      : Get.put(HomeController());
+  final state = Get.find<HomeController>().state;
 
   @override
   Widget build(BuildContext context) {
-    // 使用Get.find避免重复创建，如果不存在则创建
-    final controller = Get.isRegistered<HomeController>()
-        ? Get.find<HomeController>()
-        : Get.put(HomeController());
-    final state = controller.state;
     // 构建周期计数器
     Widget buildCycleCounter() {
       return Obx(() => Container(

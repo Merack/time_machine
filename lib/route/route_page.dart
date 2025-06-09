@@ -12,7 +12,7 @@ class AppPages {
   AppPages._();
 
   static final routes = [
-    GetPage(name: AppRoutes.MAIN, page: () => const MainPage()),
+    GetPage(name: AppRoutes.MAIN, page: () => MainPage()),
     GetPage(name: AppRoutes.TEST, page: () => TestPage()),
     GetPage(name: AppRoutes.HOME, page: () => HomePage()),
     GetPage(name: AppRoutes.SETTING, page: () => SettingPage()),

@@ -5,15 +5,16 @@ import 'package:get/get.dart';
 import 'controller.dart';
 
 class SettingPage extends StatelessWidget {
-  const SettingPage({super.key});
+  SettingPage({super.key});
+
+  // 使用Get.find避免重复创建，如果不存在则创建
+  final controller = Get.isRegistered<SettingController>()
+      ? Get.find<SettingController>()
+      : Get.put(SettingController());
+  final state = Get.find<SettingController>().state;
 
   @override
   Widget build(BuildContext context) {
-    // 使用Get.find避免重复创建，如果不存在则创建
-    final controller = Get.isRegistered<SettingController>()
-        ? Get.find<SettingController>()
-        : Get.put(SettingController());
-    final state = controller.state;
 
     return Scaffold(
       // backgroundColor: const Color(0xFFF8F9FA),

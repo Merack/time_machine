@@ -33,7 +33,7 @@ The icon was generated using [Gemini](https://gemini.google.com/)
 ## ⏳️ Roadmap
 
 - [ ] Focus session statistics
-- [ ] Auto-start toggle
+- [x] Auto-start toggle
 - [ ] Custom progress bar colors
 - [ ] Dark mode
 - [ ] Zen mode
