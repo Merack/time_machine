@@ -35,7 +35,7 @@ The icon was generated using [Gemini](https://gemini.google.com/)
 - [ ] Focus session statistics
 - [x] Auto-start toggle
 - [ ] Custom progress bar colors
-- [ ] Dark mode
+- [x] Dark mode
 - [ ] Zen mode
 - [ ] Toggle for notification sounds
 - [ ] Background keep-alive (if possible...)

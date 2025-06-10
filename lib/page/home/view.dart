@@ -66,7 +66,7 @@ class HomePage extends StatelessWidget {
       return Obx(() {
         final theme = Theme.of(context);
 
-        // 根据状态选择进度条颜色 - 使用 Material 3 颜色
+        // 根据状态选择进度条颜色
         Color progressColor;
         switch (state.timerStatus.value) {
           case TimerStatus.focus:
