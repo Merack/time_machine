@@ -34,3 +34,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- Add new unreleased features/fixes here -->
 - Add About page
 - Add autoStart in setting page
+- Add theme switch
