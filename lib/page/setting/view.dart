@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import 'controller.dart';
 import 'widgets/widgets.dart';
+import 'widgets/theme_selector.dart';
 
 class SettingPage extends StatelessWidget {
   SettingPage({super.key});
@@ -118,6 +119,12 @@ class SettingPage extends StatelessWidget {
               SettingSection(
                 title: '显示设置',
                 children: [
+                  SettingTile(
+                    title: '主题模式',
+                    subtitle: '选择应用的外观主题',
+                    trailing: const ThemeSelector(),
+                  ),
+                  const SettingDivider(),
                   SettingTile(
                     title: '正向计时',
                     subtitle: '计时从0开始递增显示',
