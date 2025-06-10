@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:time_machine/theme/theme_controller.dart';
 
 import '../../config/app_config.dart';
 import 'controller.dart';
@@ -15,6 +16,7 @@ class HomePage extends StatelessWidget {
       ? Get.find<HomeController>()
       : Get.put(HomeController());
   final state = Get.find<HomeController>().state;
+  final themeController = Get.put(ThemeController());
 
   @override
   Widget build(BuildContext context) {
@@ -71,10 +73,10 @@ class HomePage extends StatelessWidget {
             progressColor = theme.colorScheme.primary;
             break;
           case TimerStatus.microBreak:
-            progressColor = theme.colorScheme.tertiary;
+            progressColor = theme.colorScheme.onPrimaryFixedVariant;
             break;
           case TimerStatus.bigBreak:
-            progressColor = theme.colorScheme.onTertiaryFixed;
+            progressColor = theme.colorScheme.tertiary;
             break;
           case TimerStatus.paused:
             progressColor = theme.colorScheme.outline;
@@ -136,6 +138,10 @@ class HomePage extends StatelessWidget {
         foregroundColor: theme.colorScheme.onSurface,
         elevation: 0,
         centerTitle: true,
+        actions: [
+          IconButton(onPressed: themeController.switchLightOrDark,
+              icon: const Icon(Icons.dark_mode_outlined)),
+        ],
       ),
       body: SafeArea(
         child: Padding(
