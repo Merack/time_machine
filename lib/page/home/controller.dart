@@ -250,11 +250,11 @@ class HomeController extends GetxController {
 
     switch (state.timerStatus.value) {
       case TimerStatus.focus:
-        _completeFocusSession();
+        _completeFocusStatus();
         break;
       // 如果专注计时走完正好又处于微休息期间时, 仍然认为完成了专注任务
       case TimerStatus.microBreak:
-        _completeFocusSession();
+        _completeFocusStatus();
         break;
       case TimerStatus.bigBreak:
         _completeBigBreak();
@@ -264,8 +264,8 @@ class HomeController extends GetxController {
     }
   }
 
-  /// 完成专注会话
-  void _completeFocusSession() {
+  /// 完成专注状态倒计时
+  void _completeFocusStatus() {
     // 不在专注时段, 微休息停止计时
     _microBreakTimer?.cancel();
 
@@ -277,8 +277,15 @@ class HomeController extends GetxController {
 
     // 如果用户设置大休息时间为0, 则跳过休息阶段
     if (state.bigBreakTimeSeconds.value == 0) {
-      resetTimer();
-      _startFocusSession();
+      if (state.autoStartNextFocus.value) {
+        // 直接开始下一轮专注
+        resetTimer();
+        _startFocusSession();
+      } else {
+        // 仅重置计时器，保持停止状态
+        resetTimer();
+      }
+      // 直接return 这个函数
       return;
     }
 
@@ -290,23 +297,6 @@ class HomeController extends GetxController {
     // 开始大休息倒计时
     _startFocusCountdown();
   }
-
-  /// 完成微休息(已废弃, 为供参考暂时保留注释)
-  // void _completeMicroBreak() {
-  //   // 播放微休息结束音效
-  //   _playAudio('audio/ding.mp3');
-  //
-  //   // 回到专注状态，恢复之前的剩余时间
-  //   state.timerStatus.value = TimerStatus.focus;
-  //   state.totalTime.value = state.focusTimeSeconds.value;
-  //
-  //   // 生成下一次微休息间隔
-  //   state.generateNextMicroBreakInterval();
-  //
-  //   // 继续专注倒计时和微休息倒计时
-  //   _startFocusCountdown();
-  //   _startMicroBreakCountdown();
-  // }
 
   /// 完成大休息
   void _completeBigBreak() {
@@ -334,7 +324,7 @@ class HomeController extends GetxController {
 
     switch (state.timerStatus.value) {
       case TimerStatus.focus:
-        _completeFocusSession();
+        _completeFocusStatus();
         break;
       case TimerStatus.microBreak:
         // _completeMicroBreak();

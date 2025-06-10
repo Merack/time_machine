@@ -21,9 +21,9 @@ class SettingPage extends StatelessWidget {
       appBar: AppBar(
         // 左侧重置按钮，替换默认返回按钮
         leading: IconButton(
-          onPressed: controller.resetToDefaults,
-          icon: const Icon(Icons.refresh_rounded),
-          tooltip: '重置为默认设置',
+          onPressed: controller.toAboutPage,
+          icon: const Icon(Icons.info_outline),
+          tooltip: '关于',
         ),
         title: Text(
           '设置',
@@ -35,9 +35,9 @@ class SettingPage extends StatelessWidget {
         // 右侧按钮
         actions: [
           IconButton(
-            onPressed: controller.toAboutPage,
-            icon: const Icon(Icons.info_outline),
-            tooltip: '关于',
+            onPressed: controller.resetToDefaults,
+            icon: const Icon(Icons.refresh_rounded),
+            tooltip: '重置为默认设置',
           ),
           IconButton(
             onPressed: controller.saveSettings,
