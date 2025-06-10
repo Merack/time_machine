@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:mmkv/mmkv.dart';
+import 'package:time_machine/route/route_name.dart';
 
 import '../../service/app_storage_service.dart';
 import '../../config/storage_keys.dart';
@@ -12,6 +13,7 @@ class SettingController extends GetxController {
 
   @override
   void onInit() {
+    // Get.log("setting controller onInit");
     super.onInit();
     _storage = Get.find<AppStorageService>().mmkv;
     _loadSettings();
@@ -25,6 +27,7 @@ class SettingController extends GetxController {
 
   /// 从存储中加载设置
   void _loadSettings() {
+    // Get.log("setting controller _loadSettings");
     state.focusTimeMinutes.value = _storage.decodeInt(
       StorageKeys.focusTimeMinutes,
       defaultValue: StorageKeys.defaultFocusTimeMinutes,
@@ -72,6 +75,10 @@ class SettingController extends GetxController {
 
     // 更新控制器文本
     state.updateControllers();
+  }
+
+  void toAboutPage() {
+    Get.toNamed(AppRoutes.ABOUT);
   }
 
   /// 保存设置到存储
