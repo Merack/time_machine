@@ -35,6 +35,7 @@ class SaveButton extends StatelessWidget {
             text,
             style: theme.textTheme.labelLarge?.copyWith(
               fontWeight: FontWeight.w600,
+              color: colorScheme.surface,
             ),
           ),
         ),
