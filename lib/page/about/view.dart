@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:time_machine/config/app_config.dart';
 
 class AboutPage extends StatelessWidget {
   const AboutPage({super.key});
@@ -7,14 +8,11 @@ class AboutPage extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
       appBar: AppBar(
         title: const Text(
           '关于',
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
         ),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
         elevation: 0,
         centerTitle: true,
       ),
@@ -32,17 +30,16 @@ class AboutPage extends StatelessWidget {
                 const SizedBox(height: 24),
                 // 应用名称
                 const Text(
-                  'Time Machine',
+                  AppConfig.APPNAME,
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.w600,
-                    color: Colors.black87,
                   ),
                 ),
                 const SizedBox(height: 8),
                 // 版本信息
                 Text(
-                  '版本 1.0.0',
+                  '版本 ${AppConfig.APPVERSION}',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w400,
@@ -52,11 +49,10 @@ class AboutPage extends StatelessWidget {
                 const SizedBox(height: 32),
                 // 作者信息
                 const Text(
-                  '作者: Merack',
+                  '作者: ${AppConfig.AUTHOR}',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w500,
-                    color: Colors.black,
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -65,15 +61,14 @@ class AboutPage extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const Text(
-                      'GitHub源码',
+                      '源码',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
-                        color: Colors.black,
                       ),
                     ),
                     SelectableText(
-                      'https://github.com/Merack/time_machine',
+                      AppConfig.GITHUB,
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey[600],
@@ -96,14 +91,13 @@ class AboutPage extends StatelessWidget {
       height: 80,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        color: Colors.grey[300],
       ),
       clipBehavior: Clip.antiAlias,
       child: Image.asset(
         'assets/icon/icon.png',
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) {
-          return const Icon(Icons.timer, size: 50, color: Colors.black54);
+          return const Icon(Icons.timer, size: 50);
         },
       ),
     );

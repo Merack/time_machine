@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:get/get.dart';
-import 'package:time_machine/config/app_config.dart';
 import '../../config/storage_keys.dart';
 
 /// 计时器状态枚举
@@ -73,7 +72,7 @@ class HomeState {
 
   /// 生成下一次微休息的随机间隔时间
   void generateNextMicroBreakInterval() {
-    if (AppConfig.isDebug) {
+    if (Get.isLogEnable) {
       nextMicroBreakTime.value = 5;
       return;
     }

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:time_machine/theme/theme_controller.dart';
 
-import '../../config/app_config.dart';
 import 'controller.dart';
 import 'state.dart';
 import 'widgets/circular_progress_widget.dart';
@@ -118,7 +117,7 @@ class HomePage extends StatelessWidget {
         isRunning: state.isRunning.value,
         onPlayPause: controller.toggleTimer,
         onReset: controller.resetTimer,
-        onSkip: AppConfig.isDebug ? controller.skipCurrentPhase : null,
+        onSkip: Get.isLogEnable ? controller.skipCurrentPhase : null,
       ));
     }
 

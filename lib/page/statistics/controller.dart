@@ -31,7 +31,7 @@ class StatisticsController extends GetxController {
       final timePeriodStats = results[1] as Map<String, dynamic>;
       final recentDailyStatsRaw = results[2] as List<Map<String, dynamic>>;
 
-      // 转换为强类型数据模型
+
       final completeStats = CompleteStatisticsModel(
         basicStats: basicStats,
         today: TimePeriodStatisticsModel.fromMap(timePeriodStats['today'] ?? {}),
