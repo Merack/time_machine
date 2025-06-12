@@ -28,6 +28,6 @@ class StorageKeys {
   static const int defaultMicroBreakIntervalMaxMinutes = 5;
   static const bool defaultIsCountingUp = false; // 默认逆向计时
   static const bool defaultIsProgressForward = true; // 默认正向填充
-  static const bool defaultAutoStartNextFocus = true;
+  static const bool defaultAutoStartNextFocus = false;
   static const String defaultThemeMode = 'system'; // 默认跟随系统
 }

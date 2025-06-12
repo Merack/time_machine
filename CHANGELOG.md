@@ -29,9 +29,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [Unreleased]
+## [1.3.0] - 2025-06-08
 
-<!-- Add new unreleased features/fixes here -->
+new version 1.3.0
+
+### Features
 - Add About page
 - Add autoStart in setting page
 - Add theme switch
+- Add statistics page
+
+## [Unreleased]
+
+<!-- Add new unreleased features/fixes here -->

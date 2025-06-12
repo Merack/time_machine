@@ -20,7 +20,8 @@
 - 自定义专注时间, 休息时间, 微休息时间, 微休息间隔
 - 自定义是否启用微休息, 正方向计时, 进度条方向
 - 支持中断恢复
-- 仅测试了 Android 平台
+- 数据统计功能
+- 仅支持 Android 平台
 
 ---
 
@@ -31,7 +32,7 @@
 --- 
 
 ## ⏳️ 开发计划
-- [ ] 数据统计
+- [x] 数据统计
 - [x] 自动开始控制
 - [ ] 自定义进度条颜色
 - [x] 暗色模式
@@ -47,7 +48,8 @@
 
 ---
 
-## 📌 参考
+## 📌 参考/鸣谢
 
-- 计时机制: [BV1naLozQEBq](https://www.bilibili.com/video/BV1naLozQEBq)
-- 界面设计: [JokerQianwei/Focus](https://github.com/JokerQianwei/Focus/)
+- [BV1naLozQEBq](https://www.bilibili.com/video/BV1naLozQEBq)
+- [JokerQianwei/Focus](https://github.com/JokerQianwei/Focus/)
+- Gemini, Claude, ChatGPT

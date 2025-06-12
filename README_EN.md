@@ -49,7 +49,8 @@ The icon was generated using [Gemini](https://gemini.google.com/)
 
 ---
 
-## 📌 References
+## 📌 References/Thanks
 
-- Timer mechanism: [BV1naLozQEBq](https://www.bilibili.com/video/BV1naLozQEBq)
-- UI inspiration: [JokerQianwei/Focus](https://github.com/JokerQianwei/Focus/)
+- [BV1naLozQEBq](https://www.bilibili.com/video/BV1naLozQEBq)
+- [JokerQianwei/Focus](https://github.com/JokerQianwei/Focus/)
+- Gemini, Claude, ChatGPT

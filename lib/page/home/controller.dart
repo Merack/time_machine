@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:mmkv/mmkv.dart';
 
+import '../../dao/focus_session_dao.dart';
+import '../../model/focus_session_model.dart';
 import '../../service/app_storage_service.dart';
 import '../../config/storage_keys.dart';
 import 'state.dart';
@@ -13,6 +15,9 @@ class HomeController extends GetxController {
   Timer? _timer;
   Timer? _microBreakTimer;
   late final MMKV _storage;
+
+  // 当前专注会话记录
+  DateTime? _currentSessionStartTime;
 
   @override
   void onInit() {
@@ -103,6 +108,10 @@ class HomeController extends GetxController {
   /// 重置计时器
   void resetTimer() {
     // _playButtonSound();
+
+    // 清空当前会话信息（未完成的专注不记录）
+    _currentSessionStartTime = null;
+
     _timer?.cancel();
     _microBreakTimer?.cancel();
 
@@ -158,6 +167,9 @@ class HomeController extends GetxController {
     state.totalTime.value = state.focusTimeSeconds.value;
     state.isRunning.value = true;
     state.generateNextMicroBreakInterval();
+
+    // 记录专注会话开始时间
+    _currentSessionStartTime = DateTime.now();
 
     _startFocusCountdown();
     _startMicroBreakCountdown();
@@ -269,6 +281,9 @@ class HomeController extends GetxController {
     // 不在专注时段, 微休息停止计时
     _microBreakTimer?.cancel();
 
+    // 记录专注会话完成
+    _recordFocusSession();
+
     // 播放专注完成音效
     _playAudio('audio/wakeup.mp3');
 
@@ -356,6 +371,38 @@ class HomeController extends GetxController {
     } catch (e) {
       // 使用 Get.log 替代 print
       Get.log('播放音频失败: $e');
+    }
+  }
+
+  /// 记录专注会话（仅记录完成的会话）
+  Future<void> _recordFocusSession() async {
+    if (_currentSessionStartTime == null) {
+      Get.log('专注会话开始时间为空，无法记录');
+      return;
+    }
+
+    try {
+      final endTime = DateTime.now();
+      final actualDuration = endTime.difference(_currentSessionStartTime!).inSeconds;
+
+      final session = FocusSessionModel(
+        // id为null，让数据库自动生成
+        startTime: _currentSessionStartTime!,
+        endTime: endTime,
+        focusDuration: state.focusTimeSeconds.value,
+        actualDuration: actualDuration,
+        isCompleted: true, // 只记录完成的会话,所以总是true, 为了兼容就留下这个字段了
+        timeOfDay: FocusSessionModel.getTimeOfDay(_currentSessionStartTime!),
+      );
+
+      await FocusSessionDao.insert(session.toMap());
+      Get.log('专注会话记录成功');
+
+      // 清空当前会话信息
+      _currentSessionStartTime = null;
+
+    } catch (e) {
+      Get.log('记录专注会话失败: $e');
     }
   }
 
