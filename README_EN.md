@@ -8,8 +8,8 @@ Its timing mechanism is inspired by this [Bilibili video](https://www.bilibili.c
 ---
 
 ## Preview
-![show0](pic/show0.jpeg)  
-![show1](pic/shwo1.jpeg)
+![show0](pic/v1/show0.jpeg)  
+![show1](pic/v1/shwo1.jpeg)
 
 ---
 

@@ -8,8 +8,18 @@
 ---
 
 ## 预览
-![show0](pic/show0.jpeg)
-![show1](pic/shwo1.jpeg)
+**主页**
+![home](pic/home.jpeg)
+
+<p><strong>禅模式</strong></p>
+<p>在主页点击中间的计时控件进入<p>
+<img src="pic/zenmod.jpg" alt="zen" height="400">
+
+<p><strong>设置</strong></p>
+<img src="pic/settingpage.jpg" alt="setting" height="400">
+
+<p><strong>统计页面</strong></p>
+<img src="pic/statistics.jpg" alt="stat" height="400">
 
 ---
 
@@ -35,12 +45,13 @@
 ## ⏳️ 开发计划
 - [x] 数据统计
 - [x] 自动开始控制
-- [ ] 自定义进度条颜色
+- [ ] ~~自定义进度条颜色~~ 已放弃
 - [x] 暗色模式
 - [x] 禅模式
 - [ ] 开关提示音
 - [ ] 后台保活(尽量...)
 - [ ] 多语言--英文
+- [ ] 主页面返回键退出二次确认
 
 --- 
 
@@ -55,3 +66,19 @@
 - [BV1naLozQEBq](https://www.bilibili.com/video/BV1naLozQEBq)
 - [JokerQianwei/Focus](https://github.com/JokerQianwei/Focus/)
 - Gemini, Claude, ChatGPT
+
+## License
+[![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
+
+本项目采用 **Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0)** 开源。详情请参见 [LICENSE](LICENSE) 文件。
+
+### 您可以：
+- **分享** — 以任何媒介或格式复制、发行本作品
+- **演绎** — 修改、转换或以本作品为基础进行创作
+
+### 惟须遵守下列条件：
+- **署名** — 您必须给出适当的署名，提供指向本许可协议的链接，同时标明是否（对原始作品）作了修改
+- **非商业性使用** — 您不得将本作品用于商业目的
+
+### 商业使用说明
+如需商业使用本软件，请联系作者获取商业许可。个人学习、教育用途、非营利组织使用不受此限制。
