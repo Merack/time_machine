@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-/// 应用主题定义 - 基于 Material 3 设计规范
+/// 应用主题定义
 class AppThemes {
-  // 私有构造函数，防止实例化
+  // 私有构造函数, 防止实例化
   AppThemes._();
 
   /// 主题模式枚举
@@ -10,7 +10,7 @@ class AppThemes {
   static const String dark = 'dark';
   static const String system = 'system';
 
-  /// 主色调 - 使用 Material 3 推荐的紫色
+  /// 主色调, 使用 Material 3 推荐的紫色
   static const Color _seedColor = Color(0xFF6750A4);
 
   /// 亮色主题

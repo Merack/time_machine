@@ -37,7 +37,7 @@ class HomeState {
   // 下一次微休息的倒计时（秒）
   var nextMicroBreakTime = 0.obs;
 
-  // 微休息间隔时间（3-5分钟的随机值，单位：秒）
+  // 微休息间隔时间（3-5分钟的随机值, 单位：秒）
   var microBreakInterval = 0.obs;
 
   // 设置默认值
@@ -54,6 +54,9 @@ class HomeState {
 
   // 自动开始下一个专注
   var autoStartNextFocus = StorageKeys.defaultAutoStartNextFocus.obs;
+
+  // 禅模式状态
+  var isZenMode = false.obs;
 
   HomeState() {
     ///Initialize variables

@@ -9,7 +9,7 @@ class MainController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    pageController = PageController(initialPage: state.currentIndex);
+    pageController = PageController(initialPage: state.currentIndex.value);
   }
 
   @override
@@ -20,19 +20,13 @@ class MainController extends GetxController {
 
   /// 页面切换时调用
   void onPageChanged(int index) {
-    state.currentIndex = index;
-    update();
+    state.currentIndex.value = index;
   }
 
   /// 点击导航栏时调用
   void onNavigationTap(int index) {
-    if (state.currentIndex != index) {
+    if (state.currentIndex.value != index) {
       pageController.jumpToPage(index);
     }
-  }
-
-  /// 兼容旧的updateIndex方法
-  void updateIndex(int newIndex) {
-    onNavigationTap(newIndex);
   }
 }

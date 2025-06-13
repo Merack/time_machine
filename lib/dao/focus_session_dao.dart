@@ -268,7 +268,7 @@ class FocusSessionDao {
       int consecutiveDays = 0;
       DateTime checkDate = today;
 
-      // 如果今天没有专注记录，从昨天开始检查
+      // 如果今天没有专注记录, 从昨天开始检查
       final focusDates = result.map((row) => row['focus_date'] as String).toSet();
       if (!focusDates.contains(todayStr)) {
         checkDate = today.subtract(const Duration(days: 1));

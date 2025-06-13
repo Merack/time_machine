@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../home/view.dart';
 import '../statistics/view.dart';
@@ -18,7 +19,7 @@ class NavigationItem {
 }
 
 class MainState {
-  var currentIndex = 0;
+  var currentIndex = 0.obs;
 
   // 使用懒加载和const构造函数优化页面创建
   static final List<Widget> _pages = [

@@ -9,6 +9,7 @@ class CircularProgressWidget extends StatelessWidget {
   final Color progressColor; // 进度条颜色
   final Color backgroundColor; // 背景颜色
   final Widget? child; // 中心显示的内容
+  final VoidCallback? onTap; // 点击回调
 
   const CircularProgressWidget({
     super.key,
@@ -18,11 +19,12 @@ class CircularProgressWidget extends StatelessWidget {
     this.progressColor = const Color(0xFF007AFF),
     this.backgroundColor = const Color(0xFFE5E5EA),
     this.child,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    Widget progressWidget = SizedBox(
       width: size,
       height: size,
       child: Stack(
@@ -53,6 +55,16 @@ class CircularProgressWidget extends StatelessWidget {
         ],
       ),
     );
+
+    // 如果有点击回调, 包装在GestureDetector中
+    if (onTap != null) {
+      return GestureDetector(
+        onTap: onTap,
+        child: progressWidget,
+      );
+    }
+
+    return progressWidget;
   }
 }
 

@@ -297,7 +297,7 @@ class HomeController extends GetxController {
         resetTimer();
         _startFocusSession();
       } else {
-        // 仅重置计时器，保持停止状态
+        // 仅重置计时器, 保持停止状态
         resetTimer();
       }
       // 直接return 这个函数
@@ -323,7 +323,7 @@ class HomeController extends GetxController {
       resetTimer();
       _startFocusSession();
     } else {
-      // 仅重置计时器，保持停止状态
+      // 仅重置计时器, 保持停止状态
       resetTimer();
     }
   }
@@ -359,6 +359,11 @@ class HomeController extends GetxController {
     _playAudio('audio/button.wav');
   }
 
+  /// 切换禅模式
+  void toggleZenMode() {
+    state.isZenMode.value = !state.isZenMode.value;
+  }
+
   /// 播放音频
   void _playAudio(String assetPath) async {
     try {
@@ -377,7 +382,7 @@ class HomeController extends GetxController {
   /// 记录专注会话（仅记录完成的会话）
   Future<void> _recordFocusSession() async {
     if (_currentSessionStartTime == null) {
-      Get.log('专注会话开始时间为空，无法记录');
+      Get.log('专注会话开始时间为空, 无法记录');
       return;
     }
 
@@ -386,7 +391,7 @@ class HomeController extends GetxController {
       final actualDuration = endTime.difference(_currentSessionStartTime!).inSeconds;
 
       final session = FocusSessionModel(
-        // id为null，让数据库自动生成
+        // id为null, 让数据库自动生成
         startTime: _currentSessionStartTime!,
         endTime: endTime,
         focusDuration: state.focusTimeSeconds.value,

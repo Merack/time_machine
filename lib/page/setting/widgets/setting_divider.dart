@@ -11,7 +11,7 @@ class SettingDivider extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20),
       height: 1,
-      color: colorScheme.outlineVariant.withValues(alpha: 0.5), // Material 3 分割线颜色
+      color: colorScheme.outlineVariant.withValues(alpha: 0.5),
     );
   }
 }

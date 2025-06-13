@@ -23,8 +23,6 @@ Future<void> initServices() async {
   // 异步初始化数据库服务
   await Get.putAsync(() => DatabaseService().init());
 
-  // 初始化统计服务
-  // Get.put(StatisticsService());
 
   // 初始化主题控制器
   Get.put(ThemeController());

@@ -117,7 +117,7 @@ class SettingController extends GetxController {
       final homeController = Get.find<HomeController>();
       homeController.reloadSettings();
     } catch (e) {
-      // HomeController 可能还没有初始化，忽略错误
+      // HomeController 可能还没有初始化, 忽略错误
     }
   }
 

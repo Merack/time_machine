@@ -38,7 +38,7 @@ class StatisticsService {
     // }
 
     try {
-      // 使用SQL聚合查询获取统计数据
+      // SQL聚合查询获取统计数据
       final statsResult = await FocusSessionDao.getBasicStatistics();
       // 基础数据
       final basicStats = statsResult['basic'] as Map<String, dynamic>;
@@ -193,7 +193,7 @@ class StatisticsService {
   /// 获取最近7天的每日统计
   Future<List<Map<String, dynamic>>> getRecentDailyStats() async {
     try {
-      // 使用SQL聚合查询获取最近7天的数据
+      // 查询获取最近7天的数据
       final sqlResults = await FocusSessionDao.getRecentDailyStatistics(7);
 
       // 创建日期到统计数据的映射

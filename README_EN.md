@@ -36,7 +36,7 @@ The icon was generated using [Gemini](https://gemini.google.com/)
 - [x] Auto-start toggle
 - [ ] Custom progress bar colors
 - [x] Dark mode
-- [ ] Zen mode
+- [x] Zen mode
 - [ ] Toggle for notification sounds
 - [ ] Background keep-alive (if possible...)
 - [ ] Multi-language support — English

@@ -1,8 +1,8 @@
 abstract class AppRoutes {
-  // 私有构造函数，防止实例化此类
+  // 私有构造函数, 防止实例化此类
   AppRoutes._();
 
-  // 初始路由，通常是启动页或主页
+  // 初始路由
   static const String INITIAL = '/main';
 
   static const String TEST = '/test';

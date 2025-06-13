@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 
 import '../../../theme/theme_controller.dart';
 
-/// 主题选择器组件 - Material 3 风格
+/// 主题选择器组件
 class ThemeSelector extends StatelessWidget {
   const ThemeSelector({super.key});
 

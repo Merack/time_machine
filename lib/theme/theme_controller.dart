@@ -6,7 +6,7 @@ import '../config/storage_keys.dart';
 import '../service/app_storage_service.dart';
 import 'app_themes.dart';
 
-/// 主题控制器 - 管理应用主题状态
+/// 主题控制器
 class ThemeController extends GetxController {
   late final MMKV _storage;
   
@@ -44,7 +44,7 @@ class ThemeController extends GetxController {
 
   // 监听系统主题变化
   // void _listenToSystemThemeChanges() {
-  //   // 当选择跟随系统时，监听系统主题变化
+  //   // 当选择跟随系统时, 监听系统主题变化
   //   ever(_themeMode, (ThemeMode mode) {
   //     if (mode == ThemeMode.system) {
   //       _updateSystemUI();
@@ -52,6 +52,7 @@ class ThemeController extends GetxController {
   //   });
   // }
 
+  // 更新: Zen Mod好像用得上这个, 但是懒得试了, 先鸽了再说
   // 动态调整系统状态栏和导航栏的样式, 比如改变电量图标的亮暗
   // 但是现在的操作系统都会自动处理了(至少在我用的vivo上是这样)
   // 所以还是先注释掉吧
