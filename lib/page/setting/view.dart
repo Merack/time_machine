@@ -8,15 +8,14 @@ import 'test_data_controller.dart';
 import '../../service/database_service.dart';
 
 class SettingPage extends StatelessWidget {
-  SettingPage({super.key});
-
-  final controller = Get.isRegistered<SettingController>()
-      ? Get.find<SettingController>()
-      : Get.put(SettingController());
-  final state = Get.find<SettingController>().state;
+  const SettingPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.isRegistered<SettingController>()
+        ? Get.find<SettingController>()
+        : Get.put(SettingController());
+    final state = Get.find<SettingController>().state;
     // Get.log("setting view build");
     final theme = Theme.of(context);
 
@@ -57,6 +56,10 @@ class SettingPage extends StatelessWidget {
                 ),
               );
 
+
+              // 对话框关闭后,主动清除焦点
+              // FocusManager.instance.primaryFocus?.unfocus();
+
               if (confirmed == true) {
                 controller.resetToDefaults();
               }
@@ -75,7 +78,14 @@ class SettingPage extends StatelessWidget {
         child: GestureDetector(
           onTap: () {
             // 点击页面任何地方都会触发当前聚焦输入框失去焦点
-            FocusScope.of(context).unfocus();
+            // FocusScope.of(context).unfocus();
+
+            // fix bug: 如果用FocusScope.of的方式, 那么在dialog出现前如果执行以下操作:
+            // 点击文本框->失去焦点->打开dialog
+            // 此时无论dialog是取消还是确定都会重新聚焦到文本框并弹出键盘
+            // 原因是FocusScope会记住之前的焦点并在路由恢复时恢复这个焦点, 即使已经使用了unfocus(), 有点小坑
+            // FocusManager.instance的方式虽然不优雅但是管用
+            FocusManager.instance.primaryFocus?.unfocus();
           },
           child: ListView(
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),

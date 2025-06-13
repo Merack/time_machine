@@ -6,12 +6,14 @@ import 'widgets/statistics_card.dart';
 import 'widgets/simple_chart.dart';
 
 class StatisticsPage extends StatelessWidget {
-  StatisticsPage({Key? key}) : super(key: key);
-
-  final StatisticsController controller = Get.put(StatisticsController());
+  const StatisticsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final StatisticsController controller = Get.isRegistered<StatisticsController>()
+        ? Get.find<StatisticsController>()
+        : Get.put(StatisticsController());
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('专注统计'),
@@ -86,6 +88,7 @@ class StatisticsPage extends StatelessWidget {
 
   /// 构建基础统计卡片
   Widget _buildBasicStatistics(BuildContext context) {
+    final StatisticsController controller = Get.find<StatisticsController>();
     final stats = controller.data?.basicStats;
     if (stats == null) return const SizedBox.shrink();
 
@@ -139,6 +142,7 @@ class StatisticsPage extends StatelessWidget {
 
   /// 构建时间维度统计
   Widget _buildTimePeriodStatistics(BuildContext context) {
+    final StatisticsController controller = Get.find<StatisticsController>();
     final data = controller.data;
     if (data == null) return const SizedBox.shrink();
 
@@ -184,6 +188,7 @@ class StatisticsPage extends StatelessWidget {
 
   /// 构建最近趋势
   Widget _buildRecentTrend(BuildContext context) {
+    final StatisticsController controller = Get.find<StatisticsController>();
     final recentStats = controller.data?.recentDays ?? [];
 
     if (recentStats.isEmpty) {
@@ -207,6 +212,7 @@ class StatisticsPage extends StatelessWidget {
 
   /// 构建时段分布
   Widget _buildTimeDistribution(BuildContext context) {
+    final StatisticsController controller = Get.find<StatisticsController>();
     final stats = controller.data?.basicStats;
     if (stats == null) return const SizedBox.shrink();
 
@@ -221,24 +227,25 @@ class StatisticsPage extends StatelessWidget {
   }
 
   /// 构建周模式 (暂时用不上)
-  Widget _buildWeeklyPattern(BuildContext context) {
-    final stats = controller.data?.basicStats;
-    if (stats == null) return const SizedBox.shrink();
-
-    final chartData = [
-      ChartData(label: '周一', value: (stats.weeklyPattern[1] ?? 0).toDouble()),
-      ChartData(label: '周二', value: (stats.weeklyPattern[2] ?? 0).toDouble()),
-      ChartData(label: '周三', value: (stats.weeklyPattern[3] ?? 0).toDouble()),
-      ChartData(label: '周四', value: (stats.weeklyPattern[4] ?? 0).toDouble()),
-      ChartData(label: '周五', value: (stats.weeklyPattern[5] ?? 0).toDouble()),
-      ChartData(label: '周六', value: (stats.weeklyPattern[6] ?? 0).toDouble()),
-      ChartData(label: '周日', value: (stats.weeklyPattern[7] ?? 0).toDouble()),
-    ];
-
-    return SimpleBarChart(
-      data: chartData,
-      title: '周专注模式',
-      height: 180,
-    );
-  }
+  // Widget _buildWeeklyPattern(BuildContext context) {
+  //   final StatisticsController controller = Get.find<StatisticsController>();
+  //   final stats = controller.data?.basicStats;
+  //   if (stats == null) return const SizedBox.shrink();
+  //
+  //   final chartData = [
+  //     ChartData(label: '周一', value: (stats.weeklyPattern[1] ?? 0).toDouble()),
+  //     ChartData(label: '周二', value: (stats.weeklyPattern[2] ?? 0).toDouble()),
+  //     ChartData(label: '周三', value: (stats.weeklyPattern[3] ?? 0).toDouble()),
+  //     ChartData(label: '周四', value: (stats.weeklyPattern[4] ?? 0).toDouble()),
+  //     ChartData(label: '周五', value: (stats.weeklyPattern[5] ?? 0).toDouble()),
+  //     ChartData(label: '周六', value: (stats.weeklyPattern[6] ?? 0).toDouble()),
+  //     ChartData(label: '周日', value: (stats.weeklyPattern[7] ?? 0).toDouble()),
+  //   ];
+  //
+  //   return SimpleBarChart(
+  //     data: chartData,
+  //     title: '周专注模式',
+  //     height: 180,
+  //   );
+  // }
 }
