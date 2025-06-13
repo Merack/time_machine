@@ -8,7 +8,7 @@
 ---
 
 ## 预览
-**主页**
+**主页**  
 ![home](pic/home.jpeg)
 
 <p><strong>禅模式</strong></p>
