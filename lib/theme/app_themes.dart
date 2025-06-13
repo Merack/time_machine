@@ -17,6 +17,9 @@ class AppThemes {
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
+      //全局禁用点击效果(M3自带的水波纹)
+      splashFactory: NoSplash.splashFactory,
+      highlightColor: Colors.transparent, // 禁用长按高亮效果
       colorScheme: ColorScheme.fromSeed(
         seedColor: _seedColor,
         brightness: Brightness.light,
@@ -28,6 +31,8 @@ class AppThemes {
   static ThemeData get darkTheme {
     return ThemeData(
       useMaterial3: true,
+      splashFactory: NoSplash.splashFactory,
+      highlightColor: Colors.transparent, // 禁用长按高亮效果
       colorScheme: ColorScheme.fromSeed(
         seedColor: _seedColor,
         brightness: Brightness.dark,
