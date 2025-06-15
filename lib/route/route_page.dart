@@ -6,6 +6,7 @@ import '../page/main/view.dart';
 import '../page/home/view.dart';
 import '../page/setting/view.dart';
 import '../page/about/view.dart';
+import '../page/donate/view.dart';
 
 class AppPages {
   // 私有化构造函数
@@ -18,5 +19,6 @@ class AppPages {
     GetPage(name: AppRoutes.SETTING, page: () => SettingPage()),
     GetPage(name: AppRoutes.OTHER, page: () => Other()),
     GetPage(name: AppRoutes.ABOUT, page: () => const AboutPage()),
+    GetPage(name: AppRoutes.DONATE, page: () => const DonatePage()),
   ];
 }

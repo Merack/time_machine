@@ -11,6 +11,7 @@ abstract class AppRoutes {
   static const String SETTING = '/setting';
   static const String OTHER = "/other";
   static const String ABOUT = '/about';
+  static const String DONATE = '/donate';
 
   // 带参数的路由
   static const String USER_DETAILS = '/user/:id';

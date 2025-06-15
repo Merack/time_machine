@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:time_machine/config/app_config.dart';
+import '../../route/route_name.dart';
 
 class AboutPage extends StatelessWidget {
   const AboutPage({super.key});
@@ -15,6 +17,13 @@ class AboutPage extends StatelessWidget {
         ),
         elevation: 0,
         centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: () => Get.toNamed(AppRoutes.DONATE),
+            icon: const Icon(Icons.favorite_outline),
+            tooltip: '打赏支持',
+          ),
+        ],
       ),
       body: SafeArea(
         child: Padding(
