@@ -120,7 +120,7 @@ class HomePage extends StatelessWidget {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
-              color: isZenMode ? Colors.white : theme.colorScheme.onSurfaceVariant,
+              color: isZenMode ? Colors.white70 : theme.colorScheme.onSurfaceVariant,
             ),
           ),
         ],
@@ -185,14 +185,14 @@ class HomePage extends StatelessWidget {
           timeStyle: TextStyle(
             fontSize: 54,
             fontWeight: FontWeight.w400,
-            color: isZenMode ? Colors.white : theme.colorScheme.onSurface,
+            color: isZenMode ? Colors.white70 : theme.colorScheme.onSurface,
             fontFeatures: const [
               FontFeature.tabularFigures(),
             ],
           ),
           statusStyle: TextStyle(
             fontSize: 16,
-            color: isZenMode ? Colors.white : theme.colorScheme.outline,
+            color: isZenMode ? Colors.white54 : theme.colorScheme.outline,
             fontWeight: FontWeight.w500,
           ),
         ),

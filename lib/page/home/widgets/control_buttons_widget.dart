@@ -23,7 +23,7 @@ class ControlButtonsWidget extends StatelessWidget {
 
     // 禅模式配色
     final buttonBackgroundColor = isZenMode ? Colors.black : theme.colorScheme.primary;
-    final buttonForegroundColor = isZenMode ? Colors.white : theme.colorScheme.onPrimary;
+    final buttonForegroundColor = isZenMode ? Colors.white70 : theme.colorScheme.onPrimary;
     final buttonElevation = isZenMode ? 0.0 : 3.0;
 
     List<Widget> buttons = [
