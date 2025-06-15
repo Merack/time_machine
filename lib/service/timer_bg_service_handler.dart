@@ -29,6 +29,7 @@ class TimerBackgroundServiceHandler {
 
   // 微休息计时
   void startMicroBreakCountdown(int microBreakCountDownTime, TimerStatus timerStatus) {
+    _microBreakTimer?.cancel();
     // 处理微休息到来时间倒计时
     if (timerStatus == TimerStatus.focus) {
       _microBreakTimer = Timer.periodic(const Duration(seconds: 1), (timer) {

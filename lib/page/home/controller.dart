@@ -48,7 +48,8 @@ class HomeController extends GetxController {
     });
     // 微休息开始时间
     _backgroundService.on("microBreakStart").listen((event) {
-      _handleMicroBreakStart();
+      // 延迟一秒执行, 尝试解决微休息低概率出现时间不准确的问题
+      Future.delayed(Duration(seconds: 1), () => _handleMicroBreakStart());
     });
     // 微休息完成
     _backgroundService.on("microBreakComplete").listen((event) {
@@ -354,9 +355,9 @@ class HomeController extends GetxController {
       // 开始微休息倒计时
       // 设置微休息时间
       state.remainingMicroBreakTime.value = state.microBreakTimeSeconds.value;
-    _backgroundService.invoke('start_micro_break_countdown', {
-      'microBreakCountDownTime': state.remainingMicroBreakTime.value,
-      'timerStatus': state.timerStatus.value.name
+      _backgroundService.invoke('start_micro_break_countdown', {
+        'microBreakCountDownTime': state.remainingMicroBreakTime.value,
+        'timerStatus': state.timerStatus.value.name
     });
   }
 
