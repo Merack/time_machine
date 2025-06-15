@@ -38,6 +38,8 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        multiDexEnabled = true
     }
 
     signingConfigs {
@@ -61,8 +63,8 @@ android {
 }
 
 dependencies {
-    // 添加 desugaring 依赖
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+    // 添加Desugaring依赖
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }
 
 flutter {
