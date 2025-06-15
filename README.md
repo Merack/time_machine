@@ -49,9 +49,10 @@
 - [x] 暗色模式
 - [x] 禅模式
 - [ ] 开关提示音
-- [ ] 后台保活(尽量...)
+- [x] 后台保活(尽量...)  使用了 [FlutterBackgroundService](https://pub.dev/packages/flutter_background_service) 做了保活, 但不保证效果
 - [ ] 多语言--英文
 - [ ] 主页面返回键退出二次确认
+- [ ] 数据备份
 
 --- 
 

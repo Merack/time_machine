@@ -4,6 +4,7 @@ import 'package:time_machine/route/route_name.dart';
 import 'package:time_machine/route/route_page.dart';
 import 'package:time_machine/service/app_storage_service.dart';
 import 'package:time_machine/service/database_service.dart';
+import 'package:time_machine/service/background_timer_service.dart';
 import 'package:time_machine/theme/theme_controller.dart';
 import 'package:time_machine/theme/app_themes.dart';
 
@@ -23,6 +24,8 @@ Future<void> initServices() async {
   // 异步初始化数据库服务
   await Get.putAsync(() => DatabaseService().init());
 
+  // 初始化后台计时器服务
+  Get.putAsync(() => BackgroundTimerService().init());
 
   // 初始化主题控制器
   Get.put(ThemeController());

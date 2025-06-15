@@ -8,12 +8,12 @@ class SimpleBarChart extends StatelessWidget {
   final Color? barColor;
 
   const SimpleBarChart({
-    Key? key,
+    super.key,
     required this.data,
     required this.title,
     this.height = 200,
     this.barColor,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -164,13 +164,13 @@ class SimpleProgressRing extends StatelessWidget {
   final Color? progressColor;
 
   const SimpleProgressRing({
-    Key? key,
+    super.key,
     required this.progress,
     required this.centerText,
     this.subtitle,
     this.size = 120,
     this.progressColor,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -255,10 +255,10 @@ class TimeOfDayDistribution extends StatelessWidget {
   final Map<String, int> counts; // 原始数量
 
   const TimeOfDayDistribution({
-    Key? key,
+    super.key,
     required this.distribution,
     required this.counts,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

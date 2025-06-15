@@ -18,7 +18,7 @@ class AboutPage extends StatelessWidget {
       ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(32.0),
+          padding: const EdgeInsets.all(20),
           child: Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -46,7 +46,7 @@ class AboutPage extends StatelessWidget {
                     color: Colors.grey[600],
                   ),
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 20),
                 // 作者信息
                 const Text(
                   '作者: ${AppConfig.AUTHOR}',
@@ -55,7 +55,7 @@ class AboutPage extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 8),
                 // GitHub 链接
                 Column(
                   mainAxisSize: MainAxisSize.min,
@@ -76,6 +76,14 @@ class AboutPage extends StatelessWidget {
                       textAlign: TextAlign.center,
                     ),
                   ],
+                ),
+                const SizedBox(height: 50),
+                const Text(
+                  '${AppConfig.ORGANIZATION} 出品',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ],
             ),

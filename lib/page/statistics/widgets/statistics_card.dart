@@ -10,14 +10,14 @@ class StatisticsCard extends StatelessWidget {
   final VoidCallback? onTap;
 
   const StatisticsCard({
-    Key? key,
+    super.key,
     required this.title,
     required this.value,
     this.subtitle,
     required this.icon,
     this.iconColor,
     this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -91,12 +91,12 @@ class CompactStatisticsCard extends StatelessWidget {
   final Color? iconColor;
 
   const CompactStatisticsCard({
-    Key? key,
+    super.key,
     required this.title,
     required this.value,
     required this.icon,
     this.iconColor,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -156,14 +156,14 @@ class TimePeriodCard extends StatelessWidget {
   final IconData icon;
 
   const TimePeriodCard({
-    Key? key,
+    super.key,
     required this.title,
     required this.sessions,
     required this.hours,
     required this.avgSessionsPerDay,
     required this.avgTimePerDay,
     required this.icon,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
