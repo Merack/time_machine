@@ -101,23 +101,25 @@ class _CircularProgressPainter extends CustomPainter {
       const startAngle = -math.pi / 2; // 从顶部开始
       final sweepAngle = 2 * math.pi * progress;
 
+      // 不用渐变了
       // 添加渐变效果
-      if (progress > 0) {
-        final gradient = SweepGradient(
-          startAngle: startAngle,
-          endAngle: startAngle + sweepAngle,
-          colors: [
-            color.withAlpha((255 * 0.3).round()),
-            color,
-            color.withAlpha((255 * 0.8).round()),
-          ],
-          stops: const [0.0, 0.5, 1.0],
-        );
-
-        paint.shader = gradient.createShader(
-          Rect.fromCircle(center: center, radius: radius),
-        );
-      }
+      // if (progress > 0) {
+      //   final gradient = SweepGradient(
+      //     startAngle: startAngle,
+      //     endAngle: startAngle + sweepAngle,
+      //     colors: [
+      //       color.withAlpha((255 * 0.3).round()),
+      //       color,
+      //       color.withAlpha((255 * 0.8).round()),
+      //     ],
+      //     stops: const [0.0, 0.5, 1.0],
+      //     transform: const GradientRotation(-math.pi / 2),
+      //   );
+      //
+      //   paint.shader = gradient.createShader(
+      //     Rect.fromCircle(center: center, radius: radius),
+      //   );
+      // }
 
       canvas.drawArc(
         Rect.fromCircle(center: center, radius: radius),
@@ -127,20 +129,21 @@ class _CircularProgressPainter extends CustomPainter {
         paint,
       );
 
+      // 渐变无了, 小圆点也失效了(和背景颜色一样了), 用StrokeCap.round代替
       // 绘制进度点（圆润效果）
-      if (progress > 0 && progress < 1.0) {
-        final endAngle = startAngle + sweepAngle;
-        final endPoint = Offset(
-          center.dx + radius * math.cos(endAngle),
-          center.dy + radius * math.sin(endAngle),
-        );
-
-        final dotPaint = Paint()
-          ..color = color
-          ..style = PaintingStyle.fill;
-
-        canvas.drawCircle(endPoint, strokeWidth / 2, dotPaint);
-      }
+      // if (progress > 0 && progress < 1.0) {
+      //   final endAngle = startAngle + sweepAngle;
+      //   final endPoint = Offset(
+      //     center.dx + radius * math.cos(endAngle),
+      //     center.dy + radius * math.sin(endAngle),
+      //   );
+      //
+      //   final dotPaint = Paint()
+      //     ..color = color
+      //     ..style = PaintingStyle.fill;
+      //
+      //   canvas.drawCircle(endPoint, strokeWidth / 2, dotPaint);
+      // }
     }
   }
 

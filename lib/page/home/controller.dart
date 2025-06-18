@@ -503,17 +503,7 @@ class HomeController extends GetxController {
 
     // 如果用户设置大休息时间为0, 则跳过休息阶段
     if (state.bigBreakTimeSeconds.value == 0) {
-      if (state.autoStartNextFocus.value) {
-        // 直接开始下一轮专注
-        resetTimer();
-        // 延迟一秒再自动开始, 以免因为isolate通信而出现奇奇怪怪的问题
-        Future.delayed(const Duration(seconds: 1), () {
-          _startFocusSession();
-        });
-      } else {
-        // 仅重置计时器, 保持停止状态
-        resetTimer();
-      }
+      _completeBigBreak();
       // 直接return 这个函数
       return;
     }
@@ -532,7 +522,9 @@ class HomeController extends GetxController {
   /// 完成大休息
   void _completeBigBreak() {
     // 播放大休息结束音效
-    _playAudio('audio/alarm-wood.mp3');
+    if (state.bigBreakTimeSeconds.value != 0) {
+      _playAudio('audio/alarm-wood.mp3');
+    }
 
     if (state.autoStartNextFocus.value) {
       // 直接开始下一轮专注

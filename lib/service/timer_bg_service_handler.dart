@@ -15,7 +15,8 @@ class TimerBackgroundServiceHandler {
   TimerBackgroundServiceHandler(this._service);
 
   // 开始专注和大休息计时
-  Future<void> startFocusCountdown(int remainingFocusTime) async {
+  void startFocusCountdown(int remainingFocusTime) {
+    _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (remainingFocusTime > 0) {
         remainingFocusTime--;
@@ -58,7 +59,7 @@ class TimerBackgroundServiceHandler {
     _registerService();
   }
 
-  void cloe() {
+  void close() {
     _timer?.cancel();
     _microBreakTimer?.cancel();
   }
@@ -94,7 +95,7 @@ class TimerBackgroundServiceHandler {
 
     // 停止服务
     _service.on("stop_service").listen((event) {
-      cloe();
+      close();
       _service.stopSelf();
     });
   }
