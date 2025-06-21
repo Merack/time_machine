@@ -2,14 +2,34 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
 /// 圆形进度条组件
+///
+/// 高性能的自定义圆形进度条，支持：
+/// - 自定义进度值, 大小, 线条宽度和颜色
+/// - 背景圆环显示
+/// - 中心内容展示
+/// - 点击回调
+///
 class CircularProgressWidget extends StatelessWidget {
-  final double progress; // 进度值 0.0 - 1.0
-  final double size; // 组件大小
-  final double strokeWidth; // 线条宽度
-  final Color progressColor; // 进度条颜色
-  final Color backgroundColor; // 背景颜色
-  final Widget? child; // 中心显示的内容
-  final VoidCallback? onTap; // 点击回调
+  /// 进度值，范围 0.0 - 1.0
+  final double progress;
+
+  /// 组件大小（宽高相等）
+  final double size;
+
+  /// 线条宽度
+  final double strokeWidth;
+
+  /// 进度条颜色
+  final Color progressColor;
+
+  /// 背景圆环颜色
+  final Color backgroundColor;
+
+  /// 中心显示的内容
+  final Widget? child;
+
+  /// 点击回调
+  final VoidCallback? onTap;
 
   const CircularProgressWidget({
     super.key,
@@ -24,30 +44,21 @@ class CircularProgressWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 使用单个CustomPaint优化性能
     Widget progressWidget = SizedBox(
       width: size,
       height: size,
       child: Stack(
         alignment: Alignment.center,
         children: [
-          // 背景圆环
-          CustomPaint(
-            size: Size(size, size),
-            painter: _CircularProgressPainter(
-              progress: 1.0,
-              strokeWidth: strokeWidth,
-              color: backgroundColor,
-              isBackground: true,
-            ),
-          ),
-          // 进度圆环
+          // 合并背景进度条和变化的进度条绘制
           CustomPaint(
             size: Size(size, size),
             painter: _CircularProgressPainter(
               progress: progress,
               strokeWidth: strokeWidth,
-              color: progressColor,
-              isBackground: false,
+              progressColor: progressColor,
+              backgroundColor: backgroundColor,
             ),
           ),
           // 中心内容
@@ -69,89 +80,62 @@ class CircularProgressWidget extends StatelessWidget {
 }
 
 /// 圆形进度条绘制器
+///
+/// 将背景圆环和进度圆弧合并到单个绘制器中, 提升性能
 class _CircularProgressPainter extends CustomPainter {
   final double progress;
   final double strokeWidth;
-  final Color color;
-  final bool isBackground;
+  final Color progressColor;
+  final Color backgroundColor;
 
-  _CircularProgressPainter({
+  const _CircularProgressPainter({
     required this.progress,
     required this.strokeWidth,
-    required this.color,
-    required this.isBackground,
+    required this.progressColor,
+    required this.backgroundColor,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = (size.width - strokeWidth) / 2;
+    final rect = Rect.fromCircle(center: center, radius: radius);
 
-    final paint = Paint()
-      ..color = color
+    // 绘制背景圆环
+    final backgroundPaint = Paint()
+      ..color = backgroundColor
       ..strokeWidth = strokeWidth
       ..style = PaintingStyle.stroke
-      ..strokeCap = isBackground ? StrokeCap.butt : StrokeCap.round;
+      ..strokeCap = StrokeCap.butt;
 
-    if (isBackground) {
-      // 绘制背景圆环
-      canvas.drawCircle(center, radius, paint);
-    } else {
-      // 绘制进度圆弧
+    canvas.drawCircle(center, radius, backgroundPaint);
+
+    // 绘制进度圆弧（仅当有进度时）
+    if (progress > 0) {
       const startAngle = -math.pi / 2; // 从顶部开始
       final sweepAngle = 2 * math.pi * progress;
 
-      // 不用渐变了
-      // 添加渐变效果
-      // if (progress > 0) {
-      //   final gradient = SweepGradient(
-      //     startAngle: startAngle,
-      //     endAngle: startAngle + sweepAngle,
-      //     colors: [
-      //       color.withAlpha((255 * 0.3).round()),
-      //       color,
-      //       color.withAlpha((255 * 0.8).round()),
-      //     ],
-      //     stops: const [0.0, 0.5, 1.0],
-      //     transform: const GradientRotation(-math.pi / 2),
-      //   );
-      //
-      //   paint.shader = gradient.createShader(
-      //     Rect.fromCircle(center: center, radius: radius),
-      //   );
-      // }
+      final progressPaint = Paint()
+        ..color = progressColor
+        ..strokeWidth = strokeWidth
+        ..style = PaintingStyle.stroke
+        ..strokeCap = StrokeCap.round; // 圆润端点
 
       canvas.drawArc(
-        Rect.fromCircle(center: center, radius: radius),
+        rect,
         startAngle,
         sweepAngle,
         false,
-        paint,
+        progressPaint,
       );
-
-      // 渐变无了, 小圆点也失效了(和背景颜色一样了), 用StrokeCap.round代替
-      // 绘制进度点（圆润效果）
-      // if (progress > 0 && progress < 1.0) {
-      //   final endAngle = startAngle + sweepAngle;
-      //   final endPoint = Offset(
-      //     center.dx + radius * math.cos(endAngle),
-      //     center.dy + radius * math.sin(endAngle),
-      //   );
-      //
-      //   final dotPaint = Paint()
-      //     ..color = color
-      //     ..style = PaintingStyle.fill;
-      //
-      //   canvas.drawCircle(endPoint, strokeWidth / 2, dotPaint);
-      // }
     }
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return oldDelegate is _CircularProgressPainter &&
-        (oldDelegate.progress != progress ||
-            oldDelegate.color != color ||
-            oldDelegate.strokeWidth != strokeWidth);
+  bool shouldRepaint(covariant _CircularProgressPainter oldDelegate) {
+    return oldDelegate.progress != progress ||
+        oldDelegate.progressColor != progressColor ||
+        oldDelegate.backgroundColor != backgroundColor ||
+        oldDelegate.strokeWidth != strokeWidth;
   }
 }

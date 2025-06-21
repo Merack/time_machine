@@ -25,7 +25,7 @@ Future<void> initServices() async {
   await Get.putAsync(() => DatabaseService().init());
 
   // 初始化后台计时器服务
-  Get.putAsync(() => BackgroundTimerService().init());
+  await Get.putAsync(() => BackgroundTimerService().init());
 
   // 初始化主题控制器
   Get.put(ThemeController());

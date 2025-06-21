@@ -49,7 +49,8 @@ class HomeController extends GetxController {
     // 微休息开始时间
     _backgroundService.on("microBreakStart").listen((event) {
       // 延迟一秒执行, 尝试解决微休息低概率出现时间不准确的问题
-      Future.delayed(Duration(seconds: 1), () => _handleMicroBreakStart());
+      // Future.delayed(Duration(seconds: 1), () => _handleMicroBreakStart());
+      _handleMicroBreakStart();
     });
     // 微休息完成
     _backgroundService.on("microBreakComplete").listen((event) {
