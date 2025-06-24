@@ -1,4 +1,8 @@
+import 'dart:io';
+
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:time_machine/route/route_name.dart';
 import 'package:time_machine/route/route_page.dart';
@@ -13,6 +17,18 @@ void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await initServices();
   runApp(const MyApp());
+  // 小白条沉浸
+  if (Platform.isAndroid) {
+    final androidInfo = await DeviceInfoPlugin().androidInfo;
+    if (androidInfo.version.sdkInt >= 29) {
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    }
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarDividerColor: Colors.transparent,
+      // statusBarColor: Colors.transparent,
+    ));
+  }
 }
 
 Future<void> initServices() async {
