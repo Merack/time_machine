@@ -14,7 +14,6 @@ import 'package:time_machine/theme/theme_controller.dart';
 import 'package:time_machine/theme/app_themes.dart';
 
 void main() async {
-  // 尝试找定位一下有时候冷启动闪退的原因, 希望有用吧
   // 全局错误捕获
   FlutterError.onError = (FlutterErrorDetails details) {
     debugPrint('Flutter错误: ${details.exception}');
@@ -39,7 +38,9 @@ void main() async {
     runApp(MaterialApp(
       home: Scaffold(
         body: Center(
-          child: Text('应用启动时发生错误, err: $e, stack: $stack'),
+          child: SingleChildScrollView(
+            child: Text('应用启动时发生错误, err: $e, stack: $stack'),
+          ),
         ),
       ),
     ));

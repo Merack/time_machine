@@ -31,7 +31,7 @@ class BackgroundTimerService extends GetxService {
 
   Future<BackgroundTimerService> init() async {
     await _initializeBackgroundService();
-    _backgroundService.startService();
+    // _backgroundService.startService();
 
     Get.log('BackgroundTimerService initialized');
     return this;
@@ -90,7 +90,7 @@ Future<bool> onIosBackground(ServiceInstance service) async {
 void onBackgroundStart(ServiceInstance service) async {
   // 确保插件已注册
   DartPluginRegistrant.ensureInitialized();
-  Get.log('后台服务启动...');
+  Get.log('后台服务初始化完成');
 
   final handler = TimerBackgroundServiceHandler(service);
   handler.init();

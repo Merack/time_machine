@@ -199,7 +199,12 @@ class HomeController extends GetxController {
   //   }
   // }
   /// 开始计时器(new)
-  void _startTimer() {
+  Future<void> _startTimer() async {
+    bool isBackgroundServiceRunning = await _backgroundService.isRunning();
+    if (!isBackgroundServiceRunning) {
+      await _backgroundService.startService();
+      Get.log("===开始后台服务===");
+    }
     if (state.timerStatus.value == TimerStatus.stopped) {
       // 首次启动,进入专注状态
       _startFocusSession();
