@@ -14,9 +14,19 @@ class TimerBackgroundServiceHandler {
 
   TimerBackgroundServiceHandler(this._service);
 
+  void cancelAllTimers() {
+    _timer?.cancel();
+    _timer = null;
+    _microBreakTimer?.cancel();
+    _microBreakTimer = null;
+  }
+
   // 开始专注和大休息计时
   void startFocusCountdown(int remainingFocusTime) {
+    // 确保先取消现有计时器
     _timer?.cancel();
+    _timer = null;
+    
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (remainingFocusTime > 0) {
         remainingFocusTime--;
@@ -30,7 +40,10 @@ class TimerBackgroundServiceHandler {
 
   // 微休息计时
   void startMicroBreakCountdown(int microBreakCountDownTime, TimerStatus timerStatus) {
+    // 确保先取消现有计时器
     _microBreakTimer?.cancel();
+    _microBreakTimer = null;
+    
     // 处理微休息到来时间倒计时
     if (timerStatus == TimerStatus.focus) {
       _microBreakTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -73,8 +86,7 @@ class TimerBackgroundServiceHandler {
 
     // 停止专注计时和微休息计时
     _service.on("stop_timer").listen((event) {
-      _timer?.cancel();
-      _microBreakTimer?.cancel();
+      cancelAllTimers();
     });
 
     // 开始专注计时器

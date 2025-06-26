@@ -3,7 +3,7 @@ import 'package:time_machine/model/statistics/statistics_models.dart';
 import '../dao/focus_session_dao.dart';
 
 /// 统计数据计算服务
-class StatisticsService {
+class StatisticsDBService {
   // StatisticsDataModel? _statistics_data;
 
   // 缓存机制 (目前用不上, 不知道后面还有没用, 先注释留着吧)

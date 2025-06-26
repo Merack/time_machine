@@ -1,16 +1,16 @@
 import 'package:get/get.dart';
 import 'package:time_machine/page/statistics/state.dart';
-import '../../database/statistics_service.dart';
+import '../../database/statistics_db_service.dart';
 import '../../model/statistics/statistics_models.dart';
 
 class StatisticsController extends GetxController {
   final Rx<StatisticsState> state = const StatisticsState.initial().obs;
-  late final StatisticsService _statisticsService;
+  late final StatisticsDBService _statisticsService;
 
   @override
   void onInit() {
     super.onInit();
-    _statisticsService = Get.put(StatisticsService());
+    _statisticsService = Get.put(StatisticsDBService());
     loadStatistics();
   }
 

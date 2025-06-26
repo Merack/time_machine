@@ -17,7 +17,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
 
-version: 1.5.3+12
+version: 1.5.4+14
 
 environment:
   sdk: ^3.8.1
@@ -57,16 +57,16 @@ dev_dependencies:
   flutter_lints: ^6.0.0
 
 flutter_launcher_icons:
-  # === 通用配置 ===
+  # 通用配置
   image_path: "assets/icon/icon.png"
 
-  # === Android 配置 ===
+  # Android
   android: true
   adaptive_icon_background: "#FFFDE9" # 自适应图标的背景颜色（或图片路径 'assets/icon/background.png'）
   adaptive_icon_foreground: "assets/icon/app_icon_foreground2.png" # 自适应图标的前景图片
   min_sdk_android: 23 # android min sdk min:16, default 21
 
-  # === iOS 配置 ===
+  # iOS
   ios: true
   image_path_ios: "assets/icon/icon.png"
 

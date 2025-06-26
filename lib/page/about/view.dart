@@ -86,7 +86,7 @@ class AboutPage extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 50),
+                const SizedBox(height: 60),
                 const Text(
                   '${AppConfig.ORGANIZATION} 出品',
                   style: TextStyle(
