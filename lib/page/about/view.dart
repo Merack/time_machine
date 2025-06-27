@@ -47,13 +47,18 @@ class AboutPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 // 版本信息
-                Text(
-                  '版本 ${AppConfig.APPVERSION}',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.grey[600],
-                  ),
+                FutureBuilder<String>(
+                  future: AppConfig.APPVERSION,
+                  builder: (context, snapshot) {
+                    return Text(
+                      '版本 ${snapshot.data ?? '未知'}',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.grey[600],
+                      ),
+                    );
+                  },
                 ),
                 const SizedBox(height: 20),
                 // 作者信息

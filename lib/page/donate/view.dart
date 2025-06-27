@@ -45,7 +45,7 @@ class DonatePage extends StatelessWidget {
 
                   // 感谢文字
                   Text(
-                    '感谢您的支持！',
+                    '感谢您的支持!',
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: theme.colorScheme.primary,
                       fontWeight: FontWeight.w500,
@@ -71,7 +71,7 @@ class DonatePage extends StatelessWidget {
           context: context,
           title: '支付宝',
           imagePath: 'assets/img/alipay.jpg',
-          color: theme.colorScheme.primary,
+          color: theme.colorScheme.secondary,
         ),
         
         const SizedBox(height: 24),

@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
@@ -15,17 +14,17 @@ import 'package:time_machine/theme/app_themes.dart';
 
 void main() async {
   // 全局错误捕获
-  FlutterError.onError = (FlutterErrorDetails details) {
-    debugPrint('Flutter错误: ${details.exception}');
-    debugPrint('堆栈跟踪: ${details.stack}');
-  };
+  // FlutterError.onError = (FlutterErrorDetails details) {
+  //   debugPrint('Flutter错误: ${details.exception}');
+  //   debugPrint('堆栈跟踪: ${details.stack}');
+  // };
   
   // 捕获未处理的异步错误
-  PlatformDispatcher.instance.onError = (error, stack) {
-    debugPrint('未捕获的平台错误: $error');
-    debugPrint('堆栈跟踪: $stack');
-    return true;
-  };
+  // PlatformDispatcher.instance.onError = (error, stack) {
+  //   debugPrint('未捕获的平台错误: $error');
+  //   debugPrint('堆栈跟踪: $stack');
+  //   return true;
+  // };
   
   try {
     WidgetsFlutterBinding.ensureInitialized();
@@ -95,7 +94,6 @@ class MyApp extends StatelessWidget {
       theme: AppThemes.lightTheme,
       darkTheme: AppThemes.darkTheme,
       themeMode: themeController.themeMode,
-      // 调试配置
       debugShowCheckedModeBanner: false,
     );
   }
