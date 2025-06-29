@@ -20,7 +20,15 @@ class MainPage extends StatelessWidget {
 
     final theme = Theme.of(context);
 
-    return Obx(() => Scaffold(
+    return PopScope(
+      canPop: false, // 禁止默认的返回行为
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          // 处理返回键逻辑
+          controller.handleBackPressed();
+        }
+      },
+      child: Obx(() => Scaffold(
       // 用来解决禅模式下隐藏navigatorBar后mainPage Scaffold默认背景带来的颜色不一致问题
       // 因为navigatorBar设置为不可见后底部就露出来了, HomePage又因为navigatorBar还在文档流中占位置无法延伸到底部
       // 所以底部会有一块宽高和navigatorBar一样大小的区域, 颜色为Scaffold默认背景色
@@ -64,6 +72,7 @@ class MainPage extends StatelessWidget {
           ),
         );
       }),
-    ));
+    )),
+    );
   }
 }

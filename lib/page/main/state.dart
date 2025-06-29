@@ -21,6 +21,9 @@ class NavigationItem {
 class MainState {
   var currentIndex = 0.obs;
 
+  // 双击返回相关状态
+  var lastBackPressTime = DateTime.now();
+
   // 使用懒加载和const构造函数优化页面创建
   static final List<Widget> _pages = [
     HomePage(),
