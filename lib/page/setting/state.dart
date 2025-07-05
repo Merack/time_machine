@@ -19,6 +19,10 @@ class SettingState {
   // 自动开始下一个专注
   var autoStartNextFocus = StorageKeys.defaultAutoStartNextFocus.obs;
 
+  // 备份恢复状态
+  var isBackupInProgress = false.obs;
+  var isRestoreInProgress = false.obs;
+
   // 表单控制器
   final focusTimeController = TextEditingController();
   final bigBreakTimeController = TextEditingController();

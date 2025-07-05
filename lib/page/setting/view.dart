@@ -179,6 +179,16 @@ class SettingPage extends StatelessWidget {
 
               const SizedBox(height: 24),
 
+              // 数据设置组
+              SettingSection(
+                title: '数据设置',
+                children: [
+                  DataSettings(controller: controller),
+                ],
+              ),
+
+              const SizedBox(height: 24),
+
               // 开发者选项（仅调试模式显示）
               if (Get.isLogEnable) ...[
                 DeveloperSettings(),

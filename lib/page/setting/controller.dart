@@ -1,8 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mmkv/mmkv.dart';
 import 'package:time_machine/route/route_name.dart';
 
 import '../../service/app_storage_service.dart';
+import '../../database/backup_restore_db_service.dart';
 import '../../config/storage_keys.dart';
 import '../home/controller.dart';
 import 'state.dart';
@@ -204,5 +206,122 @@ class SettingController extends GetxController {
   /// 切换自动开始下一个专注状态
   void toggleAutoStartNextFocus(bool value) {
     state.autoStartNextFocus.value = value;
+  }
+
+  /// 执行数据备份
+  Future<void> performBackup() async {
+    if (state.isBackupInProgress.value) return;
+    BackupRestoreDBService backupRestoreDBService = Get.isRegistered<BackupRestoreDBService>()
+        ? Get.find<BackupRestoreDBService>()
+        : Get.put(BackupRestoreDBService());
+
+    state.isBackupInProgress.value = true;
+
+    try {
+      final backupPath = await backupRestoreDBService.backupData();
+
+      if (backupPath != null) {
+        Get.snackbar(
+          '备份成功',
+          '数据已备份到: $backupPath',
+          snackPosition: SnackPosition.TOP,
+          barBlur: 100.0,
+          duration: const Duration(seconds: 3),
+        );
+      } else {
+        Get.snackbar(
+          '备份失败',
+          '无法创建备份文件, 请检查存储权限',
+          snackPosition: SnackPosition.TOP,
+          barBlur: 100.0,
+          duration: const Duration(seconds: 3),
+        );
+      }
+    } catch (e) {
+      Get.log('备份过程中发生错误: $e');
+      Get.snackbar(
+        '备份失败',
+        '备份过程中发生错误: ${e.toString()}',
+        snackPosition: SnackPosition.TOP,
+        barBlur: 100.0,
+        duration: const Duration(seconds: 3),
+      );
+    } finally {
+      state.isBackupInProgress.value = false;
+    }
+  }
+
+  /// 执行数据恢复
+  Future<void> performRestore() async {
+    if (state.isRestoreInProgress.value) return;
+
+    // 先显示确认对话框
+    final confirmed = await Get.dialog<bool>(
+      AlertDialog(
+        title: const Text('确认恢复'),
+        content: const Text('此操作将覆盖当前的所有数据, 确定要继续吗?'),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(result: false),
+            child: const Text('取消'),
+          ),
+          TextButton(
+            onPressed: () => Get.back(result: true),
+            child: const Text('确定'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+
+    state.isRestoreInProgress.value = true;
+
+    try {
+      BackupRestoreDBService backupRestoreDBService = Get.isRegistered<BackupRestoreDBService>()
+          ? Get.find<BackupRestoreDBService>()
+          : Get.put(BackupRestoreDBService());
+      final success = await backupRestoreDBService.restoreData();
+
+      if (success) {
+        Get.snackbar(
+          '恢复成功',
+          '数据已成功恢复, 请重启应用以生效',
+          snackPosition: SnackPosition.TOP,
+          barBlur: 100.0,
+          duration: const Duration(seconds: 3),
+        );
+
+        // 重新加载设置
+        _loadSettings();
+
+        // 通知 HomeController 重新加载设置
+        try {
+          final homeController = Get.find<HomeController>();
+          homeController.reloadSettings();
+        } catch (e) {
+          // HomeController 可能还没有初始化, 忽略错误
+        }
+      } else {
+        Get.snackbar(
+          '恢复失败',
+          '无法恢复数据, 请检查备份文件是否有效',
+          snackPosition: SnackPosition.TOP,
+          barBlur: 100.0,
+          duration: const Duration(seconds: 3),
+        );
+      }
+    } catch (e) {
+      Get.log('恢复过程中发生错误: $e');
+      Get.snackbar(
+        '恢复失败',
+        '恢复过程中发生错误: ${e.toString()}',
+        snackPosition: SnackPosition.TOP,
+        barBlur: 100.0,
+        duration: const Duration(seconds: 3),
+      );
+    } finally {
+      state.isRestoreInProgress.value = false;
+    }
   }
 }

@@ -42,7 +42,7 @@ class MainController extends GetxController {
 
       // 显示Toast提示
       Get.snackbar(
-        '',
+        '提示',
         '再按一次返回键退出应用',
         snackPosition: SnackPosition.TOP,
         duration: const Duration(seconds: 2),

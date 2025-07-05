@@ -12,7 +12,7 @@ class DeveloperSettings extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    // final theme = Theme.of(context);
 
     return SettingSection(
       title: '开发者选项',
@@ -71,41 +71,41 @@ class DeveloperSettings extends StatelessWidget {
           ),
         ),
         const SettingDivider(),
-        SettingTile(
-          title: '重置数据库',
-          subtitle: '删除并重新创建数据库',
-          trailing: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: theme.colorScheme.error,
-              foregroundColor: theme.colorScheme.onError,
-            ),
-            onPressed: () async {
-              final confirmed = await Get.dialog<bool>(
-                AlertDialog(
-                  title: const Text('确认重置'),
-                  content: const Text('此操作将删除所有专注记录, 确定要继续吗?'),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Get.back(result: false),
-                      child: const Text('取消'),
-                    ),
-                    TextButton(
-                      onPressed: () => Get.back(result: true),
-                      child: const Text('确定'),
-                    ),
-                  ],
-                ),
-              );
-
-              if (confirmed == true) {
-                final databaseService = Get.find<DatabaseService>();
-                await databaseService.resetDatabase();
-                Get.snackbar('成功', '数据库已重置', duration: Duration(seconds: 1));
-              }
-            },
-            child: const Text('重置'),
-          ),
-        ),
+        // SettingTile(
+        //   title: '重置数据库',
+        //   subtitle: '删除并重新创建数据库',
+        //   trailing: ElevatedButton(
+        //     style: ElevatedButton.styleFrom(
+        //       backgroundColor: theme.colorScheme.error,
+        //       foregroundColor: theme.colorScheme.onError,
+        //     ),
+        //     onPressed: () async {
+        //       final confirmed = await Get.dialog<bool>(
+        //         AlertDialog(
+        //           title: const Text('确认重置'),
+        //           content: const Text('此操作将删除所有专注记录, 确定要继续吗?'),
+        //           actions: [
+        //             TextButton(
+        //               onPressed: () => Get.back(result: false),
+        //               child: const Text('取消'),
+        //             ),
+        //             TextButton(
+        //               onPressed: () => Get.back(result: true),
+        //               child: const Text('确定'),
+        //             ),
+        //           ],
+        //         ),
+        //       );
+        //
+        //       if (confirmed == true) {
+        //         final databaseService = Get.find<DatabaseService>();
+        //         await databaseService.resetDatabase();
+        //         Get.snackbar('成功', '数据库已重置', duration: Duration(seconds: 1));
+        //       }
+        //     },
+        //     child: const Text('重置'),
+        //   ),
+        // ),
       ],
     );
   }

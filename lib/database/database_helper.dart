@@ -10,8 +10,9 @@ class DatabaseHelper {
   
   // 表名
   static const String tableFocusSessions = 'focus_sessions';
-  
-  // 字段名
+  static const String tableSettings = 'settings';
+
+  // focus_sessions表字段名
   static const String columnId = 'id';
   static const String columnStartTime = 'start_time';
   static const String columnEndTime = 'end_time';
@@ -19,6 +20,13 @@ class DatabaseHelper {
   static const String columnActualDuration = 'actual_duration';
   static const String columnIsCompleted = 'is_completed';
   static const String columnTimeOfDay = 'time_of_day';
+
+  // settings表字段名
+  static const String columnSettingId = 'id';
+  static const String columnSettingKey = 'key';
+  static const String columnSettingValue = 'value';
+  static const String columnSettingType = 'type';
+  static const String columnSettingCreatedAt = 'created_at';
   
   static Database? _database;
   
@@ -53,6 +61,7 @@ class DatabaseHelper {
   /// 创建表
   static Future<void> _onCreate(Database db, int version) async {
     try {
+      // 创建focus_sessions表
       await db.execute('''
         CREATE TABLE $tableFocusSessions (
           $columnId INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -64,23 +73,40 @@ class DatabaseHelper {
           $columnTimeOfDay TEXT NOT NULL
         )
       ''');
-      
-      // 创建索引以优化查询性能
+
+      // 创建settings表
+      // await db.execute('''
+      //   CREATE TABLE $tableSettings (
+      //     $columnSettingId INTEGER PRIMARY KEY AUTOINCREMENT,
+      //     $columnSettingKey TEXT NOT NULL UNIQUE,
+      //     $columnSettingValue TEXT NOT NULL,
+      //     $columnSettingType TEXT NOT NULL,
+      //     $columnSettingCreatedAt INTEGER NOT NULL
+      //   )
+      // ''');
+
+      // 创建focus_sessions表索引以优化查询性能
       await db.execute('''
-        CREATE INDEX idx_focus_sessions_start_time 
+        CREATE INDEX idx_focus_sessions_start_time
         ON $tableFocusSessions ($columnStartTime)
       ''');
-      
+
       await db.execute('''
-        CREATE INDEX idx_focus_sessions_time_of_day 
+        CREATE INDEX idx_focus_sessions_time_of_day
         ON $tableFocusSessions ($columnTimeOfDay)
       ''');
-      
+
       await db.execute('''
-        CREATE INDEX idx_focus_sessions_date_range 
+        CREATE INDEX idx_focus_sessions_date_range
         ON $tableFocusSessions ($columnStartTime, $columnEndTime)
       ''');
-      
+
+      // 创建settings表索引
+      // await db.execute('''
+      //   CREATE INDEX idx_settings_key
+      //   ON $tableSettings ($columnSettingKey)
+      // ''');
+
       Get.log('数据库表创建成功');
     } catch (e) {
       Get.log('创建表失败: $e');
