@@ -24,8 +24,11 @@ class BackgroundTimerService extends GetxService {
   // }
 
   @override
-  void onClose() {
-    _backgroundService.invoke("stop_service");
+  Future<void> onClose() async {
+    if (await _backgroundService.isRunning()) {
+      _backgroundService.invoke("stop_service");
+    }
+
     super.onClose();
   }
 

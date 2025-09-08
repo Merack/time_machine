@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:get/get.dart';
 import 'package:time_machine/page/main/state.dart';
 
 class MainController extends GetxController {
   final MainState state = MainState();
   late PageController pageController;
+
+  final FlutterBackgroundService _backgroundService = FlutterBackgroundService();
 
   @override
   void onInit() {
@@ -32,7 +35,7 @@ class MainController extends GetxController {
   }
 
   /// 处理返回键按下事件
-  bool handleBackPressed() {
+  Future<bool> handleBackPressed() async {
     final now = DateTime.now();
     final timeDifference = now.difference(state.lastBackPressTime);
 
@@ -52,6 +55,10 @@ class MainController extends GetxController {
 
       return false; // 不退出应用
     } else {
+      if (await _backgroundService.isRunning()) {
+        _backgroundService.invoke("stop_service");
+      }
+
       // 2秒内再次按返回键, 退出应用
       SystemNavigator.pop(); // 退出应用
       return true;
