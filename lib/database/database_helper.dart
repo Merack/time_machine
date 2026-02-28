@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 /// SQLite数据库助手类 - 用于数据库相关(非表查询)的操作
 class DatabaseHelper {
   static const String _databaseName = 'time_machine.db';
-  static const int _databaseVersion = 1;
+  static const int _databaseVersion = 2;
   
   // 表名
   static const String tableFocusSessions = 'focus_sessions';
@@ -20,6 +20,7 @@ class DatabaseHelper {
   static const String columnActualDuration = 'actual_duration';
   static const String columnIsCompleted = 'is_completed';
   static const String columnTimeOfDay = 'time_of_day';
+  static const String columnSessionMode = 'session_mode';
 
   // settings表字段名
   static const String columnSettingId = 'id';
@@ -70,7 +71,8 @@ class DatabaseHelper {
           $columnFocusDuration INTEGER NOT NULL,
           $columnActualDuration INTEGER NOT NULL,
           $columnIsCompleted INTEGER NOT NULL DEFAULT 1,
-          $columnTimeOfDay TEXT NOT NULL
+          $columnTimeOfDay TEXT NOT NULL,
+          $columnSessionMode TEXT
         )
       ''');
 
@@ -117,6 +119,11 @@ class DatabaseHelper {
   /// 数据库升级
   static Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     Get.log('数据库升级: $oldVersion -> $newVersion');
+    if (oldVersion < 2) {
+      await db.execute(
+        'ALTER TABLE $tableFocusSessions ADD COLUMN $columnSessionMode TEXT'
+      );
+    }
   }
   
   /// 关闭数据库

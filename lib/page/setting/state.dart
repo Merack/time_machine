@@ -19,6 +19,12 @@ class SettingState {
   // 自动开始下一个专注
   var autoStartNextFocus = StorageKeys.defaultAutoStartNextFocus.obs;
 
+  // 番茄时钟设置组
+  var pomodoroFocusMinutes = StorageKeys.defaultPomodoroFocusMinutes.obs;
+  var pomodoroShortBreakMinutes = StorageKeys.defaultPomodoroShortBreakMinutes.obs;
+  var pomodoroLongBreakMinutes = StorageKeys.defaultPomodoroLongBreakMinutes.obs;
+  var pomodoroLongBreakInterval = StorageKeys.defaultPomodoroLongBreakInterval.obs;
+
   // 备份恢复状态
   var isBackupInProgress = false.obs;
   var isRestoreInProgress = false.obs;
@@ -29,6 +35,10 @@ class SettingState {
   final microBreakTimeController = TextEditingController();
   final microBreakIntervalMinController = TextEditingController();
   final microBreakIntervalMaxController = TextEditingController();
+  final pomodoroFocusController = TextEditingController();
+  final pomodoroShortBreakController = TextEditingController();
+  final pomodoroLongBreakController = TextEditingController();
+  final pomodoroIntervalController = TextEditingController();
 
   // 错误信息
   var focusTimeError = ''.obs;
@@ -36,6 +46,10 @@ class SettingState {
   var microBreakTimeError = ''.obs;
   var microBreakIntervalMinError = ''.obs;
   var microBreakIntervalMaxError = ''.obs;
+  var pomodoroFocusError = ''.obs;
+  var pomodoroShortBreakError = ''.obs;
+  var pomodoroLongBreakError = ''.obs;
+  var pomodoroIntervalError = ''.obs;
 
   SettingState() {
     ///Initialize variables
@@ -49,6 +63,10 @@ class SettingState {
     microBreakTimeController.text = microBreakTimeSeconds.value.toString();
     microBreakIntervalMinController.text = microBreakIntervalMinMinutes.value.toString();
     microBreakIntervalMaxController.text = microBreakIntervalMaxMinutes.value.toString();
+    pomodoroFocusController.text = pomodoroFocusMinutes.value.toString();
+    pomodoroShortBreakController.text = pomodoroShortBreakMinutes.value.toString();
+    pomodoroLongBreakController.text = pomodoroLongBreakMinutes.value.toString();
+    pomodoroIntervalController.text = pomodoroLongBreakInterval.value.toString();
   }
 
   /// 更新控制器文本
@@ -58,6 +76,10 @@ class SettingState {
     microBreakTimeController.text = microBreakTimeSeconds.value.toString();
     microBreakIntervalMinController.text = microBreakIntervalMinMinutes.value.toString();
     microBreakIntervalMaxController.text = microBreakIntervalMaxMinutes.value.toString();
+    pomodoroFocusController.text = pomodoroFocusMinutes.value.toString();
+    pomodoroShortBreakController.text = pomodoroShortBreakMinutes.value.toString();
+    pomodoroLongBreakController.text = pomodoroLongBreakMinutes.value.toString();
+    pomodoroIntervalController.text = pomodoroLongBreakInterval.value.toString();
   }
 
   /// 清除所有错误信息
@@ -67,6 +89,10 @@ class SettingState {
     microBreakTimeError.value = '';
     microBreakIntervalMinError.value = '';
     microBreakIntervalMaxError.value = '';
+    pomodoroFocusError.value = '';
+    pomodoroShortBreakError.value = '';
+    pomodoroLongBreakError.value = '';
+    pomodoroIntervalError.value = '';
   }
 
   /// 验证所有输入
@@ -120,7 +146,25 @@ class SettingState {
         );
       }
     }
-    
+
+    // 验证番茄时钟设置
+    if (pomodoroFocusMinutes.value <= 0) {
+      pomodoroFocusError.value = '番茄专注时间必须大于0分钟';
+      isValid = false;
+    }
+    if (pomodoroShortBreakMinutes.value < 0) {
+      pomodoroShortBreakError.value = '短休息时间必须大于或等于0分钟';
+      isValid = false;
+    }
+    if (pomodoroLongBreakMinutes.value < 0) {
+      pomodoroLongBreakError.value = '长休息时间必须大于或等于0分钟';
+      isValid = false;
+    }
+    if (pomodoroLongBreakInterval.value <= 0) {
+      pomodoroIntervalError.value = '长休息间隔必须大于0';
+      isValid = false;
+    }
+
     return isValid;
   }
 
@@ -130,5 +174,9 @@ class SettingState {
     microBreakTimeController.dispose();
     microBreakIntervalMinController.dispose();
     microBreakIntervalMaxController.dispose();
+    pomodoroFocusController.dispose();
+    pomodoroShortBreakController.dispose();
+    pomodoroLongBreakController.dispose();
+    pomodoroIntervalController.dispose();
   }
 }

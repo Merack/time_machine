@@ -190,6 +190,11 @@ class BackupRestoreDBService {
       StorageKeys.isProgressForward: 'bool',
       StorageKeys.autoStartNextFocus: 'bool',
       StorageKeys.themeMode: 'string',
+      StorageKeys.timerMode: 'string',
+      StorageKeys.pomodoroFocusMinutes: 'int',
+      StorageKeys.pomodoroShortBreakMinutes: 'int',
+      StorageKeys.pomodoroLongBreakMinutes: 'int',
+      StorageKeys.pomodoroLongBreakInterval: 'int',
     };
     
     for (final entry in settingsMap.entries) {
@@ -238,7 +243,8 @@ class BackupRestoreDBService {
         ${DatabaseHelper.columnFocusDuration} INTEGER NOT NULL,
         ${DatabaseHelper.columnActualDuration} INTEGER NOT NULL,
         ${DatabaseHelper.columnIsCompleted} INTEGER NOT NULL DEFAULT 1,
-        ${DatabaseHelper.columnTimeOfDay} TEXT NOT NULL
+        ${DatabaseHelper.columnTimeOfDay} TEXT NOT NULL,
+        ${DatabaseHelper.columnSessionMode} TEXT
       )
     ''');
     

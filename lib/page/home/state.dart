@@ -8,6 +8,7 @@ enum TimerStatus {
   focus,      // 专注状态
   microBreak, // 微休息状态
   bigBreak,   // 大休息状态
+  shortBreak, // 番茄短休息状态
   paused,     // 暂停状态
   stopped     // 停止状态
 }
@@ -57,6 +58,18 @@ class HomeState {
 
   // 禅模式状态
   var isZenMode = false.obs;
+
+  // 计时器模式
+  var timerMode = StorageKeys.defaultTimerMode.obs;
+
+  // 番茄时钟设置
+  var pomodoroFocusTimeSeconds = (StorageKeys.defaultPomodoroFocusMinutes * 60).obs;
+  var pomodoroShortBreakSeconds = (StorageKeys.defaultPomodoroShortBreakMinutes * 60).obs;
+  var pomodoroLongBreakSeconds = (StorageKeys.defaultPomodoroLongBreakMinutes * 60).obs;
+  var pomodoroLongBreakInterval = StorageKeys.defaultPomodoroLongBreakInterval.obs;
+
+  // 当前轮次内的番茄数（达到 interval 后重置）
+  var currentPomodoroCount = 0.obs;
 
   HomeState() {
     ///Initialize variables
@@ -124,6 +137,8 @@ class HomeState {
         return '微休息';
       case TimerStatus.bigBreak:
         return '休息';
+      case TimerStatus.shortBreak:
+        return '短休息';
       case TimerStatus.paused:
         return '已暂停';
       case TimerStatus.stopped:

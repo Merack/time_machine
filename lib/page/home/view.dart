@@ -61,6 +61,11 @@ class HomePage extends StatelessWidget {
             padding: const EdgeInsets.all(24.0),
             child: Column(
               children: [
+                // 模式切换
+                _buildModeToggle(context, isZenMode, textColor, surfaceColor),
+
+                const SizedBox(height: 16),
+
                 // 周期统计
                 _buildCycleCounter(context, isZenMode, textColor, surfaceColor),
 
@@ -87,45 +92,124 @@ class HomePage extends StatelessWidget {
     });
   }
 
+  // 构建模式切换控件
+  Widget _buildModeToggle(BuildContext context, bool isZenMode, Color textColor, Color surfaceColor) {
+    if (isZenMode) return const SizedBox.shrink();
+    final theme = Theme.of(context);
+
+    return Obx(() {
+      final isStopped = state.timerStatus.value == TimerStatus.stopped;
+      final isPomodoro = state.timerMode.value == 'pomodoro';
+
+      return Container(
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surfaceContainerLow,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildModeChip(
+              context: context,
+              label: '随机提示音',
+              isSelected: !isPomodoro,
+              enabled: isStopped,
+              onTap: () => controller.switchTimerMode('random_break'),
+            ),
+            _buildModeChip(
+              context: context,
+              label: '番茄时钟',
+              isSelected: isPomodoro,
+              enabled: isStopped,
+              onTap: () => controller.switchTimerMode('pomodoro'),
+            ),
+          ],
+        ),
+      );
+    });
+  }
+
+  Widget _buildModeChip({
+    required BuildContext context,
+    required String label,
+    required bool isSelected,
+    required bool enabled,
+    required VoidCallback onTap,
+  }) {
+    final theme = Theme.of(context);
+    return GestureDetector(
+      onTap: enabled ? onTap : null,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? theme.colorScheme.primary : Colors.transparent,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+            color: isSelected
+                ? theme.colorScheme.onPrimary
+                : enabled
+                    ? theme.colorScheme.onSurfaceVariant
+                    : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+          ),
+        ),
+      ),
+    );
+  }
+
   // 构建周期计数器
   Widget _buildCycleCounter(BuildContext context, bool isZenMode, Color textColor, Color surfaceColor) {
     final theme = Theme.of(context);
 
-    return Obx(() => Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      decoration: BoxDecoration(
-        color: isZenMode ? surfaceColor : theme.colorScheme.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: isZenMode ? [] : [
-          BoxShadow(
-            color: theme.colorScheme.shadow.withValues(alpha: 0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (state.completedCycles.value > 0) ...[
-            Icon(
-              Icons.check_circle,
-              color: isZenMode ? Colors.white : theme.colorScheme.surfaceTint,
-              size: 20,
+    return Obx(() {
+      final isPomodoro = state.timerMode.value == 'pomodoro';
+      final completedCycles = state.completedCycles.value;
+      final currentCount = state.currentPomodoroCount.value;
+      final interval = state.pomodoroLongBreakInterval.value;
+
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        decoration: BoxDecoration(
+          color: isZenMode ? surfaceColor : theme.colorScheme.surfaceContainerLow,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: isZenMode ? [] : [
+            BoxShadow(
+              color: theme.colorScheme.shadow.withValues(alpha: 0.1),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
             ),
-            const SizedBox(width: 8),
           ],
-          Text(
-            '已完成 ${state.completedCycles.value} 个时钟',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: isZenMode ? Colors.white70 : theme.colorScheme.onSurfaceVariant,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (completedCycles > 0) ...[
+              Icon(
+                Icons.check_circle,
+                color: isZenMode ? Colors.white : theme.colorScheme.surfaceTint,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+            ],
+            Text(
+              isPomodoro
+                  ? '已完成 $completedCycles 个番茄  $currentCount/$interval'
+                  : '已完成 $completedCycles 个时钟',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: isZenMode ? Colors.white70 : theme.colorScheme.onSurfaceVariant,
+              ),
             ),
-          ),
-        ],
-      ),
-    ));
+          ],
+        ),
+      );
+    });
   }
 
   // 构建计时器主要区域
@@ -163,6 +247,9 @@ class HomePage extends StatelessWidget {
             break;
           case TimerStatus.bigBreak:
             progressColor = theme.colorScheme.tertiary;
+            break;
+          case TimerStatus.shortBreak:
+            progressColor = theme.colorScheme.secondary;
             break;
           case TimerStatus.paused:
             progressColor = theme.colorScheme.outline;

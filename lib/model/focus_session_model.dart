@@ -7,6 +7,7 @@ class FocusSessionModel {
   final int actualDuration; // 实际时长（秒）- 保留字段但不用于统计
   final bool isCompleted; // 是否完成 - 保留字段兼容性, 但总是true
   final String timeOfDay; // 时段：morning, afternoon, evening, night
+  final String? sessionMode; // 会话模式：'random_break' | 'pomodoro' | null（历史数据）
 
   const FocusSessionModel({
     this.id, // 可选, 新建时为null, 数据库会自动分配
@@ -16,6 +17,7 @@ class FocusSessionModel {
     required this.actualDuration,
     this.isCompleted = true, // 默认为true, 因为只记录完成的会话
     required this.timeOfDay,
+    this.sessionMode,
   });
 
   /// 从数据库Map创建FocusSession
@@ -28,6 +30,7 @@ class FocusSessionModel {
       actualDuration: map['actual_duration'] as int,
       isCompleted: (map['is_completed'] as int) == 1,
       timeOfDay: map['time_of_day'] as String,
+      sessionMode: map['session_mode'] as String?,
     );
   }
 
@@ -40,6 +43,7 @@ class FocusSessionModel {
       'actual_duration': actualDuration,
       'is_completed': isCompleted ? 1 : 0,
       'time_of_day': timeOfDay,
+      'session_mode': sessionMode,
     };
 
     // 如果id不为null（更新操作）, 则包含id

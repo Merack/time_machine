@@ -116,10 +116,38 @@ class HomeController extends GetxController {
       defaultValue: StorageKeys.defaultAutoStartNextFocus,
     );
 
+    // 计时器模式
+    state.timerMode.value = _storage.decodeString(StorageKeys.timerMode)
+        ?? StorageKeys.defaultTimerMode;
+
+    // 番茄时钟设置
+    state.pomodoroFocusTimeSeconds.value = _storage.decodeInt(
+      StorageKeys.pomodoroFocusMinutes,
+      defaultValue: StorageKeys.defaultPomodoroFocusMinutes,
+    ) * 60;
+
+    state.pomodoroShortBreakSeconds.value = _storage.decodeInt(
+      StorageKeys.pomodoroShortBreakMinutes,
+      defaultValue: StorageKeys.defaultPomodoroShortBreakMinutes,
+    ) * 60;
+
+    state.pomodoroLongBreakSeconds.value = _storage.decodeInt(
+      StorageKeys.pomodoroLongBreakMinutes,
+      defaultValue: StorageKeys.defaultPomodoroLongBreakMinutes,
+    ) * 60;
+
+    state.pomodoroLongBreakInterval.value = _storage.decodeInt(
+      StorageKeys.pomodoroLongBreakInterval,
+      defaultValue: StorageKeys.defaultPomodoroLongBreakInterval,
+    );
+
     // 如果当前是停止状态, 更新初始时间
     if (state.timerStatus.value == TimerStatus.stopped) {
-      state.remainingFocusTime.value = state.focusTimeSeconds.value;
-      state.totalTime.value = state.focusTimeSeconds.value;
+      final focusTime = state.timerMode.value == 'pomodoro'
+          ? state.pomodoroFocusTimeSeconds.value
+          : state.focusTimeSeconds.value;
+      state.remainingFocusTime.value = focusTime;
+      state.totalTime.value = focusTime;
     }
   }
 
@@ -165,8 +193,11 @@ class HomeController extends GetxController {
     _currentSessionStartTime = null;
 
     state.timerStatus.value = TimerStatus.stopped;
-    state.remainingFocusTime.value = state.focusTimeSeconds.value;
-    state.totalTime.value = state.focusTimeSeconds.value;
+    final focusTime = state.timerMode.value == 'pomodoro'
+        ? state.pomodoroFocusTimeSeconds.value
+        : state.focusTimeSeconds.value;
+    state.remainingFocusTime.value = focusTime;
+    state.totalTime.value = focusTime;
     state.isRunning.value = false;
     state.generateNextMicroBreakInterval();
   }
@@ -259,9 +290,14 @@ class HomeController extends GetxController {
 
   /// 开始专注会话 (new, 直接写在旧版里了, 忘记开一个新版了, 不管了 -_-)
   void _startFocusSession() {
+    final isPomodoro = state.timerMode.value == 'pomodoro';
+    final focusTime = isPomodoro
+        ? state.pomodoroFocusTimeSeconds.value
+        : state.focusTimeSeconds.value;
+
     state.timerStatus.value = TimerStatus.focus;
-    state.remainingFocusTime.value = state.focusTimeSeconds.value;
-    state.totalTime.value = state.focusTimeSeconds.value;
+    state.remainingFocusTime.value = focusTime;
+    state.totalTime.value = focusTime;
     state.isRunning.value = true;
     state.generateNextMicroBreakInterval();
 
@@ -273,7 +309,8 @@ class HomeController extends GetxController {
       'remainingFocusTime': state.remainingFocusTime.value
     });
 
-    if (checkIsEnabledMicroBreak()) {
+    // 只有随机提示音模式才启动微休息
+    if (!isPomodoro && checkIsEnabledMicroBreak()) {
       // Get.log("启用微休息后台计时");
       _backgroundService.invoke('start_micro_break_countdown', {
         'microBreakCountDownTime': state.nextMicroBreakTime.value,
@@ -443,7 +480,11 @@ class HomeController extends GetxController {
   void _handleFocusTimerComplete() {
     switch (state.timerStatus.value) {
       case TimerStatus.focus:
-        _completeFocusStatus();
+        if (state.timerMode.value == 'pomodoro') {
+          _completePomodoroFocus();
+        } else {
+          _completeFocusStatus();
+        }
         break;
     // 如果专注计时走完正好又处于微休息期间时, 仍然认为完成了专注任务
       case TimerStatus.microBreak:
@@ -451,6 +492,9 @@ class HomeController extends GetxController {
         break;
       case TimerStatus.bigBreak:
         _completeBigBreak();
+        break;
+      case TimerStatus.shortBreak:
+        _completeShortBreak();
         break;
       default:
         break;
@@ -542,6 +586,55 @@ class HomeController extends GetxController {
     }
   }
 
+  /// 完成番茄专注（番茄模式专用）
+  void _completePomodoroFocus() {
+    // 记录专注会话完成
+    _recordFocusSession();
+
+    // 播放专注完成音效
+    _playAudio('audio/wakeup.mp3');
+
+    // 增加完成周期数和番茄计数
+    state.completedCycles.value++;
+    state.currentPomodoroCount.value++;
+
+    final isLongBreak = state.currentPomodoroCount.value >= state.pomodoroLongBreakInterval.value;
+    if (isLongBreak) {
+      state.currentPomodoroCount.value = 0;
+      _startPomodoroBreak(isLong: true);
+    } else {
+      _startPomodoroBreak(isLong: false);
+    }
+  }
+
+  /// 开始番茄休息（短休息或长休息）
+  void _startPomodoroBreak({required bool isLong}) {
+    final breakTime = isLong
+        ? state.pomodoroLongBreakSeconds.value
+        : state.pomodoroShortBreakSeconds.value;
+
+    state.timerStatus.value = isLong ? TimerStatus.bigBreak : TimerStatus.shortBreak;
+    state.remainingFocusTime.value = breakTime;
+    state.totalTime.value = breakTime;
+    state.isRunning.value = true;
+
+    _backgroundService.invoke('start_focus_countdown', {
+      'remainingFocusTime': breakTime
+    });
+  }
+
+  /// 完成番茄短休息
+  void _completeShortBreak() {
+    _playAudio('audio/alarm-wood.mp3');
+
+    if (state.autoStartNextFocus.value) {
+      resetTimer();
+      _startFocusSession();
+    } else {
+      resetTimer();
+    }
+  }
+
   /// 跳过当前阶段（仅在debug模式下可用）(未保活版, 用不上了, 留着参考)
   // void skipCurrentPhase() {
   //   // 播放按钮音效
@@ -577,7 +670,11 @@ class HomeController extends GetxController {
 
     switch (state.timerStatus.value) {
       case TimerStatus.focus:
-        _completeFocusStatus();
+        if (state.timerMode.value == 'pomodoro') {
+          _completePomodoroFocus();
+        } else {
+          _completeFocusStatus();
+        }
         break;
       case TimerStatus.microBreak:
         _backgroundService.invoke('start_focus_countdown', {
@@ -587,6 +684,9 @@ class HomeController extends GetxController {
         break;
       case TimerStatus.bigBreak:
         _completeBigBreak();
+        break;
+      case TimerStatus.shortBreak:
+        _completeShortBreak();
         break;
       default:
         break;
@@ -601,6 +701,20 @@ class HomeController extends GetxController {
   /// 切换禅模式
   void toggleZenMode() {
     state.isZenMode.value = !state.isZenMode.value;
+  }
+
+  /// 切换计时器模式（仅在停止状态下可切换）
+  void switchTimerMode(String mode) {
+    if (state.timerStatus.value != TimerStatus.stopped) return;
+    state.timerMode.value = mode;
+    state.currentPomodoroCount.value = 0;
+    _storage.encodeString(StorageKeys.timerMode, mode);
+    // 更新初始显示时间
+    final focusTime = mode == 'pomodoro'
+        ? state.pomodoroFocusTimeSeconds.value
+        : state.focusTimeSeconds.value;
+    state.remainingFocusTime.value = focusTime;
+    state.totalTime.value = focusTime;
   }
 
   /// 播放音频
@@ -633,10 +747,13 @@ class HomeController extends GetxController {
         // id为null, 让数据库自动生成
         startTime: _currentSessionStartTime!,
         endTime: endTime,
-        focusDuration: state.focusTimeSeconds.value,
+        focusDuration: state.timerMode.value == 'pomodoro'
+            ? state.pomodoroFocusTimeSeconds.value
+            : state.focusTimeSeconds.value,
         actualDuration: actualDuration,
         isCompleted: true, // 只记录完成的会话,所以总是true, 为了兼容就留下这个字段了
         timeOfDay: FocusSessionModel.getTimeOfDay(_currentSessionStartTime!),
+        sessionMode: state.timerMode.value,
       );
 
       await FocusSessionDao.insert(session.toMap());

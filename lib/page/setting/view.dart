@@ -147,6 +147,16 @@ class SettingPage extends StatelessWidget {
 
               const SizedBox(height: 24),
 
+              // 番茄时钟设置组（始终显示，供用户预先配置）
+              SettingSection(
+                title: '番茄时钟设置',
+                children: [
+                  PomodoroSettings(controller: controller),
+                ],
+              ),
+
+              const SizedBox(height: 24),
+
               // 显示设置组
               SettingSection(
                 title: '显示设置',

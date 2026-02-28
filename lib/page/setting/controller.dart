@@ -75,6 +75,26 @@ class SettingController extends GetxController {
       defaultValue: StorageKeys.defaultAutoStartNextFocus,
     );
 
+    state.pomodoroFocusMinutes.value = _storage.decodeInt(
+      StorageKeys.pomodoroFocusMinutes,
+      defaultValue: StorageKeys.defaultPomodoroFocusMinutes,
+    );
+
+    state.pomodoroShortBreakMinutes.value = _storage.decodeInt(
+      StorageKeys.pomodoroShortBreakMinutes,
+      defaultValue: StorageKeys.defaultPomodoroShortBreakMinutes,
+    );
+
+    state.pomodoroLongBreakMinutes.value = _storage.decodeInt(
+      StorageKeys.pomodoroLongBreakMinutes,
+      defaultValue: StorageKeys.defaultPomodoroLongBreakMinutes,
+    );
+
+    state.pomodoroLongBreakInterval.value = _storage.decodeInt(
+      StorageKeys.pomodoroLongBreakInterval,
+      defaultValue: StorageKeys.defaultPomodoroLongBreakInterval,
+    );
+
     // 更新控制器文本
     state.updateControllers();
   }
@@ -105,6 +125,10 @@ class SettingController extends GetxController {
     _storage.encodeBool(StorageKeys.isCountingUp, state.isCountingUp.value);
     _storage.encodeBool(StorageKeys.isProgressForward, state.isProgressForward.value);
     _storage.encodeBool(StorageKeys.autoStartNextFocus, state.autoStartNextFocus.value);
+    _storage.encodeInt(StorageKeys.pomodoroFocusMinutes, state.pomodoroFocusMinutes.value);
+    _storage.encodeInt(StorageKeys.pomodoroShortBreakMinutes, state.pomodoroShortBreakMinutes.value);
+    _storage.encodeInt(StorageKeys.pomodoroLongBreakMinutes, state.pomodoroLongBreakMinutes.value);
+    _storage.encodeInt(StorageKeys.pomodoroLongBreakInterval, state.pomodoroLongBreakInterval.value);
 
     Get.snackbar(
       '设置已保存',
@@ -134,6 +158,10 @@ class SettingController extends GetxController {
     state.isCountingUp.value = StorageKeys.defaultIsCountingUp;
     state.isProgressForward.value = StorageKeys.defaultIsProgressForward;
     state.autoStartNextFocus.value = StorageKeys.defaultAutoStartNextFocus;
+    state.pomodoroFocusMinutes.value = StorageKeys.defaultPomodoroFocusMinutes;
+    state.pomodoroShortBreakMinutes.value = StorageKeys.defaultPomodoroShortBreakMinutes;
+    state.pomodoroLongBreakMinutes.value = StorageKeys.defaultPomodoroLongBreakMinutes;
+    state.pomodoroLongBreakInterval.value = StorageKeys.defaultPomodoroLongBreakInterval;
 
     state.updateControllers();
     state.clearErrors();
@@ -206,6 +234,30 @@ class SettingController extends GetxController {
   /// 切换自动开始下一个专注状态
   void toggleAutoStartNextFocus(bool value) {
     state.autoStartNextFocus.value = value;
+  }
+
+  /// 更新番茄专注时间
+  void updatePomodoroFocusTime(String value) {
+    final intValue = int.tryParse(value);
+    if (intValue != null) state.pomodoroFocusMinutes.value = intValue;
+  }
+
+  /// 更新番茄短休息时间
+  void updatePomodoroShortBreak(String value) {
+    final intValue = int.tryParse(value);
+    if (intValue != null) state.pomodoroShortBreakMinutes.value = intValue;
+  }
+
+  /// 更新番茄长休息时间
+  void updatePomodoroLongBreak(String value) {
+    final intValue = int.tryParse(value);
+    if (intValue != null) state.pomodoroLongBreakMinutes.value = intValue;
+  }
+
+  /// 更新番茄长休息间隔
+  void updatePomodoroInterval(String value) {
+    final intValue = int.tryParse(value);
+    if (intValue != null) state.pomodoroLongBreakInterval.value = intValue;
   }
 
   /// 执行数据备份
