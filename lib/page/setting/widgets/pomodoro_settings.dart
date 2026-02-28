@@ -65,7 +65,7 @@ class PomodoroSettings extends StatelessWidget {
         SettingTile(
           title: '长休息间隔',
           subtitle: '每隔几个番茄触发一次长休息',
-          trailing: Obx(() => TimeInput(
+          trailing: TimeInput(
             controller: state.pomodoroIntervalController,
             unit: '个',
             onChanged: controller.updatePomodoroInterval,
@@ -73,7 +73,7 @@ class PomodoroSettings extends StatelessWidget {
             onFocusChange: (hasFocus) {
               if (!hasFocus) controller.state.validateAll();
             },
-          )),
+          ),
         ),
       ],
     );
