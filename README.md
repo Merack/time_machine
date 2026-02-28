@@ -2,8 +2,8 @@
 
 [Switch to English Version](README_EN.md)
 
-**TimeMachine** 是一个简约高效的 Flutter 构建的专注时钟应用,  
-计时机制, 灵感来源于B站视频[BV1naLozQEBq](https://www.bilibili.com/video/BV1naLozQEBq)
+**TimeMachine** 是一个简约高效的 Flutter 构建的专注时钟应用, 支持随机提示音和番茄时钟两种机制
+随机提示音计时机制, 灵感来源于[BV1naLozQEBq](https://www.bilibili.com/video/BV1naLozQEBq)
 
 ---
 
@@ -25,6 +25,7 @@
 
 ## ✅ 主要功能
 
+- 支持随机提示音机制和番茄时钟机制
 - 专注计时与动画进度展示
 - 播放提示音
 - 自定义专注时间, 休息时间, 微休息时间, 微休息间隔
@@ -32,7 +33,7 @@
 - 支持中断恢复
 - 数据统计功能
 - 禅模式 -- 计时页面点击页面中间的计时控件进行切换
-- 仅支持 Android 平台
+- 仅支持 Android 平台(其他平台没有测试设备)
 
 ---
 
@@ -59,7 +60,7 @@
 --- 
 
 ## 🙃 已知问题
-- ~~底部小白条不能沉浸~~ 参考~~抄袭~~[pilipala](https://github.com/guozhigq/pilipala)的方式实现小白条沉浸
+- ~~底部小白条不能沉浸~~ ~~抄袭~~参考[pilipala](https://github.com/guozhigq/pilipala)的方式实现小白条沉浸
 - 亮色模式下进入禅模式会导致系统状态栏图标看不清(有解决思路, 但个人很喜欢因为这个bug产生的样式, 就先不修了)
 - 低概率冷启动时闪退(难复现, 还没有思路去定位错误)
 
