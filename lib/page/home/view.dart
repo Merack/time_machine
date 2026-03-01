@@ -58,7 +58,7 @@ class HomePage extends StatelessWidget {
             ),))),
         body: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.all(24.0),
+            padding: const EdgeInsets.fromLTRB(24, 10, 24, 24),
             child: Column(
               children: [
                 // 模式切换
@@ -94,7 +94,7 @@ class HomePage extends StatelessWidget {
 
   // 构建模式切换控件
   Widget _buildModeToggle(BuildContext context, bool isZenMode, Color textColor, Color surfaceColor) {
-    if (isZenMode) return const SizedBox.shrink();
+    if (isZenMode) return const SizedBox(height: 30);
     final theme = Theme.of(context);
 
     return Obx(() {
