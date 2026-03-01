@@ -40,10 +40,25 @@
         </activity>
 
         <!-- 后台服务配置 -->
+        <!-- stopWithTask=true: 划掉App时服务随之停止, 覆盖插件默认的 false -->
         <service
             android:name="id.flutter.flutter_background_service.BackgroundService"
             android:foregroundServiceType="mediaPlayback"
-            />
+            android:stopWithTask="true"
+            tools:replace="android:stopWithTask" />
+
+        <!-- 禁用插件自动注册的 BootReceiver -->
+        <!-- 它监听 BOOT_COMPLETED / MY_PACKAGE_REPLACED 等事件并尝试启动前台服务 -->
+        <!-- 在 Android 16 (API 36) 上可能会因 ForegroundServiceStartNotAllowedException 崩溃 -->
+        <receiver
+            android:name="id.flutter.flutter_background_service.BootReceiver"
+            tools:node="remove" />
+
+        <!-- 禁用插件自动注册的 WatchdogReceiver -->
+        <!-- 它会在服务崩溃后自动重启服务, 不需要此行为 -->
+        <receiver
+            android:name="id.flutter.flutter_background_service.WatchdogReceiver"
+            tools:node="remove" />
 
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
