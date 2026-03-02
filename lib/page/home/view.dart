@@ -168,7 +168,9 @@ class HomePage extends StatelessWidget {
 
     return Obx(() {
       final isPomodoro = state.timerMode.value == 'pomodoro';
-      final completedCycles = state.completedCycles.value;
+      final completedCycles = isPomodoro
+          ? state.completedPomodoroCycles.value
+          : state.completedRandomCycles.value;
       final currentCount = state.currentPomodoroCount.value;
       final interval = state.pomodoroLongBreakInterval.value;
 

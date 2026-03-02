@@ -548,8 +548,8 @@ class HomeController extends GetxController {
     // 播放专注完成音效
     _playAudio('audio/wakeup.mp3');
 
-    // 增加完成周期数
-    state.completedCycles.value++;
+    // 增加完成周期数（随机提示音模式）
+    state.completedRandomCycles.value++;
 
     // 如果用户设置大休息时间为0, 则跳过休息阶段
     if (state.bigBreakTimeSeconds.value == 0) {
@@ -595,7 +595,7 @@ class HomeController extends GetxController {
     _playAudio('audio/wakeup.mp3');
 
     // 增加完成周期数和番茄计数
-    state.completedCycles.value++;
+    state.completedPomodoroCycles.value++;
     state.currentPomodoroCount.value++;
 
     final isLongBreak = state.currentPomodoroCount.value >= state.pomodoroLongBreakInterval.value;

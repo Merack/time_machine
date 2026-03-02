@@ -29,8 +29,11 @@ class HomeState {
   // 当前阶段的总时间（秒）
   var totalTime = 0.obs;
 
-  // 已完成的专注周期数量
-  var completedCycles = 0.obs;
+  // 已完成的专注周期数量（随机提示音模式）
+  var completedRandomCycles = 0.obs;
+
+  // 已完成的专注周期数量（番茄时钟模式）
+  var completedPomodoroCycles = 0.obs;
 
   // 是否正在运行
   var isRunning = false.obs;
