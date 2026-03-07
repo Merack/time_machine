@@ -89,10 +89,3 @@
 
 ### 商业使用说明
 如需商业使用本软件，请联系作者获取商业许可。个人学习、教育用途、非营利组织使用不受此限制。
-
----
-
-## 打赏
-<p>如果你觉得这个项目对你有帮助, 可以考虑打赏</p>
-<img src="pic/donate/alipay.jpg" alt="alipay" height="200" style="display:inline-block; margin-right:10px;">
-<img src="pic/donate/wechatpay.png" alt="wechatpay" height="200" style="display:inline-block;">
