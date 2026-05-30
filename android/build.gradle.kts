@@ -1,8 +1,11 @@
 allprojects {
     repositories {
         mavenLocal()
-        maven(url = "https://maven.aliyun.com/repository/public")
-        maven(url = "https://maven.aliyun.com/repository/google")
+        // 仅本地启用阿里云镜像加速;CI 直连官方源,避免镜像 502 拖垮构建
+        if (System.getenv("CI") == null) {
+            maven(url = "https://maven.aliyun.com/repository/public")
+            maven(url = "https://maven.aliyun.com/repository/google")
+        }
 
         google()
         mavenCentral()
