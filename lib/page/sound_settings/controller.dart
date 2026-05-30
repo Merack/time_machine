@@ -161,6 +161,14 @@ class SoundSettingsController extends GetxController {
       );
       return;
     }
+
+    // 文件已复制进 documents/sounds/,清掉 file_picker 在 cacheDir 留下的临时副本,避免缓存膨胀
+    try {
+      await FilePicker.clearTemporaryFiles();
+    } catch (e) {
+      Get.log('清理 file_picker 缓存失败: $e');
+    }
+
     _storage.encodeString(StorageKeys.soundTypeKey(eventId), StorageKeys.soundTypeCustom);
     _storage.encodeString(StorageKeys.soundValueKey(eventId), dest);
     _storage.encodeString(StorageKeys.soundDisplayNameKey(eventId), originalName);
