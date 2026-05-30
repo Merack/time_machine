@@ -9,6 +9,7 @@ abstract class AppRoutes {
   static const String MAIN = '/main';
   static const String HOME = '/home';
   static const String SETTING = '/setting';
+  static const String SOUND_SETTINGS = '/sound_settings';
   static const String OTHER = "/other";
   static const String ABOUT = '/about';
   static const String DONATE = '/donate';

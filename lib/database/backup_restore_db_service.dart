@@ -177,7 +177,7 @@ class BackupRestoreDBService {
   /// 将MMKV设置数据转移到settings表
   Future<void> _transferMMKVToSettings(Database backupDB) async {
     final settingsToBackup = <SettingModel>[];
-    
+
     // 定义需要备份的设置键和类型
     final settingsMap = <String, String>{
       StorageKeys.focusTimeMinutes: 'int',
@@ -196,6 +196,12 @@ class BackupRestoreDBService {
       StorageKeys.pomodoroLongBreakMinutes: 'int',
       StorageKeys.pomodoroLongBreakInterval: 'int',
     };
+
+    // 加入提示音事件的 type/value 键
+    for (final eventId in StorageKeys.soundEventIds) {
+      settingsMap[StorageKeys.soundTypeKey(eventId)] = 'string';
+      settingsMap[StorageKeys.soundValueKey(eventId)] = 'string';
+    }
     
     for (final entry in settingsMap.entries) {
       final key = entry.key;

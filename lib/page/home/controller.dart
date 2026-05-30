@@ -7,6 +7,7 @@ import 'package:mmkv/mmkv.dart';
 import '../../dao/focus_session_dao.dart';
 import '../../model/focus_session_model.dart';
 import '../../service/app_storage_service.dart';
+import '../../service/ringtone_picker_service.dart';
 import '../../config/storage_keys.dart';
 import 'state.dart';
 
@@ -280,7 +281,14 @@ class HomeController extends GetxController {
   // }
 
   /// 暂停计时器 (new)
-  void _pauseTimer() {
+  Future<void> _pauseTimer() async {
+    try {
+      if (_audioPlayer.state == PlayerState.playing) {
+        await _audioPlayer.stop();
+      }
+    } catch (e) {
+      Get.log('停止播放失败: $e');
+    }
     // 一同暂停专注和微休息
     _backgroundService.invoke("stop_timer");
     state.previousStatus.value = state.timerStatus.value;
@@ -390,7 +398,7 @@ class HomeController extends GetxController {
   void _handleMicroBreakStart() {
     Get.log("微休息开始");
       // 播放微休息开始音效
-      _playAudio('audio/drop.mp3');
+      _playAudio(StorageKeys.soundEventMicroBreakStart);
 
       // 进入微休息状态
       state.timerStatus.value = TimerStatus.microBreak;
@@ -409,7 +417,7 @@ class HomeController extends GetxController {
     Get.log("微休息结束");
 
     // 播放微休息结束音效
-    _playAudio('audio/ding.mp3');
+    _playAudio(StorageKeys.soundEventMicroBreakComplete);
 
     // 更新状态
     state.timerStatus.value = TimerStatus.focus;
@@ -546,7 +554,7 @@ class HomeController extends GetxController {
     _recordFocusSession();
 
     // 播放专注完成音效
-    _playAudio('audio/wakeup.mp3');
+    _playAudio(StorageKeys.soundEventFocusComplete);
 
     // 增加完成周期数（随机提示音模式）
     state.completedRandomCycles.value++;
@@ -573,7 +581,7 @@ class HomeController extends GetxController {
   void _completeBigBreak() {
     // 播放大休息结束音效
     if (state.bigBreakTimeSeconds.value != 0) {
-      _playAudio('audio/alarm-wood.mp3');
+      _playAudio(StorageKeys.soundEventBreakComplete);
     }
 
     if (state.autoStartNextFocus.value) {
@@ -592,7 +600,7 @@ class HomeController extends GetxController {
     _recordFocusSession();
 
     // 播放专注完成音效
-    _playAudio('audio/wakeup.mp3');
+    _playAudio(StorageKeys.soundEventFocusComplete);
 
     // 增加完成周期数和番茄计数
     state.completedPomodoroCycles.value++;
@@ -625,7 +633,7 @@ class HomeController extends GetxController {
 
   /// 完成番茄短休息
   void _completeShortBreak() {
-    _playAudio('audio/alarm-wood.mp3');
+    _playAudio(StorageKeys.soundEventBreakComplete);
 
     if (state.autoStartNextFocus.value) {
       resetTimer();
@@ -693,9 +701,16 @@ class HomeController extends GetxController {
     }
   }
 
-  /// 播放按钮音效
-  void _playButtonSound() {
-    _playAudio('audio/button.wav');
+  /// 播放按钮音效(写死, 不参与用户配置)
+  void _playButtonSound() async {
+    try {
+      if (_audioPlayer.state == PlayerState.playing) {
+        await _audioPlayer.stop();
+      }
+      await _audioPlayer.play(AssetSource('audio/button.wav'));
+    } catch (e) {
+      Get.log('播放按钮音失败: $e');
+    }
   }
 
   /// 切换禅模式
@@ -718,16 +733,46 @@ class HomeController extends GetxController {
   }
 
   /// 播放音频
-  void _playAudio(String assetPath) async {
+  /// [eventId] 来自 StorageKeys.soundEventIds
+  void _playAudio(String eventId) async {
     try {
       // 当新的播放请求来临时打断之前的播放
-      // 目前还不可以处理按钮的快速点击, 仅是处理阶段结束音乐播放时按下按钮的情况
       if (_audioPlayer.state == PlayerState.playing) {
-        _audioPlayer.stop();
+        await _audioPlayer.stop();
       }
-      await _audioPlayer.play(AssetSource(assetPath));
+
+      // 同时停掉可能在播的系统铃声
+      try {
+        Get.find<RingtonePickerService>().stopSystemRingtone();
+      } catch (_) {}
+
+      final type = _storage.decodeString(StorageKeys.soundTypeKey(eventId)) ??
+          StorageKeys.soundTypeBuiltin;
+      final value = _storage.decodeString(StorageKeys.soundValueKey(eventId)) ??
+          StorageKeys.defaultEventSounds[eventId]!;
+
+      switch (type) {
+        case StorageKeys.soundTypeSystem:
+          final ringtone = Get.find<RingtonePickerService>();
+          final ok = await ringtone.playSystemRingtone(value);
+          if (!ok) {
+            // 系统铃声播放失败回退到默认 builtin
+            await _audioPlayer.play(AssetSource(StorageKeys.defaultEventSounds[eventId]!));
+          }
+          break;
+        case StorageKeys.soundTypeCustom:
+          try {
+            await _audioPlayer.play(DeviceFileSource(value));
+          } catch (e) {
+            Get.log('自定义音效播放失败,回退到默认: $e');
+            await _audioPlayer.play(AssetSource(StorageKeys.defaultEventSounds[eventId]!));
+          }
+          break;
+        case StorageKeys.soundTypeBuiltin:
+        default:
+          await _audioPlayer.play(AssetSource(value));
+      }
     } catch (e) {
-      // 使用 Get.log 替代 print
       Get.log('播放音频失败: $e');
     }
   }

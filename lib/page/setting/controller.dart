@@ -4,6 +4,7 @@ import 'package:mmkv/mmkv.dart';
 import 'package:time_machine/route/route_name.dart';
 
 import '../../service/app_storage_service.dart';
+import '../../service/permission_service.dart';
 import '../../database/backup_restore_db_service.dart';
 import '../../config/storage_keys.dart';
 import '../home/controller.dart';
@@ -263,6 +264,20 @@ class SettingController extends GetxController {
   /// 执行数据备份
   Future<void> performBackup() async {
     if (state.isBackupInProgress.value) return;
+
+    // 申请存储权限
+    final perm = Get.find<PermissionService>();
+    if (!await perm.requestStorage()) {
+      Get.snackbar(
+        '权限不足',
+        '备份需要存储权限, 请在「权限管理→存储权限」中授予后再试',
+        snackPosition: SnackPosition.TOP,
+        barBlur: 100,
+        duration: const Duration(seconds: 3),
+      );
+      return;
+    }
+
     BackupRestoreDBService backupRestoreDBService = Get.isRegistered<BackupRestoreDBService>()
         ? Get.find<BackupRestoreDBService>()
         : Get.put(BackupRestoreDBService());
@@ -306,6 +321,19 @@ class SettingController extends GetxController {
   /// 执行数据恢复
   Future<void> performRestore() async {
     if (state.isRestoreInProgress.value) return;
+
+    // 申请存储权限
+    final perm = Get.find<PermissionService>();
+    if (!await perm.requestStorage()) {
+      Get.snackbar(
+        '权限不足',
+        '恢复需要存储权限, 请在「权限管理→存储权限」中授予后再试',
+        snackPosition: SnackPosition.TOP,
+        barBlur: 100,
+        duration: const Duration(seconds: 3),
+      );
+      return;
+    }
 
     // 先显示确认对话框
     final confirmed = await Get.dialog<bool>(

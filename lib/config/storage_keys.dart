@@ -46,4 +46,55 @@ class StorageKeys {
   static const int defaultPomodoroShortBreakMinutes = 5;
   static const int defaultPomodoroLongBreakMinutes = 20;
   static const int defaultPomodoroLongBreakInterval = 4;
+
+  // ===== 提示音事件 =====
+  // eventId 列表
+  static const String soundEventMicroBreakStart = 'microBreakStart';
+  static const String soundEventMicroBreakComplete = 'microBreakComplete';
+  static const String soundEventFocusComplete = 'focusComplete';
+  static const String soundEventBreakComplete = 'breakComplete';
+
+  static const List<String> soundEventIds = [
+    soundEventMicroBreakStart,
+    soundEventMicroBreakComplete,
+    soundEventFocusComplete,
+    soundEventBreakComplete,
+  ];
+
+  // 提示音类型常量
+  static const String soundTypeBuiltin = 'builtin';
+  static const String soundTypeSystem = 'system';
+  static const String soundTypeCustom = 'custom';
+
+  // 软件内置音效资源路径(供选择对话框使用)
+  static const Map<String, String> builtinSounds = {
+    'audio/drop.mp3': 'drop',
+    'audio/ding.mp3': 'ding',
+    'audio/wakeup.mp3': 'wakeup',
+    'audio/alarm-bell.mp3': 'bell',
+    'audio/alarm-kitchen.mp3': 'kitchen',
+    'audio/alarm-wood.mp3': 'wood',
+  };
+
+  // 各事件默认 builtin 资源路径
+  static const Map<String, String> defaultEventSounds = {
+    soundEventMicroBreakStart: 'audio/drop.mp3',
+    soundEventMicroBreakComplete: 'audio/ding.mp3',
+    soundEventFocusComplete: 'audio/wakeup.mp3',
+    soundEventBreakComplete: 'audio/alarm-wood.mp3',
+  };
+
+  // 事件展示名
+  static const Map<String, String> eventDisplayNames = {
+    soundEventMicroBreakStart: '微休息开始',
+    soundEventMicroBreakComplete: '微休息结束',
+    soundEventFocusComplete: '专注完成',
+    soundEventBreakComplete: '大休息/长休息结束',
+  };
+
+  // 提示音 MMKV 键辅助方法
+  static String soundTypeKey(String eventId) => 'sound_${eventId}_type';
+  static String soundValueKey(String eventId) => 'sound_${eventId}_value';
+  static String soundDisplayNameKey(String eventId) => 'sound_${eventId}_display_name';
+
 }

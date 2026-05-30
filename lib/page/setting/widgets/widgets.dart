@@ -10,3 +10,4 @@ export 'micro_break_settings.dart';
 export 'developer_settings.dart';
 export 'data_settings.dart';
 export 'pomodoro_settings.dart';
+export 'permission_settings.dart';

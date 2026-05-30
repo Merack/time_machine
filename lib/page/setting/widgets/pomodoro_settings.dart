@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import '../controller.dart';
 import 'setting_tile.dart';
 import 'time_input.dart';
