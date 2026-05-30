@@ -9,6 +9,9 @@ import 'package:time_machine/route/route_page.dart';
 import 'package:time_machine/service/app_storage_service.dart';
 import 'package:time_machine/service/database_service.dart';
 import 'package:time_machine/service/background_timer_service.dart';
+import 'package:time_machine/service/permission_service.dart';
+import 'package:time_machine/service/custom_sound_storage_service.dart';
+import 'package:time_machine/service/ringtone_picker_service.dart';
 import 'package:time_machine/theme/theme_controller.dart';
 import 'package:time_machine/theme/app_themes.dart';
 
@@ -74,14 +77,51 @@ Future<void> initServices() async {
     Get.log('BackgroundTimerService初始化失败: $e');
   }
 
+  // 权限管理服务
+  await Get.putAsync(() => PermissionService().init());
+
+  // 自定义提示音文件管理
+  await Get.putAsync(() => CustomSoundStorageService().init());
+
+  // 系统铃声 MethodChannel 封装
+  Get.put(RingtonePickerService());
+
   // 初始化主题控制器
   Get.put(ThemeController());
 
   Get.log('All services started...');
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed) {
+      // 用户从系统设置页返回时刷新权限状态
+      if (Get.isRegistered<PermissionService>()) {
+        Get.find<PermissionService>().refreshAll();
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

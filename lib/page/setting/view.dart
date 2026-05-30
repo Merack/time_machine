@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../route/route_name.dart';
 import 'controller.dart';
 import 'widgets/widgets.dart';
 import 'widgets/theme_selector.dart';
@@ -157,6 +158,21 @@ class SettingPage extends StatelessWidget {
 
               const SizedBox(height: 24),
 
+              // 提示音设置入口(进入二级页面)
+              SettingSection(
+                title: '提示音',
+                children: [
+                  SettingTile(
+                    title: '提示音设置',
+                    subtitle: '为各计时事件单独选择提示音',
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () => Get.toNamed(AppRoutes.SOUND_SETTINGS),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 24),
+
               // 显示设置组
               SettingSection(
                 title: '显示设置',
@@ -184,6 +200,16 @@ class SettingPage extends StatelessWidget {
                       onChanged: controller.toggleProgressDirection,
                     )),
                   ),
+                ],
+              ),
+
+              const SizedBox(height: 24),
+
+              // 权限管理分组
+              SettingSection(
+                title: '权限管理',
+                children: const [
+                  PermissionSettings(),
                 ],
               ),
 

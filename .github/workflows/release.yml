@@ -46,6 +46,12 @@ jobs:
       - name: Build APKs (split by ABI)
         run: flutter build apk --release --split-per-abi
 
+      - name: Rename APKs
+        run: |
+          mkdir -p dist
+          cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk dist/time_machine-arm64-v8a.apk
+          cp build/app/outputs/flutter-apk/app-x86_64-release.apk    dist/time_machine-x86_64.apk
+
       - name: Extract tag notes
         id: tag_notes
         run: |
@@ -59,7 +65,23 @@ jobs:
         with:
           body: ${{ steps.tag_notes.outputs.notes }}
           files: |
-            build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
-            build/app/outputs/flutter-apk/app-x86_64-release.apk
+            dist/time_machine-arm64-v8a.apk
+            dist/time_machine-x86_64.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload to Cloudflare R2
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+          AWS_EC2_METADATA_DISABLED: "true"
+          # 关闭 aws-cli v2 默认的完整性校验,避免 R2 拒绝带 checksum 头的请求
+          AWS_REQUEST_CHECKSUM_CALCULATION: when_required
+          AWS_RESPONSE_CHECKSUM_VALIDATION: when_required
+        run: |
+          for f in time_machine-arm64-v8a.apk time_machine-x86_64.apk; do
+            aws s3 cp "dist/$f" \
+              "s3://${{ secrets.R2_BUCKET }}/time_machine/$f" \
+              --endpoint-url "${{ secrets.R2_ENDPOINT }}"
+          done

@@ -52,11 +52,6 @@ class BackupRestoreDBService {
           // 创建与主数据库相同的表结构
           await _createBackupTables(db);
         },
-        // 更新: 直接删除整个数据库文件再重建, 性能可能会更好一点
-        // 如果旧的备份文件已存在, 那么每次打开时都删除旧表
-        // onOpen: (db) async {
-        //   await _createBackupTables(db);
-        // },
       );
 
       // 将MMKV设置数据转移到settings表
@@ -92,7 +87,7 @@ class BackupRestoreDBService {
       // Get.log('===${(await getDownloadsDirectory())?.path}===');
       
       // 选择备份文件
-      final result = await FilePicker.platform.pickFiles(
+      final result = await FilePicker.pickFiles(
         // 这里的FileType.custom无法识别db文件, 还是用默认的any吧, 只不过这样要自己验证后缀了
         // TODO: 文件后缀验证
         // type: FileType.custom,
@@ -177,7 +172,7 @@ class BackupRestoreDBService {
   /// 将MMKV设置数据转移到settings表
   Future<void> _transferMMKVToSettings(Database backupDB) async {
     final settingsToBackup = <SettingModel>[];
-    
+
     // 定义需要备份的设置键和类型
     final settingsMap = <String, String>{
       StorageKeys.focusTimeMinutes: 'int',
@@ -196,6 +191,12 @@ class BackupRestoreDBService {
       StorageKeys.pomodoroLongBreakMinutes: 'int',
       StorageKeys.pomodoroLongBreakInterval: 'int',
     };
+
+    // 加入提示音事件的 type/value 键
+    for (final eventId in StorageKeys.soundEventIds) {
+      settingsMap[StorageKeys.soundTypeKey(eventId)] = 'string';
+      settingsMap[StorageKeys.soundValueKey(eventId)] = 'string';
+    }
     
     for (final entry in settingsMap.entries) {
       final key = entry.key;
@@ -233,8 +234,7 @@ class BackupRestoreDBService {
 
   /// 创建备份数据库表结构
   Future<void> _createBackupTables(Database db) async {
-    // 先删除已存在的表，然后创建focus_sessions表(更新: 直接删除整个数据库文件再重建, 性能可能会更好一点)
-    // await db.execute('DROP TABLE IF EXISTS ${DatabaseHelper.tableFocusSessions}');
+
     await db.execute('''
       CREATE TABLE ${DatabaseHelper.tableFocusSessions} (
         ${DatabaseHelper.columnId} INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -247,9 +247,7 @@ class BackupRestoreDBService {
         ${DatabaseHelper.columnSessionMode} TEXT
       )
     ''');
-    
-    // 先删除已存在的表，然后创建settings表 (更新: 直接删除整个数据库文件重建, 性能可能会更好一点)
-    // await db.execute('DROP TABLE IF EXISTS ${DatabaseHelper.tableSettings}');
+
     await db.execute('''
       CREATE TABLE ${DatabaseHelper.tableSettings} (
         ${DatabaseHelper.columnSettingId} INTEGER PRIMARY KEY AUTOINCREMENT,

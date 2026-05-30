@@ -7,17 +7,16 @@ import 'package:mmkv/mmkv.dart';
 import '../../dao/focus_session_dao.dart';
 import '../../model/focus_session_model.dart';
 import '../../service/app_storage_service.dart';
+import '../../service/ringtone_picker_service.dart';
 import '../../config/storage_keys.dart';
 import 'state.dart';
 
 class HomeController extends GetxController {
   final HomeState state = HomeState();
   final AudioPlayer _audioPlayer = AudioPlayer();
-  // 计时放在后台isolate里, 这里用不上了, 留着参考
-  // Timer? _timer;
-  // Timer? _microBreakTimer;
+
   late final MMKV _storage;
-  // late final BackgroundTimerService _backgroundTimerService;
+
   final FlutterBackgroundService _backgroundService = FlutterBackgroundService();
 
   // 当前专注会话记录
@@ -34,8 +33,6 @@ class HomeController extends GetxController {
 
   @override
   void onClose() {
-    // _timer?.cancel();
-    // _microBreakTimer?.cancel();
     _audioPlayer.dispose();
     super.onClose();
   }
@@ -162,26 +159,6 @@ class HomeController extends GetxController {
     }
   }
 
-  /// 重置计时器 (未保活版, 用不上了, 留着参考)
-  // void resetTimer() {
-  //   // _playButtonSound();
-  //
-  //   // 停止后台计时器服务
-  //   // _backgroundTimerService.resetTimer();
-  //
-  //   // 清空当前会话信息（未完成的专注不记录）
-  //   _currentSessionStartTime = null;
-  //
-  //   _timer?.cancel();
-  //   _microBreakTimer?.cancel();
-  //
-  //   state.timerStatus.value = TimerStatus.stopped;
-  //   state.remainingFocusTime.value = state.focusTimeSeconds.value;
-  //   state.totalTime.value = state.focusTimeSeconds.value;
-  //   state.isRunning.value = false;
-  //   state.generateNextMicroBreakInterval();
-  // }
-
   /// 重置计时器(new)
   void resetTimer() {
     // _playButtonSound();
@@ -202,33 +179,6 @@ class HomeController extends GetxController {
     state.generateNextMicroBreakInterval();
   }
 
-  /// 开始计时器 (未保活版, 用不上了, 留着参考)
-  // void _startTimer() {
-  //   if (state.timerStatus.value == TimerStatus.stopped) {
-  //     // 首次启动,进入专注状态
-  //     _startFocusSession();
-  //   } else {
-  //     // 从暂停状态恢复
-  //     if (state.timerStatus.value == TimerStatus.paused) {
-  //       // 更新 isRunning 状态
-  //       state.isRunning.value = true;
-  //       // 如果之前的状态是 focus 或者 microBreak, 则恢复为专注状态
-  //       if ((state.previousStatus.value == TimerStatus.focus) ||
-  //           (state.previousStatus.value == TimerStatus.microBreak)) {
-  //         state.timerStatus.value = TimerStatus.focus;
-  //       } else {
-  //         // 恢复为之前的状态, 逻辑上这里应该只能是 bigBreak
-  //         state.timerStatus.value = state.previousStatus.value;
-  //       }
-  //       // 重新开始专注计时器
-  //       _startFocusCountdown();
-  //       // 重新生成随机间隔
-  //       state.generateNextMicroBreakInterval();
-  //       // 重新开始微休息计时器
-  //       _startMicroBreakCountdown();
-  //     }
-  //   }
-  // }
   /// 开始计时器(new)
   Future<void> _startTimer() async {
     bool isBackgroundServiceRunning = await _backgroundService.isRunning();
@@ -269,18 +219,15 @@ class HomeController extends GetxController {
     }
   }
 
-  /// 暂停计时器 (未保活版, 用不上了, 留着参考)
-  // void _pauseTimer() {
-  //   // 一同暂停专注和微休息
-  //   _timer?.cancel();
-  //   _microBreakTimer?.cancel();
-  //   state.previousStatus.value = state.timerStatus.value;
-  //   state.timerStatus.value = TimerStatus.paused;
-  //   state.isRunning.value = false;
-  // }
-
   /// 暂停计时器 (new)
-  void _pauseTimer() {
+  Future<void> _pauseTimer() async {
+    try {
+      if (_audioPlayer.state == PlayerState.playing) {
+        await _audioPlayer.stop();
+      }
+    } catch (e) {
+      Get.log('停止播放失败: $e');
+    }
     // 一同暂停专注和微休息
     _backgroundService.invoke("stop_timer");
     state.previousStatus.value = state.timerStatus.value;
@@ -322,21 +269,7 @@ class HomeController extends GetxController {
       });
     }
 
-    // 保留原有的前台计时器作为备用
-    // _startFocusCountdown();
-    // _startMicroBreakCountdown();
   }
-
-  /// 开始倒计时(未保活版, 用不上, 留着参考)
-  // void _startFocusCountdown() {
-  //   _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-  //     if (state.remainingFocusTime.value > 0) {
-  //       state.remainingFocusTime.value--;
-  //     } else {
-  //       _handleFocusTimerComplete();
-  //     }
-  //   });
-  // }
 
   /// 检查是否启用微休息
   bool checkIsEnabledMicroBreak() {
@@ -350,47 +283,11 @@ class HomeController extends GetxController {
     }
   }
 
-  /// 处理微休息到来时间和微休息期间倒计时 (未保活版, 用不上, 留着参考)
-  // void _startMicroBreakCountdown() {
-  //   // 检查微休息是否启用
-  //   if (!state.microBreakEnabled.value) {
-  //     return;
-  //   }
-  //
-  //   // 不启用微休息的逻辑
-  //   if (state.microBreakTimeSeconds.value == 0) {
-  //     return;
-  //   }
-  //   // 处理微休息到来时间倒计时
-  //   if (state.timerStatus.value == TimerStatus.focus) {
-  //     _microBreakTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-  //       if (state.nextMicroBreakTime.value > 0) {
-  //         state.nextMicroBreakTime.value--;
-  //         Get.log("距离微休息开始还有: ${state.nextMicroBreakTime.value}");
-  //       } else {
-  //         _handleMicroBreakStatus(isStartMicroBreak: true);
-  //       }
-  //     });
-  //   }
-  //   // 处理微休息期间倒计时
-  //   if (state.timerStatus.value == TimerStatus.microBreak) {
-  //     _microBreakTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-  //       if (state.remainingMicroBreakTime.value > 0) {
-  //         state.remainingMicroBreakTime.value--;
-  //         Get.log("微休息时间还剩有: ${state.remainingMicroBreakTime.value}");
-  //       } else {
-  //         Get.log("微休息完成");
-  //         _handleMicroBreakStatus(isStartMicroBreak: false);
-  //       }
-  //     });
-  //   }
-  // }
-
   /// 微休息开始处理函数
   void _handleMicroBreakStart() {
     Get.log("微休息开始");
       // 播放微休息开始音效
-      _playAudio('audio/drop.mp3');
+      _playAudio(StorageKeys.soundEventMicroBreakStart);
 
       // 进入微休息状态
       state.timerStatus.value = TimerStatus.microBreak;
@@ -409,7 +306,7 @@ class HomeController extends GetxController {
     Get.log("微休息结束");
 
     // 播放微休息结束音效
-    _playAudio('audio/ding.mp3');
+    _playAudio(StorageKeys.soundEventMicroBreakComplete);
 
     // 更新状态
     state.timerStatus.value = TimerStatus.focus;
@@ -421,60 +318,6 @@ class HomeController extends GetxController {
       'timerStatus': state.timerStatus.value.name
     });
   }
-
-  /// 处理微休息的开始和结束 (未保活版, 用不上, 留着参考)
-  // void _handleMicroBreakStatus({required bool isStartMicroBreak}) {
-  //   Get.log("微休息开始");
-  //   // 开始微休息
-  //   if (isStartMicroBreak) {
-  //     _microBreakTimer?.cancel();
-  //
-  //     // 播放微休息开始音效
-  //     _playAudio('audio/drop.mp3');
-  //
-  //     // 进入微休息状态
-  //     state.timerStatus.value = TimerStatus.microBreak;
-  //
-  //     // 开始微休息倒计时
-  //     // 设置微休息时间
-  //     state.remainingMicroBreakTime.value = state.microBreakTimeSeconds.value;
-  //     _startMicroBreakCountdown();
-  //   } else {
-  //     // 微休息结束
-  //     Get.log("微休息结束");
-  //     _microBreakTimer?.cancel();
-  //
-  //     // 播放微休息结束音效
-  //     _playAudio('audio/ding.mp3');
-  //
-  //     // 更新状态
-  //     state.timerStatus.value = TimerStatus.focus;
-  //
-  //     state.generateNextMicroBreakInterval();
-  //     // 开始微休息倒计时
-  //     _startMicroBreakCountdown();
-  //   }
-  // }
-
-  /// 处理计时器完成 (未保活版, 用不上了, 留着参考)
-  // void _handleFocusTimerComplete() {
-  //   _timer?.cancel();
-  //
-  //   switch (state.timerStatus.value) {
-  //     case TimerStatus.focus:
-  //       _completeFocusStatus();
-  //       break;
-  //     // 如果专注计时走完正好又处于微休息期间时, 仍然认为完成了专注任务
-  //     case TimerStatus.microBreak:
-  //       _completeFocusStatus();
-  //       break;
-  //     case TimerStatus.bigBreak:
-  //       _completeBigBreak();
-  //       break;
-  //     default:
-  //       break;
-  //   }
-  // }
 
   /// 处理计时器完成(new)
   void _handleFocusTimerComplete() {
@@ -501,42 +344,6 @@ class HomeController extends GetxController {
     }
   }
 
-  /// 完成专注状态倒计时 (未保活版, 用不上了, 留着参考)
-  // void _completeFocusStatus() {
-  //   // 不在专注时段, 微休息停止计时
-  //   _microBreakTimer?.cancel();
-  //
-  //   // 记录专注会话完成
-  //   _recordFocusSession();
-  //
-  //   // 播放专注完成音效
-  //   _playAudio('audio/wakeup.mp3');
-  //
-  //   // 增加完成周期数
-  //   state.completedCycles.value++;
-  //
-  //   // 如果用户设置大休息时间为0, 则跳过休息阶段
-  //   if (state.bigBreakTimeSeconds.value == 0) {
-  //     if (state.autoStartNextFocus.value) {
-  //       // 直接开始下一轮专注
-  //       resetTimer();
-  //       _startFocusSession();
-  //     } else {
-  //       // 仅重置计时器, 保持停止状态
-  //       resetTimer();
-  //     }
-  //     // 直接return 这个函数
-  //     return;
-  //   }
-  //
-  //   // 进入大休息状态
-  //   state.timerStatus.value = TimerStatus.bigBreak;
-  //   state.remainingFocusTime.value = state.bigBreakTimeSeconds.value;
-  //   state.totalTime.value = state.bigBreakTimeSeconds.value;
-  //
-  //   // 开始大休息倒计时
-  //   _startFocusCountdown();
-  // }
   /// 完成专注状态倒计时(new)
   void _completeFocusStatus() {
     // 不在专注时段, 微休息停止计时
@@ -546,7 +353,7 @@ class HomeController extends GetxController {
     _recordFocusSession();
 
     // 播放专注完成音效
-    _playAudio('audio/wakeup.mp3');
+    _playAudio(StorageKeys.soundEventFocusComplete);
 
     // 增加完成周期数（随机提示音模式）
     state.completedRandomCycles.value++;
@@ -573,7 +380,7 @@ class HomeController extends GetxController {
   void _completeBigBreak() {
     // 播放大休息结束音效
     if (state.bigBreakTimeSeconds.value != 0) {
-      _playAudio('audio/alarm-wood.mp3');
+      _playAudio(StorageKeys.soundEventBreakComplete);
     }
 
     if (state.autoStartNextFocus.value) {
@@ -592,7 +399,7 @@ class HomeController extends GetxController {
     _recordFocusSession();
 
     // 播放专注完成音效
-    _playAudio('audio/wakeup.mp3');
+    _playAudio(StorageKeys.soundEventFocusComplete);
 
     // 增加完成周期数和番茄计数
     state.completedPomodoroCycles.value++;
@@ -625,7 +432,7 @@ class HomeController extends GetxController {
 
   /// 完成番茄短休息
   void _completeShortBreak() {
-    _playAudio('audio/alarm-wood.mp3');
+    _playAudio(StorageKeys.soundEventBreakComplete);
 
     if (state.autoStartNextFocus.value) {
       resetTimer();
@@ -635,31 +442,6 @@ class HomeController extends GetxController {
     }
   }
 
-  /// 跳过当前阶段（仅在debug模式下可用）(未保活版, 用不上了, 留着参考)
-  // void skipCurrentPhase() {
-  //   // 播放按钮音效
-  //   _playAudio('audio/button.wav');
-  //
-  //   // 立即结束当前阶段
-  //   _timer?.cancel();
-  //   _microBreakTimer?.cancel();
-  //
-  //   switch (state.timerStatus.value) {
-  //     case TimerStatus.focus:
-  //       _completeFocusStatus();
-  //       break;
-  //     case TimerStatus.microBreak:
-  //       // _completeMicroBreak();
-  //       _startFocusCountdown();
-  //       _handleMicroBreakStatus(isStartMicroBreak: false);
-  //       break;
-  //     case TimerStatus.bigBreak:
-  //       _completeBigBreak();
-  //       break;
-  //     default:
-  //       break;
-  //   }
-  // }
   /// 跳过当前阶段（仅在debug模式下可用）(new)
   void skipCurrentPhase() {
     // 播放按钮音效
@@ -693,9 +475,16 @@ class HomeController extends GetxController {
     }
   }
 
-  /// 播放按钮音效
-  void _playButtonSound() {
-    _playAudio('audio/button.wav');
+  /// 播放按钮音效(写死, 不参与用户配置)
+  void _playButtonSound() async {
+    try {
+      if (_audioPlayer.state == PlayerState.playing) {
+        await _audioPlayer.stop();
+      }
+      await _audioPlayer.play(AssetSource('audio/button.wav'));
+    } catch (e) {
+      Get.log('播放按钮音失败: $e');
+    }
   }
 
   /// 切换禅模式
@@ -718,16 +507,46 @@ class HomeController extends GetxController {
   }
 
   /// 播放音频
-  void _playAudio(String assetPath) async {
+  /// [eventId] 来自 StorageKeys.soundEventIds
+  void _playAudio(String eventId) async {
     try {
       // 当新的播放请求来临时打断之前的播放
-      // 目前还不可以处理按钮的快速点击, 仅是处理阶段结束音乐播放时按下按钮的情况
       if (_audioPlayer.state == PlayerState.playing) {
-        _audioPlayer.stop();
+        await _audioPlayer.stop();
       }
-      await _audioPlayer.play(AssetSource(assetPath));
+
+      // 同时停掉可能在播的系统铃声
+      try {
+        Get.find<RingtonePickerService>().stopSystemRingtone();
+      } catch (_) {}
+
+      final type = _storage.decodeString(StorageKeys.soundTypeKey(eventId)) ??
+          StorageKeys.soundTypeBuiltin;
+      final value = _storage.decodeString(StorageKeys.soundValueKey(eventId)) ??
+          StorageKeys.defaultEventSounds[eventId]!;
+
+      switch (type) {
+        case StorageKeys.soundTypeSystem:
+          final ringtone = Get.find<RingtonePickerService>();
+          final ok = await ringtone.playSystemRingtone(value);
+          if (!ok) {
+            // 系统铃声播放失败回退到默认 builtin
+            await _audioPlayer.play(AssetSource(StorageKeys.defaultEventSounds[eventId]!));
+          }
+          break;
+        case StorageKeys.soundTypeCustom:
+          try {
+            await _audioPlayer.play(DeviceFileSource(value));
+          } catch (e) {
+            Get.log('自定义音效播放失败,回退到默认: $e');
+            await _audioPlayer.play(AssetSource(StorageKeys.defaultEventSounds[eventId]!));
+          }
+          break;
+        case StorageKeys.soundTypeBuiltin:
+        default:
+          await _audioPlayer.play(AssetSource(value));
+      }
     } catch (e) {
-      // 使用 Get.log 替代 print
       Get.log('播放音频失败: $e');
     }
   }

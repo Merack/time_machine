@@ -5,6 +5,7 @@ import '../page/test/view.dart';
 import '../page/main/view.dart';
 import '../page/home/view.dart';
 import '../page/setting/view.dart';
+import '../page/sound_settings/view.dart';
 import '../page/about/view.dart';
 import '../page/donate/view.dart';
 
@@ -17,6 +18,7 @@ class AppPages {
     GetPage(name: AppRoutes.TEST, page: () => TestPage()),
     GetPage(name: AppRoutes.HOME, page: () => HomePage()),
     GetPage(name: AppRoutes.SETTING, page: () => SettingPage()),
+    GetPage(name: AppRoutes.SOUND_SETTINGS, page: () => const SoundSettingsPage()),
     GetPage(name: AppRoutes.OTHER, page: () => Other()),
     GetPage(name: AppRoutes.ABOUT, page: () => const AboutPage()),
     GetPage(name: AppRoutes.DONATE, page: () => const DonatePage()),

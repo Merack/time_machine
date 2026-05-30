@@ -11,8 +11,12 @@ pluginManagement {
 
     repositories {
         mavenLocal()
-        maven(url = "https://maven.aliyun.com/repository/public")
-        maven(url = "https://maven.aliyun.com/repository/google")
+        // 仅本地启用阿里云镜像加速;CI(GitHub Actions 默认注入 CI=true)直连官方源,
+        // 避免镜像 502 时 Gradle 整体 disable 该仓库导致构建失败
+        if (System.getenv("CI") == null) {
+            maven(url = "https://maven.aliyun.com/repository/public")
+            maven(url = "https://maven.aliyun.com/repository/google")
+        }
 
         google()
         mavenCentral()
@@ -22,8 +26,8 @@ pluginManagement {
 
 plugins {
     id("dev.flutter.flutter-plugin-loader") version "1.0.0"
-    id("com.android.application") version "8.7.3" apply false
-    id("org.jetbrains.kotlin.android") version "2.1.0" apply false
+    id("com.android.application") version "8.13.2" apply false
+    id("org.jetbrains.kotlin.android") version "2.3.0" apply false
 }
 
 include(":app")
