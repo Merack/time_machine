@@ -52,11 +52,6 @@ class BackupRestoreDBService {
           // 创建与主数据库相同的表结构
           await _createBackupTables(db);
         },
-        // 更新: 直接删除整个数据库文件再重建, 性能可能会更好一点
-        // 如果旧的备份文件已存在, 那么每次打开时都删除旧表
-        // onOpen: (db) async {
-        //   await _createBackupTables(db);
-        // },
       );
 
       // 将MMKV设置数据转移到settings表
@@ -239,8 +234,7 @@ class BackupRestoreDBService {
 
   /// 创建备份数据库表结构
   Future<void> _createBackupTables(Database db) async {
-    // 先删除已存在的表，然后创建focus_sessions表(更新: 直接删除整个数据库文件再重建, 性能可能会更好一点)
-    // await db.execute('DROP TABLE IF EXISTS ${DatabaseHelper.tableFocusSessions}');
+
     await db.execute('''
       CREATE TABLE ${DatabaseHelper.tableFocusSessions} (
         ${DatabaseHelper.columnId} INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -253,9 +247,7 @@ class BackupRestoreDBService {
         ${DatabaseHelper.columnSessionMode} TEXT
       )
     ''');
-    
-    // 先删除已存在的表，然后创建settings表 (更新: 直接删除整个数据库文件重建, 性能可能会更好一点)
-    // await db.execute('DROP TABLE IF EXISTS ${DatabaseHelper.tableSettings}');
+
     await db.execute('''
       CREATE TABLE ${DatabaseHelper.tableSettings} (
         ${DatabaseHelper.columnSettingId} INTEGER PRIMARY KEY AUTOINCREMENT,

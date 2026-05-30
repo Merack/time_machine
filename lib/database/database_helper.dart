@@ -76,17 +76,6 @@ class DatabaseHelper {
         )
       ''');
 
-      // 创建settings表
-      // await db.execute('''
-      //   CREATE TABLE $tableSettings (
-      //     $columnSettingId INTEGER PRIMARY KEY AUTOINCREMENT,
-      //     $columnSettingKey TEXT NOT NULL UNIQUE,
-      //     $columnSettingValue TEXT NOT NULL,
-      //     $columnSettingType TEXT NOT NULL,
-      //     $columnSettingCreatedAt INTEGER NOT NULL
-      //   )
-      // ''');
-
       // 创建focus_sessions表索引以优化查询性能
       await db.execute('''
         CREATE INDEX idx_focus_sessions_start_time
@@ -102,12 +91,6 @@ class DatabaseHelper {
         CREATE INDEX idx_focus_sessions_date_range
         ON $tableFocusSessions ($columnStartTime, $columnEndTime)
       ''');
-
-      // 创建settings表索引
-      // await db.execute('''
-      //   CREATE INDEX idx_settings_key
-      //   ON $tableSettings ($columnSettingKey)
-      // ''');
 
       Get.log('数据库表创建成功');
     } catch (e) {
