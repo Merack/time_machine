@@ -140,7 +140,7 @@ class SoundSettingsController extends GetxController {
       return;
     }
 
-    final result = await FilePicker.platform.pickFiles(
+    final result = await FilePicker.pickFiles(
       type: FileType.audio,
       dialogTitle: '选择音频文件',
     );

@@ -87,7 +87,7 @@ class BackupRestoreDBService {
       // Get.log('===${(await getDownloadsDirectory())?.path}===');
       
       // 选择备份文件
-      final result = await FilePicker.platform.pickFiles(
+      final result = await FilePicker.pickFiles(
         // 这里的FileType.custom无法识别db文件, 还是用默认的any吧, 只不过这样要自己验证后缀了
         // TODO: 文件后缀验证
         // type: FileType.custom,
