@@ -269,9 +269,11 @@ class SettingController extends GetxController {
       final backupPath = await backupRestoreDBService.backupData();
 
       if (backupPath != null) {
+        // 原生 Toast 对超长无空格路径会截断,只展示外部存储根(/0/)之后的关键路径
+        final shownPath = backupPath.split('/0/').last;
         ToastUtil.show(
           '备份成功',
-          '数据已备份到: $backupPath',
+          '数据已备份到: $shownPath',
           toastLength: Toast.LENGTH_LONG,
         );
       } else {
