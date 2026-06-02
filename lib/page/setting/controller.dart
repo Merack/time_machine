@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mmkv/mmkv.dart';
 import 'package:time_machine/route/route_name.dart';
+import 'package:time_machine/utils/toast_util.dart';
 
 import '../../service/app_storage_service.dart';
 import '../../service/permission_service.dart';
@@ -107,13 +108,7 @@ class SettingController extends GetxController {
   /// 保存设置到存储
   void saveSettings() {
     if (!state.validateAll()) {
-      Get.snackbar(
-        '验证失败',
-        '请检查输入的设置值',
-        snackPosition: SnackPosition.TOP,
-        barBlur: 100,
-        duration: Duration(seconds: 2)
-      );
+      ToastUtil.show('验证失败', '请检查输入的设置值');
       return;
     }
 
@@ -131,13 +126,7 @@ class SettingController extends GetxController {
     _storage.encodeInt(StorageKeys.pomodoroLongBreakMinutes, state.pomodoroLongBreakMinutes.value);
     _storage.encodeInt(StorageKeys.pomodoroLongBreakInterval, state.pomodoroLongBreakInterval.value);
 
-    Get.snackbar(
-      '设置已保存',
-      '所有设置已成功保存',
-      snackPosition: SnackPosition.TOP,
-      barBlur: 100.0,
-      duration: Duration(seconds: 1),
-    );
+    ToastUtil.show('设置已保存', '所有设置已成功保存');
 
     // 通知 HomeController 重新加载设置
     try {
@@ -167,13 +156,7 @@ class SettingController extends GetxController {
     state.updateControllers();
     state.clearErrors();
 
-    Get.snackbar(
-      '已重置',
-      '所有设置已重置为默认值',
-      snackPosition: SnackPosition.TOP,
-      barBlur: 100.0,
-      duration: Duration(seconds: 1),
-    );
+    ToastUtil.show('已重置', '所有设置已重置为默认值');
   }
 
   /// 更新专注时间
@@ -268,12 +251,10 @@ class SettingController extends GetxController {
     // 申请存储权限
     final perm = Get.find<PermissionService>();
     if (!await perm.requestStorage()) {
-      Get.snackbar(
+      ToastUtil.show(
         '权限不足',
         '备份需要存储权限, 请在「权限管理→存储权限」中授予后再试',
-        snackPosition: SnackPosition.TOP,
-        barBlur: 100,
-        duration: const Duration(seconds: 3),
+        toastLength: Toast.LENGTH_LONG,
       );
       return;
     }
@@ -288,30 +269,24 @@ class SettingController extends GetxController {
       final backupPath = await backupRestoreDBService.backupData();
 
       if (backupPath != null) {
-        Get.snackbar(
+        ToastUtil.show(
           '备份成功',
           '数据已备份到: $backupPath',
-          snackPosition: SnackPosition.TOP,
-          barBlur: 100.0,
-          duration: const Duration(seconds: 3),
+          toastLength: Toast.LENGTH_LONG,
         );
       } else {
-        Get.snackbar(
+        ToastUtil.show(
           '备份失败',
           '无法创建备份文件, 请检查存储权限',
-          snackPosition: SnackPosition.TOP,
-          barBlur: 100.0,
-          duration: const Duration(seconds: 3),
+          toastLength: Toast.LENGTH_LONG,
         );
       }
     } catch (e) {
       Get.log('备份过程中发生错误: $e');
-      Get.snackbar(
+      ToastUtil.show(
         '备份失败',
         '备份过程中发生错误: ${e.toString()}',
-        snackPosition: SnackPosition.TOP,
-        barBlur: 100.0,
-        duration: const Duration(seconds: 3),
+        toastLength: Toast.LENGTH_LONG,
       );
     } finally {
       state.isBackupInProgress.value = false;
@@ -325,12 +300,10 @@ class SettingController extends GetxController {
     // 申请存储权限
     final perm = Get.find<PermissionService>();
     if (!await perm.requestStorage()) {
-      Get.snackbar(
+      ToastUtil.show(
         '权限不足',
         '恢复需要存储权限, 请在「权限管理→存储权限」中授予后再试',
-        snackPosition: SnackPosition.TOP,
-        barBlur: 100,
-        duration: const Duration(seconds: 3),
+        toastLength: Toast.LENGTH_LONG,
       );
       return;
     }
@@ -364,12 +337,10 @@ class SettingController extends GetxController {
       final success = await backupRestoreDBService.restoreData();
 
       if (success) {
-        Get.snackbar(
+        ToastUtil.show(
           '恢复成功',
           '数据已成功恢复, 请重启应用以生效',
-          snackPosition: SnackPosition.TOP,
-          barBlur: 100.0,
-          duration: const Duration(seconds: 3),
+          toastLength: Toast.LENGTH_LONG,
         );
 
         // 重新加载设置
@@ -383,22 +354,18 @@ class SettingController extends GetxController {
           // HomeController 可能还没有初始化, 忽略错误
         }
       } else {
-        Get.snackbar(
+        ToastUtil.show(
           '恢复失败',
           '无法恢复数据, 请检查备份文件是否有效',
-          snackPosition: SnackPosition.TOP,
-          barBlur: 100.0,
-          duration: const Duration(seconds: 3),
+          toastLength: Toast.LENGTH_LONG,
         );
       }
     } catch (e) {
       Get.log('恢复过程中发生错误: $e');
-      Get.snackbar(
+      ToastUtil.show(
         '恢复失败',
         '恢复过程中发生错误: ${e.toString()}',
-        snackPosition: SnackPosition.TOP,
-        barBlur: 100.0,
-        duration: const Duration(seconds: 3),
+        toastLength: Toast.LENGTH_LONG,
       );
     } finally {
       state.isRestoreInProgress.value = false;

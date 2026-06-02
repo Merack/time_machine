@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:time_machine/utils/toast_util.dart';
 import '../../config/storage_keys.dart';
 
 class SettingState {
@@ -137,13 +138,7 @@ class SettingState {
       if (microBreakIntervalMinMinutes.value > microBreakIntervalMaxMinutes.value) {
         microBreakIntervalMinMinutes.value = microBreakIntervalMaxMinutes.value;
         microBreakIntervalMinController.text = microBreakIntervalMinMinutes.value.toString();
-        Get.snackbar(
-          '设置已调整',
-          '最小间隔不能大于最大间隔,已调整为相同值',
-          snackPosition: SnackPosition.TOP,
-          barBlur: 100,
-          duration: Duration(seconds: 2),
-        );
+        ToastUtil.show('设置已调整', '最小间隔不能大于最大间隔,已调整为相同值');
       }
     }
 

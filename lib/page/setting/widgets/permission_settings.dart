@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:time_machine/utils/toast_util.dart';
 
 import '../../../service/permission_service.dart';
 import 'setting_tile.dart';
@@ -75,13 +76,7 @@ class PermissionSettings extends StatelessWidget {
   }
 
   void _showOpenSettingsHint() {
-    Get.snackbar(
-      '需要在系统设置中手动开启',
-      '权限已被永久拒绝, 即将跳转到应用设置',
-      snackPosition: SnackPosition.TOP,
-      barBlur: 100,
-      duration: const Duration(seconds: 2),
-    );
+    ToastUtil.show('需要在系统设置中手动开启', '权限已被永久拒绝, 即将跳转到应用设置');
   }
 }
 

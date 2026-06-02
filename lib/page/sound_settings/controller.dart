@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:get/get.dart';
 import 'package:mmkv/mmkv.dart';
 import 'package:path/path.dart' as p;
+import 'package:time_machine/utils/toast_util.dart';
 
 import '../../config/storage_keys.dart';
 import '../../service/app_storage_service.dart';
@@ -130,13 +131,7 @@ class SoundSettingsController extends GetxController {
     // Android 13+ 需要 READ_MEDIA_AUDIO
     final granted = await _permissionService.requestAudioRead();
     if (!granted) {
-      Get.snackbar(
-        '权限不足',
-        '请授予音频读取权限后重试',
-        snackPosition: SnackPosition.TOP,
-        barBlur: 100,
-        duration: const Duration(seconds: 2),
-      );
+      ToastUtil.show('权限不足', '请授予音频读取权限后重试');
       return;
     }
 
@@ -152,13 +147,7 @@ class SoundSettingsController extends GetxController {
 
     final dest = await _customSoundStorage.importCustomSound(eventId, src);
     if (dest == null) {
-      Get.snackbar(
-        '导入失败',
-        '无法保存自定义音效',
-        snackPosition: SnackPosition.TOP,
-        barBlur: 100,
-        duration: const Duration(seconds: 2),
-      );
+      ToastUtil.show('导入失败', '无法保存自定义音效');
       return;
     }
 
@@ -217,13 +206,7 @@ class SoundSettingsController extends GetxController {
     }
     await stopAllPreview();
     if (!await File(filePath).exists()) {
-      Get.snackbar(
-        '试听失败',
-        '文件不存在',
-        snackPosition: SnackPosition.TOP,
-        barBlur: 100,
-        duration: const Duration(seconds: 2),
-      );
+      ToastUtil.show('试听失败', '文件不存在');
       return;
     }
     state.previewingTag.value = tag;
