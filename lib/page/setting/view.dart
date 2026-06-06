@@ -125,28 +125,21 @@ class SettingPage extends StatelessWidget {
                     ),
                   ),
                   const SettingDivider(),
-                  SettingTile(
-                    title: '自动开始下一个',
-                    subtitle: '休息结束后自动开始下一个专注',
-                    trailing: Obx(() => SettingSwitch(
-                      value: state.autoStartNextFocus.value,
-                      onChanged: controller.toggleAutoStartNextFocus,
-                    )),
-                  ),
+                  MicroBreakSettings(controller: controller)
                 ],
               ),
 
               const SizedBox(height: 24),
 
               // 微休息设置组
-              SettingSection(
-                title: '微休息设置',
-                children: [
-                  MicroBreakSettings(controller: controller),
-                ],
-              ),
+              // SettingSection(
+              //   title: '微休息设置',
+              //   children: [
+              //     MicroBreakSettings(controller: controller),
+              //   ],
+              // ),
 
-              const SizedBox(height: 24),
+              // const SizedBox(height: 24),
 
               // 番茄时钟设置组（始终显示，供用户预先配置）
               SettingSection(
@@ -175,8 +168,17 @@ class SettingPage extends StatelessWidget {
 
               // 显示设置组
               SettingSection(
-                title: '显示设置',
+                title: '显示与行为',
                 children: [
+                  SettingTile(
+                    title: '自动开始下一个',
+                    subtitle: '休息结束后自动开始下一个专注',
+                    trailing: Obx(() => SettingSwitch(
+                      value: state.autoStartNextFocus.value,
+                      onChanged: controller.toggleAutoStartNextFocus,
+                    )),
+                  ),
+                  const SettingDivider(),
                   SettingTile(
                     title: '主题模式',
                     subtitle: '选择应用的外观主题',
