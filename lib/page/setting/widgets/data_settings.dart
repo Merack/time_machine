@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:time_machine/utils/toast_util.dart';
 
 import '../../../service/database_service.dart';
 import '../controller.dart';
@@ -102,10 +103,7 @@ class DataSettings extends StatelessWidget {
               if (confirmed == true) {
                 final databaseService = Get.find<DatabaseService>();
                 await databaseService.resetDatabase();
-                Get.snackbar('成功', '数据库已重置', 
-                duration: Duration(seconds: 1),
-                barBlur: 100,
-                );
+                ToastUtil.show('成功', '数据库已重置');
               }
             },
             child: const Text('重置'),

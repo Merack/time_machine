@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:time_machine/utils/toast_util.dart';
 import 'package:time_machine/page/setting/widgets/setting_divider.dart';
 import 'package:time_machine/page/setting/widgets/setting_section.dart';
 import 'package:time_machine/page/setting/widgets/setting_tile.dart';
@@ -24,7 +25,7 @@ class DeveloperSettings extends StatelessWidget {
             onPressed: () async {
               final testDataController = Get.put(TestDataController());
               await testDataController.generateTestData();
-              Get.snackbar('成功', '测试数据已生成', duration: Duration(seconds: 1));
+              ToastUtil.show('成功', '测试数据已生成');
             },
             child: const Text('生成'),
           ),

@@ -111,17 +111,17 @@ class HomePage extends StatelessWidget {
           children: [
             _buildModeChip(
               context: context,
-              label: '随机提示音',
-              isSelected: !isPomodoro,
-              enabled: isStopped,
-              onTap: () => controller.switchTimerMode('random_break'),
-            ),
-            _buildModeChip(
-              context: context,
               label: '番茄时钟',
               isSelected: isPomodoro,
               enabled: isStopped,
               onTap: () => controller.switchTimerMode('pomodoro'),
+            ),
+            _buildModeChip(
+              context: context,
+              label: '随机提示音',
+              isSelected: !isPomodoro,
+              enabled: isStopped,
+              onTap: () => controller.switchTimerMode('random_break'),
             ),
           ],
         ),

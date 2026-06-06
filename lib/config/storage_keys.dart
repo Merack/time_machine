@@ -29,7 +29,7 @@ class StorageKeys {
   static const String themeMode = 'theme_mode'; // 主题模式：light, dark, system
 
   // 默认值
-  static const String defaultTimerMode = 'random_break';
+  static const String defaultTimerMode = 'pomodoro';
   static const int defaultFocusTimeMinutes = 90;
   static const int defaultBigBreakTimeMinutes = 20;
   static const bool defaultMicroBreakEnabled = true; // 默认启用微休息

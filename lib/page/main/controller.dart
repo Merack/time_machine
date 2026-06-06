@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:get/get.dart';
 import 'package:time_machine/page/main/state.dart';
+import 'package:time_machine/utils/toast_util.dart';
 
 class MainController extends GetxController {
   final MainState state = MainState();
@@ -44,14 +45,7 @@ class MainController extends GetxController {
       state.lastBackPressTime = now;
 
       // 显示Toast提示
-      Get.snackbar(
-        '提示',
-        '再按一次返回键退出应用',
-        snackPosition: SnackPosition.TOP,
-        duration: const Duration(seconds: 2),
-        margin: const EdgeInsets.all(16),
-        barBlur: 100,
-      );
+      ToastUtil.show('提示', '再按一次返回键退出应用');
 
       return false; // 不退出应用
     } else {
