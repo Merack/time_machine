@@ -89,9 +89,19 @@ class SettingPage extends StatelessWidget {
           child: ListView(
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
             children: [
-              // 专注设置组
+              // 番茄时钟设置组（始终显示，供用户预先配置）
               SettingSection(
-                title: '专注设置',
+                title: '番茄时钟设置',
+                children: [
+                  PomodoroSettings(controller: controller),
+                ],
+              ),
+
+              const SizedBox(height: 24),
+
+              // 随机提示音设置组
+              SettingSection(
+                title: '随机提示音设置',
                 children: [
                   SettingTile(
                     title: '专注时间',
@@ -131,26 +141,6 @@ class SettingPage extends StatelessWidget {
 
               const SizedBox(height: 24),
 
-              // 微休息设置组
-              // SettingSection(
-              //   title: '微休息设置',
-              //   children: [
-              //     MicroBreakSettings(controller: controller),
-              //   ],
-              // ),
-
-              // const SizedBox(height: 24),
-
-              // 番茄时钟设置组（始终显示，供用户预先配置）
-              SettingSection(
-                title: '番茄时钟设置',
-                children: [
-                  PomodoroSettings(controller: controller),
-                ],
-              ),
-
-              const SizedBox(height: 24),
-
               // 提示音设置入口(进入二级页面)
               SettingSection(
                 title: '提示音',
@@ -180,12 +170,6 @@ class SettingPage extends StatelessWidget {
                   ),
                   const SettingDivider(),
                   SettingTile(
-                    title: '主题模式',
-                    subtitle: '选择应用的外观主题',
-                    trailing: const ThemeSelector(),
-                  ),
-                  const SettingDivider(),
-                  SettingTile(
                     title: '正向计时',
                     subtitle: '计时从0开始递增显示',
                     trailing: Obx(() => SettingSwitch(
@@ -201,6 +185,12 @@ class SettingPage extends StatelessWidget {
                       value: state.isProgressForward.value,
                       onChanged: controller.toggleProgressDirection,
                     )),
+                  ),
+                  const SettingDivider(),
+                  SettingTile(
+                    title: '主题模式',
+                    subtitle: '选择应用的外观主题',
+                    trailing: const ThemeSelector(),
                   ),
                 ],
               ),
