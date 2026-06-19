@@ -1,5 +1,7 @@
 # TimeMachine — 基于 Flutter 的专注时钟应用
 
+> 鸿蒙版已上线, 欢迎在应用商店搜索"时雨"来体验
+
 [Switch to English Version](README_EN.md)
 
 **TimeMachine** 是一个简约高效的 Flutter 构建的专注时钟应用, 支持随机提示音和番茄时钟两种机制
