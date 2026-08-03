@@ -97,4 +97,47 @@ class StorageKeys {
   static String soundValueKey(String eventId) => 'sound_${eventId}_value';
   static String soundDisplayNameKey(String eventId) => 'sound_${eventId}_display_name';
 
+  // ===== 事件提醒通知 =====
+  // 复用上面的 soundEventIds 作为通知事件集合, 不另建一套事件体系.
+  // 暂停/从暂停恢复不属于事件, 因此不会发通知.
+
+  /// 事件提醒通知渠道 ID
+  ///
+  /// 注意: Android 通知渠道创建后其重要性/声音/振动均不可再由代码修改,
+  /// 只能通过更换渠道 ID 或用户清除应用数据来重建. 改动这些属性前务必确认.
+  static const String notificationChannelEvents = 'time_machine_events';
+  static const String notificationChannelEventsName = 'Time Machine 计时提醒';
+  static const String notificationChannelEventsDesc = '专注完成、休息结束等计时事件提醒';
+
+  /// 各事件通知 ID(与前台常驻通知的 1048596 区分开)
+  /// 每个事件固定一个 ID, 重复触发时替换自身旧通知而不是堆叠
+  static const Map<String, int> notificationIds = {
+    soundEventMicroBreakStart: 1048601,
+    soundEventMicroBreakComplete: 1048602,
+    soundEventFocusComplete: 1048603,
+    soundEventBreakComplete: 1048604,
+  };
+
+  /// 通知标题(默认取 eventDisplayNames, 这里只放需要区别于展示名的)
+  static const Map<String, String> notificationTitles = {
+    soundEventMicroBreakStart: '微休息开始',
+    soundEventMicroBreakComplete: '微休息结束',
+    soundEventFocusComplete: '专注完成',
+    soundEventBreakComplete: '休息结束',
+  };
+
+  /// 通知正文
+  static const Map<String, String> notificationBodies = {
+    soundEventMicroBreakStart: '抬头远眺, 放松一下眼睛',
+    soundEventMicroBreakComplete: '微休息结束, 回到专注',
+    soundEventFocusComplete: '本轮专注已完成, 休息一下吧',
+    soundEventBreakComplete: '休息结束, 准备开始下一轮专注',
+  };
+
+  /// 事件通知开关默认值: 全部关闭, 由用户按需开启
+  static const bool defaultNotificationEnabled = false;
+
+  /// 事件通知开关 MMKV 键
+  static String notificationEnabledKey(String eventId) =>
+      'notify_${eventId}_enabled';
 }
