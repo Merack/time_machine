@@ -50,10 +50,11 @@ class PermissionSettings extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
       child: Text(
-        '在此处请求的电池优化权限, 即使显示授权成功, 在某些系统上也可能并未真正生效. '
+        '重要说明: \n'
+        '• 在此处请求的电池优化权限, 即使显示授权成功, 在某些系统上也可能并未真正生效. '
         '强烈建议手动在系统设置里搜索"电池优化", 将本应用加入白名单; '
         '同时在手机管家中把本应用的后台运行设为允许.\n'
-        '本应用后台只维护必要的计时器, 耗电量极小.',
+        '• 本应用后台运行只维护必要的计时器, 耗电量极小.',
         style: theme.textTheme.bodySmall?.copyWith(
           color: theme.colorScheme.onSurfaceVariant,
           height: 1.6,

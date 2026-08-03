@@ -64,7 +64,6 @@ class NotificationSettingsPage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(20),
                   child: Text(
-                    '• 所有事件通知默认关闭, 按需开启\n'
                     '• 通知会带系统提示音和振动, 与应用自身的提示音同时触发\n'
                     '• 微休息在随机提示音模式下每几分钟触发一次, 开启后通知会比较频繁\n'
                     '• 暂停和从暂停恢复不发送通知\n'
