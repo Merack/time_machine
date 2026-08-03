@@ -7,6 +7,7 @@ import 'package:mmkv/mmkv.dart';
 import '../../dao/focus_session_dao.dart';
 import '../../model/focus_session_model.dart';
 import '../../service/app_storage_service.dart';
+import '../../service/notification_service.dart';
 import '../../service/ringtone_picker_service.dart';
 import '../../config/storage_keys.dart';
 import 'state.dart';
@@ -287,7 +288,7 @@ class HomeController extends GetxController {
   void _handleMicroBreakStart() {
     Get.log("微休息开始");
       // 播放微休息开始音效
-      _playAudio(StorageKeys.soundEventMicroBreakStart);
+      _notifyEvent(StorageKeys.soundEventMicroBreakStart);
 
       // 进入微休息状态
       state.timerStatus.value = TimerStatus.microBreak;
@@ -306,7 +307,7 @@ class HomeController extends GetxController {
     Get.log("微休息结束");
 
     // 播放微休息结束音效
-    _playAudio(StorageKeys.soundEventMicroBreakComplete);
+    _notifyEvent(StorageKeys.soundEventMicroBreakComplete);
 
     // 更新状态
     state.timerStatus.value = TimerStatus.focus;
@@ -353,7 +354,7 @@ class HomeController extends GetxController {
     _recordFocusSession();
 
     // 播放专注完成音效
-    _playAudio(StorageKeys.soundEventFocusComplete);
+    _notifyEvent(StorageKeys.soundEventFocusComplete);
 
     // 增加完成周期数（随机提示音模式）
     state.completedRandomCycles.value++;
@@ -380,7 +381,7 @@ class HomeController extends GetxController {
   void _completeBigBreak() {
     // 播放大休息结束音效
     if (state.bigBreakTimeSeconds.value != 0) {
-      _playAudio(StorageKeys.soundEventBreakComplete);
+      _notifyEvent(StorageKeys.soundEventBreakComplete);
     }
 
     if (state.autoStartNextFocus.value) {
@@ -399,7 +400,7 @@ class HomeController extends GetxController {
     _recordFocusSession();
 
     // 播放专注完成音效
-    _playAudio(StorageKeys.soundEventFocusComplete);
+    _notifyEvent(StorageKeys.soundEventFocusComplete);
 
     // 增加完成周期数和番茄计数
     state.completedPomodoroCycles.value++;
@@ -432,7 +433,7 @@ class HomeController extends GetxController {
 
   /// 完成番茄短休息
   void _completeShortBreak() {
-    _playAudio(StorageKeys.soundEventBreakComplete);
+    _notifyEvent(StorageKeys.soundEventBreakComplete);
 
     if (state.autoStartNextFocus.value) {
       resetTimer();
@@ -504,6 +505,20 @@ class HomeController extends GetxController {
         : state.focusTimeSeconds.value;
     state.remainingFocusTime.value = focusTime;
     state.totalTime.value = focusTime;
+  }
+
+  /// 触发计时事件的用户提醒(提示音 + 通知栏提醒)
+  ///
+  /// 两者共用同一套 eventId, 但开关互相独立: 提示音一直会响,
+  /// 通知则由用户在通知设置页按事件开启(默认全部关闭).
+  /// 暂停和从暂停恢复不是计时事件, 不走这里, 因此不会发通知.
+  void _notifyEvent(String eventId) {
+    _playAudio(eventId);
+
+    // 通知发送是异步的且失败不影响计时, 这里不 await
+    if (Get.isRegistered<NotificationService>()) {
+      Get.find<NotificationService>().showEventNotification(eventId);
+    }
   }
 
   /// 播放音频

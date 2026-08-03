@@ -11,6 +11,7 @@ import 'package:time_machine/service/database_service.dart';
 import 'package:time_machine/service/background_timer_service.dart';
 import 'package:time_machine/service/permission_service.dart';
 import 'package:time_machine/service/custom_sound_storage_service.dart';
+import 'package:time_machine/service/notification_service.dart';
 import 'package:time_machine/service/ringtone_picker_service.dart';
 import 'package:time_machine/theme/theme_controller.dart';
 import 'package:time_machine/theme/app_themes.dart';
@@ -79,6 +80,9 @@ Future<void> initServices() async {
 
   // 权限管理服务
   await Get.putAsync(() => PermissionService().init());
+
+  // 计时事件提醒通知服务
+  await Get.putAsync(() => NotificationService().init());
 
   // 自定义提示音文件管理
   await Get.putAsync(() => CustomSoundStorageService().init());

@@ -141,15 +141,22 @@ class SettingPage extends StatelessWidget {
 
               const SizedBox(height: 24),
 
-              // 提示音设置入口(进入二级页面)
+              // 提示音与通知入口(进入二级页面)
               SettingSection(
-                title: '提示音',
+                title: '提示音与通知',
                 children: [
                   SettingTile(
                     title: '提示音设置',
                     subtitle: '为各计时事件单独选择提示音',
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () => Get.toNamed(AppRoutes.SOUND_SETTINGS),
+                  ),
+                  const SettingDivider(),
+                  SettingTile(
+                    title: '通知设置',
+                    subtitle: '通知权限, 以及各计时事件的通知栏提醒开关',
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () => Get.toNamed(AppRoutes.NOTIFICATION_SETTINGS),
                   ),
                 ],
               ),
