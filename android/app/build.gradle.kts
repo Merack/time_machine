@@ -23,7 +23,7 @@ kotlin {
 
 android {
     namespace = "top.merack.time_machine"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 37
     ndkVersion = "28.2.13676358"
 
     compileOptions {
@@ -73,6 +73,15 @@ android {
 dependencies {
     // 添加Desugaring依赖
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
+
+    // audioplayers_android 会传递引入 kotlin-stdlib-jdk7:1.7.10,与 Kotlin 2.3 的
+    // kotlin-stdlib 产生重复类(kotlin.internal.jdk7.*、kotlin.io.path.* 等)。
+    // 自 Kotlin 1.8.0 起 jdk7/jdk8 产物已是空壳并只依赖 kotlin-stdlib,
+    // 因此统一提升到 1.8.0 即可消除冲突,且不会降级任何依赖。
+    constraints {
+        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0")
+        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.0")
+    }
 }
 
 flutter {
