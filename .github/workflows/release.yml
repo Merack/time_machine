@@ -20,8 +20,10 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '17'
+          distribution: 'corretto'
+          java-version: '25'
+          # 缓存 ~/.gradle/caches 与 wrapper 发行包,key 跟随 gradle 配置文件变化自动失效
+          cache: 'gradle'
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2

@@ -87,7 +87,7 @@ class BackupRestoreDBService {
       // Get.log('===${(await getDownloadsDirectory())?.path}===');
       
       // 选择备份文件
-      final result = await FilePicker.pickFiles(
+      final picked = await FilePicker.pickFile(
         // 这里的FileType.custom无法识别db文件, 还是用默认的any吧, 只不过这样要自己验证后缀了
         // TODO: 文件后缀验证
         // type: FileType.custom,
@@ -96,12 +96,12 @@ class BackupRestoreDBService {
         initialDirectory: (await _getDownloadsDirectory())?.path,
       );
       
-      if (result == null || result.files.isEmpty) {
+      if (picked == null) {
         Get.log('用户取消选择文件');
         return false;
       }
       
-      final backupFilePath = result.files.first.path;
+      final backupFilePath = picked.path;
       if (backupFilePath == null) {
         Get.log('无效的文件路径');
         return false;

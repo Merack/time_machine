@@ -7,7 +7,7 @@ import Foundation
 
 import audioplayers_darwin
 import device_info_plus
-import file_picker
+import file_picker_darwin
 import flutter_local_notifications
 import mmkv_ios
 import package_info_plus

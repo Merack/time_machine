@@ -135,15 +135,16 @@ class SoundSettingsController extends GetxController {
       return;
     }
 
-    final result = await FilePicker.pickFiles(
+    final picked = await FilePicker.pickFile(
       type: FileType.audio,
       dialogTitle: '选择音频文件',
     );
-    if (result == null || result.files.isEmpty) return;
-    final src = result.files.first.path;
+    if (picked == null) return;
+    // 部分平台(如 Web)不提供本地路径,此时无法复制文件
+    final src = picked.path;
     if (src == null) return;
     // 文件管理器选中文件的原始名(含扩展名),仅用于展示
-    final originalName = result.files.first.name;
+    final originalName = picked.name;
 
     final dest = await _customSoundStorage.importCustomSound(eventId, src);
     if (dest == null) {
