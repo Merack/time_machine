@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:get/get.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -7,6 +8,7 @@ import 'package:mmkv/mmkv.dart';
 import '../../dao/focus_session_dao.dart';
 import '../../model/focus_session_model.dart';
 import '../../service/app_storage_service.dart';
+import '../../service/background_timer_service.dart';
 import '../../service/notification_service.dart';
 import '../../service/ringtone_picker_service.dart';
 import '../../config/storage_keys.dart';
@@ -18,7 +20,8 @@ class HomeController extends GetxController {
 
   late final MMKV _storage;
 
-  final FlutterBackgroundService _backgroundService = FlutterBackgroundService();
+  final FlutterBackgroundService _backgroundService =
+      FlutterBackgroundService();
 
   // 当前专注会话记录
   DateTime? _currentSessionStartTime;
@@ -66,13 +69,15 @@ class HomeController extends GetxController {
         _storage.decodeInt(
           StorageKeys.focusTimeMinutes,
           defaultValue: StorageKeys.defaultFocusTimeMinutes,
-        ) * 60; // 转换为秒
+        ) *
+        60; // 转换为秒
 
     state.bigBreakTimeSeconds.value =
         _storage.decodeInt(
           StorageKeys.bigBreakTimeMinutes,
           defaultValue: StorageKeys.defaultBigBreakTimeMinutes,
-        ) * 60; // 转换为秒
+        ) *
+        60; // 转换为秒
 
     state.microBreakEnabled.value = _storage.decodeBool(
       StorageKeys.microBreakEnabled,
@@ -88,13 +93,15 @@ class HomeController extends GetxController {
         _storage.decodeInt(
           StorageKeys.microBreakIntervalMinMinutes,
           defaultValue: StorageKeys.defaultMicroBreakIntervalMinMinutes,
-        ) * 60; // 转换为秒
+        ) *
+        60; // 转换为秒
 
     state.maxMicroBreakInterval.value =
         _storage.decodeInt(
           StorageKeys.microBreakIntervalMaxMinutes,
           defaultValue: StorageKeys.defaultMicroBreakIntervalMaxMinutes,
-        ) * 60; // 转换为秒
+        ) *
+        60; // 转换为秒
 
     // 是否正向计时
     state.isCountingUp.value = _storage.decodeBool(
@@ -115,24 +122,31 @@ class HomeController extends GetxController {
     );
 
     // 计时器模式
-    state.timerMode.value = _storage.decodeString(StorageKeys.timerMode)
-        ?? StorageKeys.defaultTimerMode;
+    state.timerMode.value =
+        _storage.decodeString(StorageKeys.timerMode) ??
+        StorageKeys.defaultTimerMode;
 
     // 番茄时钟设置
-    state.pomodoroFocusTimeSeconds.value = _storage.decodeInt(
-      StorageKeys.pomodoroFocusMinutes,
-      defaultValue: StorageKeys.defaultPomodoroFocusMinutes,
-    ) * 60;
+    state.pomodoroFocusTimeSeconds.value =
+        _storage.decodeInt(
+          StorageKeys.pomodoroFocusMinutes,
+          defaultValue: StorageKeys.defaultPomodoroFocusMinutes,
+        ) *
+        60;
 
-    state.pomodoroShortBreakSeconds.value = _storage.decodeInt(
-      StorageKeys.pomodoroShortBreakMinutes,
-      defaultValue: StorageKeys.defaultPomodoroShortBreakMinutes,
-    ) * 60;
+    state.pomodoroShortBreakSeconds.value =
+        _storage.decodeInt(
+          StorageKeys.pomodoroShortBreakMinutes,
+          defaultValue: StorageKeys.defaultPomodoroShortBreakMinutes,
+        ) *
+        60;
 
-    state.pomodoroLongBreakSeconds.value = _storage.decodeInt(
-      StorageKeys.pomodoroLongBreakMinutes,
-      defaultValue: StorageKeys.defaultPomodoroLongBreakMinutes,
-    ) * 60;
+    state.pomodoroLongBreakSeconds.value =
+        _storage.decodeInt(
+          StorageKeys.pomodoroLongBreakMinutes,
+          defaultValue: StorageKeys.defaultPomodoroLongBreakMinutes,
+        ) *
+        60;
 
     state.pomodoroLongBreakInterval.value = _storage.decodeInt(
       StorageKeys.pomodoroLongBreakInterval,
@@ -187,6 +201,7 @@ class HomeController extends GetxController {
       await _backgroundService.startService();
       Get.log("===开始后台服务===");
     }
+    await _syncBackgroundRetentionConfig();
     if (state.timerStatus.value == TimerStatus.stopped) {
       // 首次启动,进入专注状态
       _startFocusSession();
@@ -205,7 +220,8 @@ class HomeController extends GetxController {
         }
         // 重新开始专注计时器
         _backgroundService.invoke('start_focus_countdown', {
-          'remainingFocusTime': state.remainingFocusTime.value
+          'remainingFocusTime': state.remainingFocusTime.value,
+          ..._backgroundRetentionConfigPayload(),
         });
         // 重新生成随机间隔
         state.generateNextMicroBreakInterval();
@@ -213,11 +229,41 @@ class HomeController extends GetxController {
         if (checkIsEnabledMicroBreak()) {
           _backgroundService.invoke('start_micro_break_countdown', {
             'microBreakCountDownTime': state.nextMicroBreakTime.value,
-            'timerStatus': state.timerStatus.value.name
+            'timerStatus': state.timerStatus.value.name,
           });
         }
       }
     }
+  }
+
+  Future<void> _syncBackgroundRetentionConfig() async {
+    if (!Platform.isAndroid || !Get.isRegistered<BackgroundTimerService>()) {
+      return;
+    }
+
+    await Get.find<BackgroundTimerService>().syncBackgroundRetentionConfig(
+      enabled: _storage.decodeBool(
+        StorageKeys.backgroundRetentionEnabled,
+        defaultValue: StorageKeys.defaultBackgroundRetentionEnabled,
+      ),
+      mixWithOthers: _storage.decodeBool(
+        StorageKeys.backgroundRetentionMixWithOthers,
+        defaultValue: StorageKeys.defaultBackgroundRetentionMixWithOthers,
+      ),
+    );
+  }
+
+  Map<String, dynamic> _backgroundRetentionConfigPayload() {
+    return {
+      'backgroundRetentionEnabled': _storage.decodeBool(
+        StorageKeys.backgroundRetentionEnabled,
+        defaultValue: StorageKeys.defaultBackgroundRetentionEnabled,
+      ),
+      'backgroundRetentionMixWithOthers': _storage.decodeBool(
+        StorageKeys.backgroundRetentionMixWithOthers,
+        defaultValue: StorageKeys.defaultBackgroundRetentionMixWithOthers,
+      ),
+    };
   }
 
   /// 暂停计时器 (new)
@@ -254,7 +300,8 @@ class HomeController extends GetxController {
 
     // 启用后台计时
     _backgroundService.invoke('start_focus_countdown', {
-      'remainingFocusTime': state.remainingFocusTime.value
+      'remainingFocusTime': state.remainingFocusTime.value,
+      ..._backgroundRetentionConfigPayload(),
     });
 
     // 只有随机提示音模式才启动微休息
@@ -266,16 +313,16 @@ class HomeController extends GetxController {
         // 更变态的是你不支持就算了, 我传进去竟然也不报错. 这个bug找得我心态爆炸
         // isolate通信枚举类型不能直接传, 即使不报错(我也不知道为什么不报错)
         // 枚举类型处理: 传它的name属性或者index属性, 分别是String和int, 保证代码逻辑正常
-        'timerStatus': state.timerStatus.value.name
+        'timerStatus': state.timerStatus.value.name,
       });
     }
-
   }
 
   /// 检查是否启用微休息
   bool checkIsEnabledMicroBreak() {
     Get.log("检查是否启用微休息: ");
-    if (!state.microBreakEnabled.value || state.microBreakTimeSeconds.value == 0) {
+    if (!state.microBreakEnabled.value ||
+        state.microBreakTimeSeconds.value == 0) {
       Get.log("不启用微休息");
       return false;
     } else {
@@ -287,18 +334,18 @@ class HomeController extends GetxController {
   /// 微休息开始处理函数
   void _handleMicroBreakStart() {
     Get.log("微休息开始");
-      // 播放微休息开始音效
-      _notifyEvent(StorageKeys.soundEventMicroBreakStart);
+    // 播放微休息开始音效
+    _notifyEvent(StorageKeys.soundEventMicroBreakStart);
 
-      // 进入微休息状态
-      state.timerStatus.value = TimerStatus.microBreak;
+    // 进入微休息状态
+    state.timerStatus.value = TimerStatus.microBreak;
 
-      // 开始微休息倒计时
-      // 设置微休息时间
-      state.remainingMicroBreakTime.value = state.microBreakTimeSeconds.value;
-      _backgroundService.invoke('start_micro_break_countdown', {
-        'microBreakCountDownTime': state.remainingMicroBreakTime.value,
-        'timerStatus': state.timerStatus.value.name
+    // 开始微休息倒计时
+    // 设置微休息时间
+    state.remainingMicroBreakTime.value = state.microBreakTimeSeconds.value;
+    _backgroundService.invoke('start_micro_break_countdown', {
+      'microBreakCountDownTime': state.remainingMicroBreakTime.value,
+      'timerStatus': state.timerStatus.value.name,
     });
   }
 
@@ -316,7 +363,7 @@ class HomeController extends GetxController {
     // 开始微休息倒计时
     _backgroundService.invoke('start_micro_break_countdown', {
       'microBreakCountDownTime': state.nextMicroBreakTime.value,
-      'timerStatus': state.timerStatus.value.name
+      'timerStatus': state.timerStatus.value.name,
     });
   }
 
@@ -330,7 +377,7 @@ class HomeController extends GetxController {
           _completeFocusStatus();
         }
         break;
-    // 如果专注计时走完正好又处于微休息期间时, 仍然认为完成了专注任务
+      // 如果专注计时走完正好又处于微休息期间时, 仍然认为完成了专注任务
       case TimerStatus.microBreak:
         _completeFocusStatus();
         break;
@@ -373,7 +420,8 @@ class HomeController extends GetxController {
 
     // 开始大休息倒计时
     _backgroundService.invoke('start_focus_countdown', {
-      'remainingFocusTime': state.remainingFocusTime.value
+      'remainingFocusTime': state.remainingFocusTime.value,
+      ..._backgroundRetentionConfigPayload(),
     });
   }
 
@@ -406,7 +454,9 @@ class HomeController extends GetxController {
     state.completedPomodoroCycles.value++;
     state.currentPomodoroCount.value++;
 
-    final isLongBreak = state.currentPomodoroCount.value >= state.pomodoroLongBreakInterval.value;
+    final isLongBreak =
+        state.currentPomodoroCount.value >=
+        state.pomodoroLongBreakInterval.value;
     if (isLongBreak) {
       state.currentPomodoroCount.value = 0;
       _startPomodoroBreak(isLong: true);
@@ -421,13 +471,16 @@ class HomeController extends GetxController {
         ? state.pomodoroLongBreakSeconds.value
         : state.pomodoroShortBreakSeconds.value;
 
-    state.timerStatus.value = isLong ? TimerStatus.bigBreak : TimerStatus.shortBreak;
+    state.timerStatus.value = isLong
+        ? TimerStatus.bigBreak
+        : TimerStatus.shortBreak;
     state.remainingFocusTime.value = breakTime;
     state.totalTime.value = breakTime;
     state.isRunning.value = true;
 
     _backgroundService.invoke('start_focus_countdown', {
-      'remainingFocusTime': breakTime
+      'remainingFocusTime': breakTime,
+      ..._backgroundRetentionConfigPayload(),
     });
   }
 
@@ -461,7 +514,8 @@ class HomeController extends GetxController {
         break;
       case TimerStatus.microBreak:
         _backgroundService.invoke('start_focus_countdown', {
-          'remainingFocusTime': state.remainingFocusTime.value
+          'remainingFocusTime': state.remainingFocusTime.value,
+          ..._backgroundRetentionConfigPayload(),
         });
         _handleMicroBreakComplete();
         break;
@@ -535,9 +589,11 @@ class HomeController extends GetxController {
         Get.find<RingtonePickerService>().stopSystemRingtone();
       } catch (_) {}
 
-      final type = _storage.decodeString(StorageKeys.soundTypeKey(eventId)) ??
+      final type =
+          _storage.decodeString(StorageKeys.soundTypeKey(eventId)) ??
           StorageKeys.soundTypeBuiltin;
-      final value = _storage.decodeString(StorageKeys.soundValueKey(eventId)) ??
+      final value =
+          _storage.decodeString(StorageKeys.soundValueKey(eventId)) ??
           StorageKeys.defaultEventSounds[eventId]!;
 
       switch (type) {
@@ -546,7 +602,9 @@ class HomeController extends GetxController {
           final ok = await ringtone.playSystemRingtone(value);
           if (!ok) {
             // 系统铃声播放失败回退到默认 builtin
-            await _audioPlayer.play(AssetSource(StorageKeys.defaultEventSounds[eventId]!));
+            await _audioPlayer.play(
+              AssetSource(StorageKeys.defaultEventSounds[eventId]!),
+            );
           }
           break;
         case StorageKeys.soundTypeCustom:
@@ -554,7 +612,9 @@ class HomeController extends GetxController {
             await _audioPlayer.play(DeviceFileSource(value));
           } catch (e) {
             Get.log('自定义音效播放失败,回退到默认: $e');
-            await _audioPlayer.play(AssetSource(StorageKeys.defaultEventSounds[eventId]!));
+            await _audioPlayer.play(
+              AssetSource(StorageKeys.defaultEventSounds[eventId]!),
+            );
           }
           break;
         case StorageKeys.soundTypeBuiltin:
@@ -575,7 +635,9 @@ class HomeController extends GetxController {
 
     try {
       final endTime = DateTime.now();
-      final actualDuration = endTime.difference(_currentSessionStartTime!).inSeconds;
+      final actualDuration = endTime
+          .difference(_currentSessionStartTime!)
+          .inSeconds;
 
       final session = FocusSessionModel(
         // id为null, 让数据库自动生成
@@ -595,7 +657,6 @@ class HomeController extends GetxController {
 
       // 清空当前会话信息
       _currentSessionStartTime = null;
-
     } catch (e) {
       Get.log('记录专注会话失败: $e');
     }

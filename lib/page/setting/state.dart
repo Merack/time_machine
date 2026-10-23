@@ -11,8 +11,10 @@ class SettingState {
   // 微休息设置组
   var microBreakEnabled = StorageKeys.defaultMicroBreakEnabled.obs;
   var microBreakTimeSeconds = StorageKeys.defaultMicroBreakTimeSeconds.obs;
-  var microBreakIntervalMinMinutes = StorageKeys.defaultMicroBreakIntervalMinMinutes.obs;
-  var microBreakIntervalMaxMinutes = StorageKeys.defaultMicroBreakIntervalMaxMinutes.obs;
+  var microBreakIntervalMinMinutes =
+      StorageKeys.defaultMicroBreakIntervalMinMinutes.obs;
+  var microBreakIntervalMaxMinutes =
+      StorageKeys.defaultMicroBreakIntervalMaxMinutes.obs;
 
   // 行为控制设置组
   var isCountingUp = StorageKeys.defaultIsCountingUp.obs;
@@ -20,11 +22,20 @@ class SettingState {
   // 自动开始下一个专注
   var autoStartNextFocus = StorageKeys.defaultAutoStartNextFocus.obs;
 
+  // 实验性功能
+  var backgroundRetentionEnabled =
+      StorageKeys.defaultBackgroundRetentionEnabled.obs;
+  var backgroundRetentionMixWithOthers =
+      StorageKeys.defaultBackgroundRetentionMixWithOthers.obs;
+
   // 番茄时钟设置组
   var pomodoroFocusMinutes = StorageKeys.defaultPomodoroFocusMinutes.obs;
-  var pomodoroShortBreakMinutes = StorageKeys.defaultPomodoroShortBreakMinutes.obs;
-  var pomodoroLongBreakMinutes = StorageKeys.defaultPomodoroLongBreakMinutes.obs;
-  var pomodoroLongBreakInterval = StorageKeys.defaultPomodoroLongBreakInterval.obs;
+  var pomodoroShortBreakMinutes =
+      StorageKeys.defaultPomodoroShortBreakMinutes.obs;
+  var pomodoroLongBreakMinutes =
+      StorageKeys.defaultPomodoroLongBreakMinutes.obs;
+  var pomodoroLongBreakInterval =
+      StorageKeys.defaultPomodoroLongBreakInterval.obs;
 
   // 备份恢复状态
   var isBackupInProgress = false.obs;
@@ -62,12 +73,17 @@ class SettingState {
     focusTimeController.text = focusTimeMinutes.value.toString();
     bigBreakTimeController.text = bigBreakTimeMinutes.value.toString();
     microBreakTimeController.text = microBreakTimeSeconds.value.toString();
-    microBreakIntervalMinController.text = microBreakIntervalMinMinutes.value.toString();
-    microBreakIntervalMaxController.text = microBreakIntervalMaxMinutes.value.toString();
+    microBreakIntervalMinController.text = microBreakIntervalMinMinutes.value
+        .toString();
+    microBreakIntervalMaxController.text = microBreakIntervalMaxMinutes.value
+        .toString();
     pomodoroFocusController.text = pomodoroFocusMinutes.value.toString();
-    pomodoroShortBreakController.text = pomodoroShortBreakMinutes.value.toString();
-    pomodoroLongBreakController.text = pomodoroLongBreakMinutes.value.toString();
-    pomodoroIntervalController.text = pomodoroLongBreakInterval.value.toString();
+    pomodoroShortBreakController.text = pomodoroShortBreakMinutes.value
+        .toString();
+    pomodoroLongBreakController.text = pomodoroLongBreakMinutes.value
+        .toString();
+    pomodoroIntervalController.text = pomodoroLongBreakInterval.value
+        .toString();
   }
 
   /// 更新控制器文本
@@ -75,12 +91,17 @@ class SettingState {
     focusTimeController.text = focusTimeMinutes.value.toString();
     bigBreakTimeController.text = bigBreakTimeMinutes.value.toString();
     microBreakTimeController.text = microBreakTimeSeconds.value.toString();
-    microBreakIntervalMinController.text = microBreakIntervalMinMinutes.value.toString();
-    microBreakIntervalMaxController.text = microBreakIntervalMaxMinutes.value.toString();
+    microBreakIntervalMinController.text = microBreakIntervalMinMinutes.value
+        .toString();
+    microBreakIntervalMaxController.text = microBreakIntervalMaxMinutes.value
+        .toString();
     pomodoroFocusController.text = pomodoroFocusMinutes.value.toString();
-    pomodoroShortBreakController.text = pomodoroShortBreakMinutes.value.toString();
-    pomodoroLongBreakController.text = pomodoroLongBreakMinutes.value.toString();
-    pomodoroIntervalController.text = pomodoroLongBreakInterval.value.toString();
+    pomodoroShortBreakController.text = pomodoroShortBreakMinutes.value
+        .toString();
+    pomodoroLongBreakController.text = pomodoroLongBreakMinutes.value
+        .toString();
+    pomodoroIntervalController.text = pomodoroLongBreakInterval.value
+        .toString();
   }
 
   /// 清除所有错误信息
@@ -118,8 +139,8 @@ class SettingState {
       if (microBreakTimeSeconds.value < 0) {
         microBreakTimeError.value = '微休息时长必须大于或等于0秒';
         isValid = false;
-      } else if (bigBreakTimeMinutes.value != 0
-          && (microBreakTimeSeconds.value > bigBreakTimeMinutes.value * 60)) {
+      } else if (bigBreakTimeMinutes.value != 0 &&
+          (microBreakTimeSeconds.value > bigBreakTimeMinutes.value * 60)) {
         microBreakTimeError.value = '微休息时长不能大于长休息时间';
         isValid = false;
       }
@@ -135,9 +156,12 @@ class SettingState {
         isValid = false;
       }
 
-      if (microBreakIntervalMinMinutes.value > microBreakIntervalMaxMinutes.value) {
+      if (microBreakIntervalMinMinutes.value >
+          microBreakIntervalMaxMinutes.value) {
         microBreakIntervalMinMinutes.value = microBreakIntervalMaxMinutes.value;
-        microBreakIntervalMinController.text = microBreakIntervalMinMinutes.value.toString();
+        microBreakIntervalMinController.text = microBreakIntervalMinMinutes
+            .value
+            .toString();
         ToastUtil.show('设置已调整', '最小间隔不能大于最大间隔,已调整为相同值');
       }
     }

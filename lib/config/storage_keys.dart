@@ -8,12 +8,15 @@ class StorageKeys {
   static const String bigBreakTimeMinutes = 'big_break_time_minutes';
   static const String microBreakEnabled = 'micro_break_enabled';
   static const String microBreakTimeSeconds = 'micro_break_time_seconds';
-  static const String microBreakIntervalMinMinutes = 'micro_break_interval_min_minutes';
-  static const String microBreakIntervalMaxMinutes = 'micro_break_interval_max_minutes';
-  
+  static const String microBreakIntervalMinMinutes =
+      'micro_break_interval_min_minutes';
+  static const String microBreakIntervalMaxMinutes =
+      'micro_break_interval_max_minutes';
+
   // 行为控制设置
   static const String isCountingUp = 'is_counting_up'; // true=正向计时,false=逆向计时
-  static const String isProgressForward = 'is_progress_forward'; // true=正向填充,false=逆向填充
+  static const String isProgressForward =
+      'is_progress_forward'; // true=正向填充,false=逆向填充
   static const String autoStartNextFocus = 'auto_start_next_focus';
 
   // 计时器模式
@@ -21,12 +24,20 @@ class StorageKeys {
 
   // 番茄时钟设置
   static const String pomodoroFocusMinutes = 'pomodoro_focus_minutes';
-  static const String pomodoroShortBreakMinutes = 'pomodoro_short_break_minutes';
+  static const String pomodoroShortBreakMinutes =
+      'pomodoro_short_break_minutes';
   static const String pomodoroLongBreakMinutes = 'pomodoro_long_break_minutes';
-  static const String pomodoroLongBreakInterval = 'pomodoro_long_break_interval';
+  static const String pomodoroLongBreakInterval =
+      'pomodoro_long_break_interval';
 
   // 主题设置
   static const String themeMode = 'theme_mode'; // 主题模式：light, dark, system
+
+  // 实验性功能
+  static const String backgroundRetentionEnabled =
+      'background_retention_enabled';
+  static const String backgroundRetentionMixWithOthers =
+      'background_retention_mix_with_others';
 
   // 默认值
   static const String defaultTimerMode = 'pomodoro';
@@ -40,6 +51,8 @@ class StorageKeys {
   static const bool defaultIsProgressForward = true; // 默认正向填充
   static const bool defaultAutoStartNextFocus = false;
   static const String defaultThemeMode = 'system'; // 默认跟随系统
+  static const bool defaultBackgroundRetentionEnabled = false;
+  static const bool defaultBackgroundRetentionMixWithOthers = true;
 
   // 番茄时钟默认值
   static const int defaultPomodoroFocusMinutes = 25;
@@ -95,7 +108,8 @@ class StorageKeys {
   // 提示音 MMKV 键辅助方法
   static String soundTypeKey(String eventId) => 'sound_${eventId}_type';
   static String soundValueKey(String eventId) => 'sound_${eventId}_value';
-  static String soundDisplayNameKey(String eventId) => 'sound_${eventId}_display_name';
+  static String soundDisplayNameKey(String eventId) =>
+      'sound_${eventId}_display_name';
 
   // ===== 事件提醒通知 =====
   // 复用上面的 soundEventIds 作为通知事件集合, 不另建一套事件体系.
