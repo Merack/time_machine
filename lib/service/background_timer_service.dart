@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
@@ -12,8 +11,7 @@ class BackgroundTimerService extends GetxService {
   static const String notificationChannelId = 'time_machine_timer';
   static const int notificationId = 1048596;
 
-  final FlutterBackgroundService _backgroundService =
-      FlutterBackgroundService();
+  final FlutterBackgroundService _backgroundService = FlutterBackgroundService();
 
   // @override
   // Future<void> onInit() async {
@@ -41,25 +39,6 @@ class BackgroundTimerService extends GetxService {
     Get.log('BackgroundTimerService initialized');
     return this;
   }
-
-  Future<void> syncBackgroundRetentionConfig({
-    required bool enabled,
-    required bool mixWithOthers,
-  }) async {
-    if (!Platform.isAndroid) return;
-
-    try {
-      if (await _backgroundService.isRunning()) {
-        _backgroundService.invoke('set_background_retention_config', {
-          'enabled': enabled,
-          'mixWithOthers': mixWithOthers,
-        });
-      }
-    } catch (e) {
-      Get.log('同步后台保留设置失败: $e');
-    }
-  }
-
   /// 初始化后台服务
   Future<void> _initializeBackgroundService() async {
     // 创建通知渠道
@@ -76,9 +55,7 @@ class BackgroundTimerService extends GetxService {
         FlutterLocalNotificationsPlugin();
 
     await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin
-        >()
+        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
 
     // 配置后台服务
@@ -120,4 +97,6 @@ void onBackgroundStart(ServiceInstance service) async {
 
   final handler = TimerBackgroundServiceHandler(service);
   handler.init();
+
 }
+

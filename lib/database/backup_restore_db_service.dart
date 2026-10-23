@@ -16,7 +16,7 @@ import '../service/app_storage_service.dart';
 class BackupRestoreDBService {
   late final MMKV _mmkv;
 
-  BackupRestoreDBService() {
+  BackupRestoreDBService(){
     _mmkv = Get.find<AppStorageService>().mmkv;
   }
 
@@ -25,7 +25,7 @@ class BackupRestoreDBService {
   Future<String?> backupData() async {
     try {
       Get.log('开始数据备份...');
-
+      
       // 获取Download目录
       final downloadsDir = await _getDownloadsDirectory();
       // final downloadsDir = await getDownloadsDirectory();
@@ -33,7 +33,7 @@ class BackupRestoreDBService {
         Get.log('无法获取Downloads目录');
         return null;
       }
-
+      
       // 创建备份文件路径
       final backupFile = '${downloadsDir.path}/time_machine_backup.db';
       // 检查备份文件是否已存在
@@ -56,7 +56,7 @@ class BackupRestoreDBService {
 
       // 将MMKV设置数据转移到settings表
       await _transferMMKVToSettings(backupDB);
-
+      
       // 复制focus_sessions数据
       final focusSessions = await FocusSessionDao.queryAll();
       if (focusSessions.isNotEmpty) {
@@ -66,12 +66,13 @@ class BackupRestoreDBService {
         }
         await batch.commit(noResult: true);
       }
-
+      
       // 关闭数据库
       await backupDB.close();
-
+      
       Get.log('数据备份完成: $backupFile');
       return backupFile;
+      
     } catch (e) {
       Get.log('数据备份失败: $e');
       return null;
@@ -84,7 +85,7 @@ class BackupRestoreDBService {
     try {
       Get.log('开始数据恢复...');
       // Get.log('===${(await getDownloadsDirectory())?.path}===');
-
+      
       // 选择备份文件
       final picked = await FilePicker.pickFile(
         // 这里的FileType.custom无法识别db文件, 还是用默认的any吧, 只不过这样要自己验证后缀了
@@ -94,44 +95,45 @@ class BackupRestoreDBService {
         dialogTitle: '选择备份文件',
         initialDirectory: (await _getDownloadsDirectory())?.path,
       );
-
+      
       if (picked == null) {
         Get.log('用户取消选择文件');
         return false;
       }
-
+      
       final backupFilePath = picked.path;
       if (backupFilePath == null) {
         Get.log('无效的文件路径');
         return false;
       }
-
+      
       final backupFile = File(backupFilePath);
       if (!await backupFile.exists()) {
         Get.log('备份文件不存在');
         return false;
       }
-
+      
       // 验证备份文件
       if (!await _validateBackupFile(backupFile)) {
         Get.log('备份文件验证失败');
         return false;
       }
-
+      
       // 打开备份数据库
       final backupDb = await openDatabase(backupFile.path, readOnly: true);
-
+      
       // 恢复focus_sessions数据
       await _restoreFocusSessions(backupDb);
-
+      
       // 恢复settings数据到MMKV
       await _restoreSettingsToMMKV(backupDb);
-
+      
       // 关闭备份数据库
       await backupDb.close();
-
+      
       Get.log('数据恢复完成');
       return true;
+      
     } catch (e) {
       Get.log('数据恢复失败: $e');
       return false;
@@ -182,8 +184,6 @@ class BackupRestoreDBService {
       StorageKeys.isCountingUp: 'bool',
       StorageKeys.isProgressForward: 'bool',
       StorageKeys.autoStartNextFocus: 'bool',
-      StorageKeys.backgroundRetentionEnabled: 'bool',
-      StorageKeys.backgroundRetentionMixWithOthers: 'bool',
       StorageKeys.themeMode: 'string',
       StorageKeys.timerMode: 'string',
       StorageKeys.pomodoroFocusMinutes: 'int',
@@ -197,11 +197,11 @@ class BackupRestoreDBService {
       settingsMap[StorageKeys.soundTypeKey(eventId)] = 'string';
       settingsMap[StorageKeys.soundValueKey(eventId)] = 'string';
     }
-
+    
     for (final entry in settingsMap.entries) {
       final key = entry.key;
       final type = entry.value;
-
+      
       dynamic value;
       switch (type) {
         case 'int':
@@ -214,7 +214,7 @@ class BackupRestoreDBService {
           value = _mmkv.decodeString(key);
           break;
       }
-
+      
       if (value != null) {
         final setting = SettingModel.fromMMKV(
           key: key,
@@ -224,7 +224,7 @@ class BackupRestoreDBService {
         settingsToBackup.add(setting);
       }
     }
-
+    
     // 批量插入到settings表
     if (settingsToBackup.isNotEmpty) {
       final settingMaps = settingsToBackup.map((s) => s.toMap()).toList();
@@ -234,6 +234,7 @@ class BackupRestoreDBService {
 
   /// 创建备份数据库表结构
   Future<void> _createBackupTables(Database db) async {
+
     await db.execute('''
       CREATE TABLE ${DatabaseHelper.tableFocusSessions} (
         ${DatabaseHelper.columnId} INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -262,20 +263,20 @@ class BackupRestoreDBService {
   Future<bool> _validateBackupFile(File backupFile) async {
     try {
       final db = await openDatabase(backupFile.path, readOnly: true);
-
+      
       // 检查必要的表是否存在
       final tables = await db.rawQuery(
-        "SELECT name FROM sqlite_master WHERE type='table'",
+        "SELECT name FROM sqlite_master WHERE type='table'"
       );
-
+      
       final tableNames = tables.map((t) => t['name'] as String).toSet();
       final requiredTables = {
         DatabaseHelper.tableFocusSessions,
         DatabaseHelper.tableSettings,
       };
-
+      
       await db.close();
-
+      
       return requiredTables.every((table) => tableNames.contains(table));
     } catch (e) {
       Get.log('验证备份文件失败: $e');
@@ -288,7 +289,7 @@ class BackupRestoreDBService {
     // 清空现有数据
     final mainDb = await DatabaseHelper.database;
     await mainDb.delete(DatabaseHelper.tableFocusSessions);
-
+    
     // 从备份恢复数据
     final sessions = await backupDb.query(DatabaseHelper.tableFocusSessions);
     if (sessions.isNotEmpty) {
@@ -299,12 +300,12 @@ class BackupRestoreDBService {
   /// 恢复settings数据到MMKV
   Future<void> _restoreSettingsToMMKV(Database backupDb) async {
     final settings = await backupDb.query(DatabaseHelper.tableSettings);
-
+    
     for (final settingMap in settings) {
       final setting = SettingModel.fromMap(settingMap);
       final key = setting.key;
       final value = setting.typedValue;
-
+      
       switch (setting.type) {
         case 'int':
           _mmkv.encodeInt(key, value as int);

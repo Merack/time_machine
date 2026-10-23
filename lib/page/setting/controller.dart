@@ -5,7 +5,6 @@ import 'package:time_machine/route/route_name.dart';
 import 'package:time_machine/utils/toast_util.dart';
 
 import '../../service/app_storage_service.dart';
-import '../../service/background_timer_service.dart';
 import '../../service/permission_service.dart';
 import '../../database/backup_restore_db_service.dart';
 import '../../config/storage_keys.dart';
@@ -78,15 +77,6 @@ class SettingController extends GetxController {
       defaultValue: StorageKeys.defaultAutoStartNextFocus,
     );
 
-    state.backgroundRetentionEnabled.value = _storage.decodeBool(
-      StorageKeys.backgroundRetentionEnabled,
-      defaultValue: StorageKeys.defaultBackgroundRetentionEnabled,
-    );
-    state.backgroundRetentionMixWithOthers.value = _storage.decodeBool(
-      StorageKeys.backgroundRetentionMixWithOthers,
-      defaultValue: StorageKeys.defaultBackgroundRetentionMixWithOthers,
-    );
-
     state.pomodoroFocusMinutes.value = _storage.decodeInt(
       StorageKeys.pomodoroFocusMinutes,
       defaultValue: StorageKeys.defaultPomodoroFocusMinutes,
@@ -122,70 +112,19 @@ class SettingController extends GetxController {
       return;
     }
 
-    _storage.encodeInt(
-      StorageKeys.focusTimeMinutes,
-      state.focusTimeMinutes.value,
-    );
-    _storage.encodeInt(
-      StorageKeys.bigBreakTimeMinutes,
-      state.bigBreakTimeMinutes.value,
-    );
-    _storage.encodeBool(
-      StorageKeys.microBreakEnabled,
-      state.microBreakEnabled.value,
-    );
-    _storage.encodeInt(
-      StorageKeys.microBreakTimeSeconds,
-      state.microBreakTimeSeconds.value,
-    );
-    _storage.encodeInt(
-      StorageKeys.microBreakIntervalMinMinutes,
-      state.microBreakIntervalMinMinutes.value,
-    );
-    _storage.encodeInt(
-      StorageKeys.microBreakIntervalMaxMinutes,
-      state.microBreakIntervalMaxMinutes.value,
-    );
+    _storage.encodeInt(StorageKeys.focusTimeMinutes, state.focusTimeMinutes.value);
+    _storage.encodeInt(StorageKeys.bigBreakTimeMinutes, state.bigBreakTimeMinutes.value);
+    _storage.encodeBool(StorageKeys.microBreakEnabled, state.microBreakEnabled.value);
+    _storage.encodeInt(StorageKeys.microBreakTimeSeconds, state.microBreakTimeSeconds.value);
+    _storage.encodeInt(StorageKeys.microBreakIntervalMinMinutes, state.microBreakIntervalMinMinutes.value);
+    _storage.encodeInt(StorageKeys.microBreakIntervalMaxMinutes, state.microBreakIntervalMaxMinutes.value);
     _storage.encodeBool(StorageKeys.isCountingUp, state.isCountingUp.value);
-    _storage.encodeBool(
-      StorageKeys.isProgressForward,
-      state.isProgressForward.value,
-    );
-    _storage.encodeBool(
-      StorageKeys.autoStartNextFocus,
-      state.autoStartNextFocus.value,
-    );
-    _storage.encodeBool(
-      StorageKeys.backgroundRetentionEnabled,
-      state.backgroundRetentionEnabled.value,
-    );
-    _storage.encodeBool(
-      StorageKeys.backgroundRetentionMixWithOthers,
-      state.backgroundRetentionMixWithOthers.value,
-    );
-
-    if (Get.isRegistered<BackgroundTimerService>()) {
-      Get.find<BackgroundTimerService>().syncBackgroundRetentionConfig(
-        enabled: state.backgroundRetentionEnabled.value,
-        mixWithOthers: state.backgroundRetentionMixWithOthers.value,
-      );
-    }
-    _storage.encodeInt(
-      StorageKeys.pomodoroFocusMinutes,
-      state.pomodoroFocusMinutes.value,
-    );
-    _storage.encodeInt(
-      StorageKeys.pomodoroShortBreakMinutes,
-      state.pomodoroShortBreakMinutes.value,
-    );
-    _storage.encodeInt(
-      StorageKeys.pomodoroLongBreakMinutes,
-      state.pomodoroLongBreakMinutes.value,
-    );
-    _storage.encodeInt(
-      StorageKeys.pomodoroLongBreakInterval,
-      state.pomodoroLongBreakInterval.value,
-    );
+    _storage.encodeBool(StorageKeys.isProgressForward, state.isProgressForward.value);
+    _storage.encodeBool(StorageKeys.autoStartNextFocus, state.autoStartNextFocus.value);
+    _storage.encodeInt(StorageKeys.pomodoroFocusMinutes, state.pomodoroFocusMinutes.value);
+    _storage.encodeInt(StorageKeys.pomodoroShortBreakMinutes, state.pomodoroShortBreakMinutes.value);
+    _storage.encodeInt(StorageKeys.pomodoroLongBreakMinutes, state.pomodoroLongBreakMinutes.value);
+    _storage.encodeInt(StorageKeys.pomodoroLongBreakInterval, state.pomodoroLongBreakInterval.value);
 
     ToastUtil.show('设置已保存', '所有设置已成功保存');
 
@@ -203,26 +142,16 @@ class SettingController extends GetxController {
     state.focusTimeMinutes.value = StorageKeys.defaultFocusTimeMinutes;
     state.bigBreakTimeMinutes.value = StorageKeys.defaultBigBreakTimeMinutes;
     state.microBreakEnabled.value = StorageKeys.defaultMicroBreakEnabled;
-    state.microBreakTimeSeconds.value =
-        StorageKeys.defaultMicroBreakTimeSeconds;
-    state.microBreakIntervalMinMinutes.value =
-        StorageKeys.defaultMicroBreakIntervalMinMinutes;
-    state.microBreakIntervalMaxMinutes.value =
-        StorageKeys.defaultMicroBreakIntervalMaxMinutes;
+    state.microBreakTimeSeconds.value = StorageKeys.defaultMicroBreakTimeSeconds;
+    state.microBreakIntervalMinMinutes.value = StorageKeys.defaultMicroBreakIntervalMinMinutes;
+    state.microBreakIntervalMaxMinutes.value = StorageKeys.defaultMicroBreakIntervalMaxMinutes;
     state.isCountingUp.value = StorageKeys.defaultIsCountingUp;
     state.isProgressForward.value = StorageKeys.defaultIsProgressForward;
     state.autoStartNextFocus.value = StorageKeys.defaultAutoStartNextFocus;
-    state.backgroundRetentionEnabled.value =
-        StorageKeys.defaultBackgroundRetentionEnabled;
-    state.backgroundRetentionMixWithOthers.value =
-        StorageKeys.defaultBackgroundRetentionMixWithOthers;
     state.pomodoroFocusMinutes.value = StorageKeys.defaultPomodoroFocusMinutes;
-    state.pomodoroShortBreakMinutes.value =
-        StorageKeys.defaultPomodoroShortBreakMinutes;
-    state.pomodoroLongBreakMinutes.value =
-        StorageKeys.defaultPomodoroLongBreakMinutes;
-    state.pomodoroLongBreakInterval.value =
-        StorageKeys.defaultPomodoroLongBreakInterval;
+    state.pomodoroShortBreakMinutes.value = StorageKeys.defaultPomodoroShortBreakMinutes;
+    state.pomodoroLongBreakMinutes.value = StorageKeys.defaultPomodoroLongBreakMinutes;
+    state.pomodoroLongBreakInterval.value = StorageKeys.defaultPomodoroLongBreakInterval;
 
     state.updateControllers();
     state.clearErrors();
@@ -291,14 +220,6 @@ class SettingController extends GetxController {
     state.autoStartNextFocus.value = value;
   }
 
-  void toggleBackgroundRetention(bool value) {
-    state.backgroundRetentionEnabled.value = value;
-  }
-
-  void toggleBackgroundRetentionMixWithOthers(bool value) {
-    state.backgroundRetentionMixWithOthers.value = value;
-  }
-
   /// 更新番茄专注时间
   void updatePomodoroFocusTime(String value) {
     final intValue = int.tryParse(value);
@@ -338,8 +259,7 @@ class SettingController extends GetxController {
       return;
     }
 
-    BackupRestoreDBService backupRestoreDBService =
-        Get.isRegistered<BackupRestoreDBService>()
+    BackupRestoreDBService backupRestoreDBService = Get.isRegistered<BackupRestoreDBService>()
         ? Get.find<BackupRestoreDBService>()
         : Get.put(BackupRestoreDBService());
 
@@ -413,8 +333,7 @@ class SettingController extends GetxController {
     state.isRestoreInProgress.value = true;
 
     try {
-      BackupRestoreDBService backupRestoreDBService =
-          Get.isRegistered<BackupRestoreDBService>()
+      BackupRestoreDBService backupRestoreDBService = Get.isRegistered<BackupRestoreDBService>()
           ? Get.find<BackupRestoreDBService>()
           : Get.put(BackupRestoreDBService());
       final success = await backupRestoreDBService.restoreData();

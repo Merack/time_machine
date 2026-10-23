@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -57,6 +55,7 @@ class SettingPage extends StatelessWidget {
                 ),
               );
 
+
               // 对话框关闭后,主动清除焦点
               // FocusManager.instance.primaryFocus?.unfocus();
 
@@ -88,15 +87,14 @@ class SettingPage extends StatelessWidget {
             FocusManager.instance.primaryFocus?.unfocus();
           },
           child: ListView(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16.0,
-              vertical: 16.0,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
             children: [
               // 番茄时钟设置组（始终显示，供用户预先配置）
               SettingSection(
                 title: '番茄时钟设置',
-                children: [PomodoroSettings(controller: controller)],
+                children: [
+                  PomodoroSettings(controller: controller),
+                ],
               ),
 
               const SizedBox(height: 24),
@@ -137,7 +135,7 @@ class SettingPage extends StatelessWidget {
                     ),
                   ),
                   const SettingDivider(),
-                  MicroBreakSettings(controller: controller),
+                  MicroBreakSettings(controller: controller)
                 ],
               ),
 
@@ -172,34 +170,28 @@ class SettingPage extends StatelessWidget {
                   SettingTile(
                     title: '自动开始下一个',
                     subtitle: '休息结束后自动开始下一个专注',
-                    trailing: Obx(
-                      () => SettingSwitch(
-                        value: state.autoStartNextFocus.value,
-                        onChanged: controller.toggleAutoStartNextFocus,
-                      ),
-                    ),
+                    trailing: Obx(() => SettingSwitch(
+                      value: state.autoStartNextFocus.value,
+                      onChanged: controller.toggleAutoStartNextFocus,
+                    )),
                   ),
                   const SettingDivider(),
                   SettingTile(
                     title: '正向计时',
                     subtitle: '计时从0开始递增显示',
-                    trailing: Obx(
-                      () => SettingSwitch(
-                        value: state.isCountingUp.value,
-                        onChanged: controller.toggleCountingDirection,
-                      ),
-                    ),
+                    trailing: Obx(() => SettingSwitch(
+                      value: state.isCountingUp.value,
+                      onChanged: controller.toggleCountingDirection,
+                    )),
                   ),
                   const SettingDivider(),
                   SettingTile(
                     title: '进度条正向填充',
                     subtitle: '圆形进度条从0开始填充',
-                    trailing: Obx(
-                      () => SettingSwitch(
-                        value: state.isProgressForward.value,
-                        onChanged: controller.toggleProgressDirection,
-                      ),
-                    ),
+                    trailing: Obx(() => SettingSwitch(
+                      value: state.isProgressForward.value,
+                      onChanged: controller.toggleProgressDirection,
+                    )),
                   ),
                   const SettingDivider(),
                   SettingTile(
@@ -212,54 +204,12 @@ class SettingPage extends StatelessWidget {
 
               const SizedBox(height: 24),
 
-              if (Platform.isAndroid) ...[
-                SettingSection(
-                  title: '实验性功能',
-                  children: [
-                    SettingTile(
-                      title: '增强后台保留',
-                      subtitle: '计时器运行期间循环播放静音音频',
-                      trailing: Obx(
-                        () => SettingSwitch(
-                          value: state.backgroundRetentionEnabled.value,
-                          onChanged: controller.toggleBackgroundRetention,
-                        ),
-                      ),
-                    ),
-                    const SettingDivider(),
-                    SettingTile(
-                      title: '与其他媒体同时播放',
-                      subtitle: '开启后不主动请求音频焦点',
-                      trailing: Obx(
-                        () => SettingSwitch(
-                          value: state.backgroundRetentionMixWithOthers.value,
-                          onChanged:
-                              controller.toggleBackgroundRetentionMixWithOthers,
-                        ),
-                      ),
-                    ),
-                    const SettingDivider(),
-                    Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Text(
-                        '计时器运行时启动前台媒体服务，并循环播放本地静音音频，让系统按媒体播放场景保留应用。'
-                        '该方式只能提高后台运行概率，不能绕过系统或厂商的电池限制，并可能增加耗电。'
-                        '开启与其他媒体同时播放后通常不会打断网课或音乐，但不同系统和播放器仍可能发生冲突。',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
-                          height: 1.6,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-              ],
-
               // 权限管理分组
               SettingSection(
                 title: '权限管理',
-                children: const [PermissionSettings()],
+                children: const [
+                  PermissionSettings(),
+                ],
               ),
 
               const SizedBox(height: 24),
@@ -267,7 +217,9 @@ class SettingPage extends StatelessWidget {
               // 数据设置组
               SettingSection(
                 title: '数据设置',
-                children: [DataSettings(controller: controller)],
+                children: [
+                  DataSettings(controller: controller),
+                ],
               ),
 
               const SizedBox(height: 24),
@@ -279,7 +231,9 @@ class SettingPage extends StatelessWidget {
               ],
 
               // 保存按钮
-              SaveButton(onPressed: controller.saveSettings),
+              SaveButton(
+                onPressed: controller.saveSettings,
+              ),
 
               const SizedBox(height: 24),
             ],
